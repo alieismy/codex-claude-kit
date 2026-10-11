@@ -54,6 +54,8 @@ Skill 清单（8 个专业 Skill + 1 个显式编排 Skill）：
 
 如需可粘贴到 ChatGPT 网页版的已确认中文个性化指令、完整英文参考译文和字符限制说明，见[网页版 ChatGPT 个性化自定义指令](docs/personalized-custom-instructions.md)。
 
+如需已确认的 Claude 网页版英文指令、精确字符数、账户设置适用范围和验证边界，见 [Instructions for Claude（仅英文版）](../docs/claude-personalized-instructions.md)。
+
 ## 快速开始
 
 完整的 Codex、Claude Code、Cursor、配置示例和环境变量安装说明见[安装说明](docs/installation.md)。

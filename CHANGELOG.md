@@ -4,6 +4,10 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
+## Unreleased
+
+- Added the approved English-only Instructions for Claude profile for the web account setting, preserving the self-reviewed text exactly. Documented character counts, product scope, setup sources, and unverified account-save and behavior boundaries; linked it from both READMEs. This does not change local-agent instructions or account settings.
+
 ## 1.8.7 - 2026-10-11
 
 - Refined the ChatGPT web custom-instruction profile to the approved final revision after self-review, with a synchronized complete English reference. Restored explicit evidence, stakeholder, upstream-constraint, and failed-verification safeguards; clarified personal/project context versus general knowledge and continuing authorization; refreshed character counts and documented project-instruction scope. This changes only the web profile and its documentation, not local-agent instructions or verified account behavior.

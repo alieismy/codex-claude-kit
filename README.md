@@ -196,6 +196,8 @@ See [RD Skills Assessment and Evolution](docs/rd-skills-assessment.md) for the r
 
 For an approved Simplified Chinese profile to paste into ChatGPT on the web, with a complete English reference translation and character-limit guidance, see [ChatGPT Web Custom Instructions](docs/personalized-custom-instructions.md).
 
+For the approved English-only Claude web profile, with exact character counts, account-setting scope, and verification limits, see [Instructions for Claude](docs/claude-personalized-instructions.md).
+
 ## Cursor Adapter
 
 The `cursor/` directory contains Cursor adapter documentation, an English adapter, and a Simplified Chinese compatibility pack:
@@ -305,6 +307,7 @@ codex-three-layer-delivery/
     mcp-routing.md
     design-principles.md
     personalized-custom-instructions.md
+    claude-personalized-instructions.md
     rd-skills-assessment.md
     release-checklist.md
   scripts/
