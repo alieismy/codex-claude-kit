@@ -4,7 +4,7 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
-## Unreleased
+## 1.8.8 - 2026-10-11
 
 - Added the approved English-only Instructions for Claude profile for the web account setting, preserving the self-reviewed text exactly. Documented character counts, product scope, setup sources, and unverified account-save and behavior boundaries; linked it from both READMEs. This does not change local-agent instructions or account settings.
 
