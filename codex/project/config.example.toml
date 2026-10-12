@@ -1,0 +1,8 @@
+# Optional project overrides. Merge into a trusted project's .codex/config.toml.
+# Preserve user-level model, provider, MCP, and Skill choices unless this project
+# has a reviewed reason to override them. This file does not install rules or Skills.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = false

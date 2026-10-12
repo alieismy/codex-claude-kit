@@ -1,6 +1,6 @@
 # Codex Three-Layer Delivery
 
-An unofficial, deliverable-driven rules-and-skills framework for Codex-first system design, architecture documentation, feasibility analysis, and document review.
+An unofficial, deliverable-driven framework for system design, architecture documentation, feasibility analysis, and document review with Codex, Claude Code, and Cursor. Settings and MCP examples support the rules and Skills while retaining each platform's native installation locations.
 
 This repository packages a three-layer operating model:
 
@@ -8,11 +8,11 @@ This repository packages a three-layer operating model:
 2. **Project document-delivery discipline**: project-level `AGENTS.md` rules for scope control, quality gates, security, MCP routing, and verification.
 3. **Research and document-delivery skills**: eight independent specialist `rd-*` skills plus one explicit delivery orchestrator for requirements, feasibility studies, evidence research, technical proposals, detailed designs, standards work, professional writing, independent review, and cross-session handoff.
 
-It also includes optional Cursor and Claude Code adapter areas for teams that want to port the same document-delivery discipline to other agent environments.
+Codex retains the most extensive configuration examples. Claude Code and Cursor have native global/project rule adapters and selected settings/MCP entry points; this does not claim identical capabilities or full CLI/cloud coverage.
 
 > This project is independent and is not affiliated with OpenAI, Cursor, Anthropic, or any referenced framework. See `ATTRIBUTION.md` for inspiration references.
 
-Simplified Chinese users can start from `zh-CN/`. The English root remains the canonical baseline; `zh-CN/` is a translation pack, `cursor/project/` is the English Cursor adapter, and `cursor/zh-CN/` remains the Cursor-specific Simplified Chinese compatibility pack.
+Simplified Chinese users can start from `zh-CN/`. The English root remains the canonical baseline; `zh-CN/` is a translation pack, every maintained Chinese platform adapter is under `zh-CN/`, including `zh-CN/cursor/`.
 
 ## Who This Is For
 
@@ -54,14 +54,16 @@ Layer 3: Document Delivery Skills
   - rd-review
   - rd-delivery (explicit orchestration only)
 
-Adapter mappings:
-  Cursor: cursor/project/.cursor/rules/ and cursor/project/.cursor/skills/
-  Cursor zh-CN: cursor/zh-CN/.cursor/rules/ and cursor/zh-CN/.cursor/skills/
-  Claude Code: claude/project/CLAUDE.md (imports the shared project AGENTS.md) and claude/project/.claude/skills/
-  Simplified Chinese: zh-CN/
+Source mappings (templates are inactive until installed):
+  Shared project core: rules/project/AGENTS.md.template
+  Codex: codex/global/AGENTS.md.template; codex/examples/; codex/project/config.example.toml
+  Claude Code: claude/{global,project}/CLAUDE.md.template; settings and MCP examples
+  Cursor: cursor/global/RULES.md.template; cursor/project/rules/*.mdc.template; MCP example
+  Shared Skills: skills/ (English); zh-CN/skills/ (Chinese)
+  Simplified Chinese adapters: zh-CN/{rules,codex,claude,cursor}/
 ```
 
-The source repository's root `AGENTS.md` is a maintainer-specific Layer 2 instruction file. It governs changes to this repository and is intentionally distinct from the distributable `codex/project/AGENTS.md` template copied into downstream document-delivery projects.
+The source repository's root `AGENTS.md` is a maintainer-specific Layer 2 instruction file. It governs changes to this repository and is intentionally distinct from the distributable `rules/project/AGENTS.md.template` template copied into downstream document-delivery projects.
 
 ## Quick Start
 
@@ -72,51 +74,29 @@ The source repository's root `AGENTS.md` is a maintainer-specific Layer 2 instru
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 mkdir -p "$codex_home"
 if [ ! -s "$codex_home/AGENTS.override.md" ] && [ ! -e "$codex_home/AGENTS.md" ]; then
-  cp codex/global/AGENTS.md "$codex_home/AGENTS.md"
+  cp codex/global/AGENTS.md.template "$codex_home/AGENTS.md"
 fi
 
 # Project document-delivery discipline: only when the target does not exist
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp codex/project/AGENTS.md /path/to/your-project/AGENTS.md
+  cp rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
 If a destination has a non-empty `AGENTS.override.md`, that file is the effective instruction source at the same scope; back it up and merge deliberately instead of creating an inactive `AGENTS.md`. If `AGENTS.md` already exists, back it up and merge only the relevant sections. Do not replace existing personal or project rules blindly. These templates contain opinionated defaults for role, language behavior, reasoning depth, authorization, and delivery discipline; adapt them to the user, team, and repository. The English global template is language-neutral, while the `zh-CN/` template intentionally defaults to Simplified Chinese.
 
-### 2. Install skills
+### 2. Choose a Skill source
 
-```bash
-# Global install: available to all projects
-skill_target="$HOME/.agents/skills"
-mkdir -p "$skill_target"
-for skill_source in skills/rd-*; do
-  skill_name=$(basename "$skill_source")
-  if [ -e "$skill_target/$skill_name" ]; then
-    printf 'Refusing to overwrite existing Skill: %s\n' "$skill_target/$skill_name" >&2
-    exit 1
-  fi
-done
-cp -R skills/rd-* "$skill_target/"
+Rules, configuration, and Skills are selected separately. If the nine RD Skills are already installed in a deliberate user-level source, reuse that source; the project-rule recipes do not install another Skill tree. Codex supports `~/.agents/skills/`, and Cursor documents compatibility with that root. Confirm actual discovery in a fresh client session; this repository does not establish Cursor runtime selection.
 
-# Or project-level install
-skill_target="/path/to/your-project/.agents/skills"
-mkdir -p "$skill_target"
-for skill_source in skills/rd-*; do
-  skill_name=$(basename "$skill_source")
-  if [ -e "$skill_target/$skill_name" ]; then
-    printf 'Refusing to overwrite existing Skill: %s\n' "$skill_target/$skill_name" >&2
-    exit 1
-  fi
-done
-cp -R skills/rd-* "$skill_target/"
-```
-
-For a verified PowerShell user-level install with backup and exact tree comparison:
+For a new local installation, use the canonical source and the verified PowerShell installer:
 
 ```powershell
 pwsh -File ./scripts/install-rd-skills.ps1 -Language en
 pwsh -File ./scripts/install-rd-skills.ps1 -Language en -CheckOnly
 ```
+
+Project/team installations and Claude Code local fallback remain available from `skills/` or `zh-CN/skills/` using `-DestinationRoot`. See the [source-to-installation mapping](docs/installation.md#source-and-destination-map). For Claude desktop/chat and Claude Code account sharing, use the [claude.ai upload workflow](claude/README.md#claudeai-skill-upload); account caches are never authoritative source trees.
 
 ### 3. Review Codex config examples
 
@@ -164,10 +144,10 @@ Cursor English files are available under:
 cursor/project/
 ```
 
-Cursor-specific Chinese files remain under:
+Cursor-specific Chinese files are under:
 
 ```text
-cursor/zh-CN/
+zh-CN/cursor/project/
 ```
 
 ## Skill Reference: Eight Specialists and One Explicit Orchestrator
@@ -186,7 +166,7 @@ cursor/zh-CN/
 
 The first eight specialist Skills in the table are independently usable and do not form a forced pipeline. `rd-delivery` is the ninth Skill and serves only as an explicit orchestrator. Use `$rd-research` when external or contested evidence is needed, `$rd-writing` when verified evidence must become an audience-ready narrative, and `$rd-review` when an independent verdict is required. Use `$rd-delivery` only when the request explicitly asks for cross-artifact orchestration, phase gates, or a durable handoff; the request need not name the Skill, but complexity or multiple outputs alone do not qualify. This boundary lives in the Skill description, the shared routing rules, and the trigger evals; no platform-specific invocation flag restricts it to named invocation.
 
-Each skill includes output and trigger-boundary cases under `evals/` plus ChatGPT/Codex desktop metadata under `agents/openai.yaml`. Multi-mode Skills keep their common workflow in `SKILL.md` and load only the selected checklist from `references/`. Shared bodies use neutral `rd-*` identifiers; Codex examples use `$rd-*`, while explicit Cursor and Claude Code invocation uses `/rd-*`.
+Each skill includes output and trigger-boundary cases under `evals/` plus ChatGPT/Codex desktop metadata under `agents/openai.yaml`. Multi-mode Skills keep their common workflow in `SKILL.md` and load only the selected checklist from `references/`. Shared bodies use neutral `rd-*` identifiers; Codex examples use `$rd-*`, Cursor and local Claude Code fallback use `/rd-*`, while Claude account-synced Skills use `/anthropic-skills:rd-*`.
 
 For an optional external-model experiment over retained synthetic evaluation responses, see the [Jev semantic-check pilot](docs/jev-pilot.md). It records a high-confidence false positive and keeps Jev advisory; it is not a default dependency, Skill router, or release gate.
 
@@ -198,59 +178,21 @@ For an approved Simplified Chinese profile to paste into ChatGPT on the web, wit
 
 For the approved English-only Claude web profile, with exact character counts, account-setting scope, and verification limits, see [Instructions for Claude](docs/claude-personalized-instructions.md).
 
-## Cursor Adapter
+## Platform Adapters and Languages
 
-The `cursor/` directory contains Cursor adapter documentation, an English adapter, and a Simplified Chinese compatibility pack:
+The source tree separates shared rules and Skills from platform-specific carriers:
 
-```text
-cursor/
-  README.md
-  project/
-    .cursor/rules/*.mdc
-    .cursor/skills/rd-*/SKILL.md
-    .cursor/mcp.example.json
-    PROMPTS.md
-  zh-CN/
-    .cursor/rules/*.mdc
-    .cursor/skills/rd-*/SKILL.md
-    .cursor/mcp.example.json
-    PROMPTS.md
-```
+| Surface | English source | Simplified Chinese source | Native destination |
+|---|---|---|---|
+| Shared project rules | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
+| Codex global rules | `codex/global/AGENTS.md.template` | `zh-CN/codex/global/AGENTS.md.template` | `{CODEX_HOME}/AGENTS.md` |
+| Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | `zh-CN/claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
+| Cursor global/project rules | `cursor/global/RULES.md.template`; `cursor/project/rules/*.mdc.template` | same paths under `zh-CN/` | User Rules in Customize; `{project}/.cursor/rules/*.mdc` |
+| Shared RD Skills | `skills/rd-*` | `zh-CN/skills/rd-*` | deliberate user/project root or claude.ai upload |
 
-Codex remains the primary target of this repository. Treat Cursor support as optional. The Cursor MCP file is published as `mcp.example.json` and contains only the tested Context7 entry; copy it to `.cursor/mcp.json` only after reviewing credentials, data flow, and the target workspace's MCP status. Add other servers one at a time for a verified use case rather than copying the full routing catalog.
+The Claude project adapter imports the installed shared project core with `@AGENTS.md`; change shared behavior in the shared source. Cursor project rules use native MDC activation semantics. `00-global-principles` is project-wide conduct, distinct from Cursor user-level global rules.
 
-## Simplified Chinese Pack
-
-The `zh-CN/` directory contains a Simplified Chinese translation pack for Codex, Claude Code, shared `rd-*` skills, documentation, and prompts.
-
-```text
-zh-CN/
-  README.md
-  PROMPTS.md
-  codex/
-  claude/
-  skills/
-  docs/
-```
-
-The English root is the canonical baseline. Use `zh-CN/` as a translation pack, not as a separate source of truth. Cursor English support is in `cursor/project/`; Cursor-specific Chinese support remains in `cursor/zh-CN/`.
-
-## Claude Code Adapter
-
-The `claude/` directory contains a Claude Code compatibility pack:
-
-```text
-claude/
-  README.md
-  global/CLAUDE.md
-  project/CLAUDE.md
-  project/.claude/settings.json
-  project/.claude/skills/rd-*/SKILL.md
-```
-
-The project `CLAUDE.md` is a thin adapter: it imports the shared project core with `@AGENTS.md` (installed from `codex/project/AGENTS.md`) and adds only Claude Code-specific guidance, so project rules have one source across Codex and Claude Code.
-
-Codex remains the primary target of this repository. Treat Claude Code support as optional and re-check Claude Code file conventions before changing `CLAUDE.md`, `.claude/settings.json`, or `.claude/skills/` behavior.
+[Claude Code](claude/README.md) and [Cursor](cursor/README.md) explain platform-specific settings, MCP, Skill discovery, and optional installation. The [installation guide](docs/installation.md) gives the complete source → destination mapping. The [layout migration guide](docs/layout-migration.md) maps former paths and explains why a repository move does not change a personal installation. Remove `.template` when installing rule files; do not recursively copy a source adapter directory into a project.
 
 ## Reviewed Public Defaults
 
@@ -271,58 +213,47 @@ The public examples combine safety boundaries with explicit capability choices; 
 
 ```text
 codex-three-layer-delivery/
-  AGENTS.md
+  AGENTS.md                         # repository-maintainer authority
+  rules/project/AGENTS.md.template   # shared downstream project core
+  skills/rd-*/                      # canonical English Skills
   codex/
-    global/AGENTS.md
-    project/AGENTS.md
-    examples/
-      config.example.toml
-      config.full-access.example.toml
+    global/AGENTS.md.template
+    project/config.example.toml
+    examples/config*.example.toml   # existing configuration profiles
+  claude/
+    README.md
+    global/CLAUDE.md.template
+    global/settings.example.json
+    project/CLAUDE.md.template
+    project/settings.example.json
+    project/mcp.example.json
   cursor/
     README.md
-    project/.cursor/rules/
-    project/.cursor/skills/
-    project/.cursor/mcp.example.json
-    zh-CN/.cursor/rules/
-    zh-CN/.cursor/skills/
-    zh-CN/.cursor/mcp.example.json
+    global/RULES.md.template
+    project/rules/*.mdc.template
+    project/mcp.example.json
+    project/PROMPTS.md
   zh-CN/
     README.md
     PROMPTS.md
+    rules/                          # shared project-rule translation
+    skills/                         # Chinese Skills, one source tree
     codex/
     claude/
-    skills/
+    cursor/
     docs/
-  claude/
-    README.md
-    global/CLAUDE.md
-    project/CLAUDE.md
-    project/.claude/settings.json
-    project/.claude/skills/
-  skills/
-    rd-*/SKILL.md
   docs/
-    compatibility.md
     installation.md
-    mcp-routing.md
-    design-principles.md
-    personalized-custom-instructions.md
-    claude-personalized-instructions.md
-    rd-skills-assessment.md
+    layout-migration.md
+    compatibility.md
     release-checklist.md
   scripts/
     install-rd-skills.ps1
     package-claude-ai-skills.ps1
-    validate-codex-configs.py
-    validate-release.ps1
-    validate-skill-metadata.py
     validate.ps1
     test-validator.ps1
+    validate-release.ps1
   schemas/
-    codex-config.schema.json
-    codex-config.schema.meta.json
-    LICENSE-APACHE-2.0.txt
-    NOTICE
   requirements-validation.txt
   PROMPTS.md
   ATTRIBUTION.md
@@ -330,6 +261,8 @@ codex-three-layer-delivery/
   SECURITY.md
   LICENSE
 ```
+
+There are no maintained platform Skill payload mirrors. Optional installation and claude.ai packaging read the two canonical language trees directly. Account-synced directories remain read-only comparison targets, never packaging sources.
 
 ## Validation
 
@@ -345,7 +278,7 @@ The validator checks common release blockers:
 
 - CRLF drift in Markdown, TOML, MDC, and script files;
 - malformed or duplicate-key Skill YAML, missing or invalid frontmatter, unresolved or escaping one-level references, per-step completion criteria, metadata, and eval coverage;
-- inconsistent mirrored Skill directory sets or file content;
+- inconsistent canonical English/Chinese Skill sets or unsupported platform payload mirrors;
 - missing evidence-state and no-change controls across Codex, Claude, and Cursor surfaces;
 - a missing or weakened repository-maintainer root `AGENTS.md`, revision-aware context-reuse contract, or dynamic task-state boundary;
 - loss of the value-first shortest-path and bounded-gate-expansion contract across maintained agent surfaces;
@@ -362,7 +295,7 @@ The validator checks common release blockers:
 - obvious secret leaks;
 - stale private/internal strings.
 
-The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects twenty-four regression cases. In addition to the existing Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it now covers the Codex schema/runtime-aligned configuration contract, Cursor's exactly-one always-on loading policy, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, and Claude shared-import installation guards.
+The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects twenty-nine regression cases. In addition to the existing Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it now covers the Codex schema/runtime-aligned configuration contract, Cursor's exactly-one always-on loading policy, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, and Claude shared-import installation guards.
 
 Before publishing a release, also run the networked dynamic gate:
 
@@ -370,7 +303,7 @@ Before publishing a release, also run the networked dynamic gate:
 pwsh ./scripts/validate-release.ps1
 ```
 
-It compares the tracked Codex schema with the current official schema, validates all four examples against the live copy, checks the installed Codex version, and strict-loads each example from an isolated temporary `CODEX_HOME`. A passing static gate does not replace this release check.
+It compares the tracked Codex schema with the current official schema, validates the maintained public user/project example inventory against the live copy, checks the installed Codex version, and strict-loads each example from an isolated temporary `CODEX_HOME`. A passing static gate does not replace this release check.
 
 ## Versioning
 
@@ -398,4 +331,4 @@ This project was informed by broad patterns from the following public repositori
 
 MIT. See `LICENSE`.
 
-Source maintainers: root `.claude/settings.json` is a repository-only instruction-template exclusion, not a distributable Claude adapter. See [compatibility evidence](docs/compatibility.md).
+Source maintainers: root `.claude/settings.json` is a maintainer-only empty configuration, not a distributable Claude adapter; source templates use non-native paths and suffixes. See [compatibility evidence](docs/compatibility.md).

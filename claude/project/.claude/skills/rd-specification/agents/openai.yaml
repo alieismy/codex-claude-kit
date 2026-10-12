@@ -1,4 +1,0 @@
-interface:
-  display_name: "Standards and Specifications"
-  short_description: "Draft testable normative clauses"
-  default_prompt: "Use $rd-specification to draft or revise the specified clauses with clear authority, scope, terminology, and conformity criteria."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Solution Architecture"
-  short_description: "Compare options and design a solution"
-  default_prompt: "Use $rd-solution to produce a decision-ready technical proposal with alternatives, architecture rationale, risks, and verification needs."

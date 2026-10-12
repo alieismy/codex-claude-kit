@@ -1,4 +1,0 @@
-interface:
-  display_name: "独立评审"
-  short_description: "独立发现有依据的问题，评估影响和严重度，并形成可辩护结论"
-  default_prompt: "使用 $rd-review 独立评审目标对象，先输出分级问题，并形成可辩护结论。"

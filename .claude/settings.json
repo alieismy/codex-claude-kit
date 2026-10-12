@@ -1,12 +1,1 @@
-{
-  "claudeMdExcludes": [
-    "**/claude/global/CLAUDE.md",
-    "**/claude/project/CLAUDE.md",
-    "**/zh-CN/claude/global/CLAUDE.md",
-    "**/zh-CN/claude/project/CLAUDE.md",
-    "**/codex/global/AGENTS.md",
-    "**/codex/project/AGENTS.md",
-    "**/zh-CN/codex/global/AGENTS.md",
-    "**/zh-CN/codex/project/AGENTS.md"
-  ]
-}
+{}

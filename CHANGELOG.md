@@ -4,6 +4,13 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
+## Unreleased
+
+- Separate the shared project core into `rules/project/AGENTS.md.template`, rename distributable instructions with `.template` suffixes, and keep native installation destinations explicit. Consolidate the Chinese Cursor adapter under `zh-CN/cursor/` and add bilingual source-layout migration guidance.
+- Remove four content-identical platform Skill mirrors. Keep only the English and Chinese canonical Skill trees; optional project/team and Claude local fallback installations, and claude.ai upload packaging, read those sources directly. Default project-rule recipes do not install another Skill copy; account caches remain read-only comparison targets.
+- Add selected local configuration entry points for Codex project settings, Claude user settings/project MCP, and Cursor user rules. Preserve native platform settings/MCP distinctions and opt-in activation; this does not introduce comprehensive CLI/cloud support, change personal installations, or upload account Skills.
+- Update layout, installation, compatibility, and release documentation plus the applicable validation contracts and negative regressions. Preserve dated evidence with its historical paths and report new static/runtime results separately; real Cursor client selection remains unverified.
+
 ## 1.8.8 - 2026-10-11
 
 - Added the approved English-only Instructions for Claude profile for the web account setting, preserving the self-reviewed text exactly. Documented character counts, product scope, setup sources, and unverified account-save and behavior boundaries; linked it from both READMEs. This does not change local-agent instructions or account settings.

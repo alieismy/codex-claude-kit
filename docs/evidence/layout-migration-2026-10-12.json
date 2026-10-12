@@ -1,0 +1,178 @@
+{
+  "recordedOn": "2026-10-12",
+  "baselineCommit": "21bc6e51873f934b7309d5f176e906d037657c83",
+  "changeState": "Uncommitted source-layout migration; sourceHashes identify the exact tested templates.",
+  "evidenceLevel": "Bounded Claude Code runtime fixture and archive payload comparison",
+  "platform": "Windows",
+  "claudeCodeVersion": "2.1.296",
+  "fixture": {
+    "location": "Independent temporary Git repository outside the source checkout",
+    "templateInputs": "Eight current English/Chinese global/project AGENTS.md.template and CLAUDE.md.template files at their source-relative paths",
+    "rootMemory": "Synthetic read-only fixture instructions in root CLAUDE.md",
+    "positiveControl": "Native control/CLAUDE.md and control/.claude/skills/layout-probe-control/SKILL.md",
+    "instructionObservation": "InstructionsLoaded hook records only relative paths and load reasons; user paths are redacted",
+    "nestedSkillCandidates": [
+      "claude/project:rd-research",
+      "zh-CN/claude/project:rd-research"
+    ],
+    "mcp": "--strict-mcp-config with an empty mcpServers object",
+    "commandOptions": [
+      "-p",
+      "--output-format stream-json",
+      "--verbose",
+      "--model sonnet",
+      "--effort low",
+      "--tools Read,Skill",
+      "--allowedTools Read,Skill",
+      "--permission-mode default",
+      "--setting-sources user,project",
+      "--no-session-persistence"
+    ]
+  },
+  "observation": {
+    "exitCode": 0,
+    "seconds": 14.5,
+    "sourceHashes": {
+      "codex/global/AGENTS.md.template": "3a9a83e79cb359741219e43cda18dd8772272c2ec4c7b6e51b7b5465f5906bf1",
+      "rules/project/AGENTS.md.template": "049f87c7c8a7fa886f75f0ec96b87923ad0cab71fc4b1b23de91941c31819f2a",
+      "claude/global/CLAUDE.md.template": "a4c61a5a4732bbaf99fc210b60665a219b9ccadc38afaf30a44a98f5469540b3",
+      "claude/project/CLAUDE.md.template": "c9e6a034f423b98df4380ebc6e5fc1b8f1d71878ad225360bc1460b38ee57f87",
+      "zh-CN/codex/global/AGENTS.md.template": "8e5ab5723ac5d57ee9cc84855ff4261fc13962e27b457311986aac9c8232ce82",
+      "zh-CN/rules/project/AGENTS.md.template": "84a274cbddf9e2419186cc6993b16c758ff80f609e5a33e8037c165ac8d818b3",
+      "zh-CN/claude/global/CLAUDE.md.template": "63841830a9e0d2fb9f702ecfbfb0c7698c474ab4739970e3f83d46dd73a86b92",
+      "zh-CN/claude/project/CLAUDE.md.template": "b8357d1fafe9d6bc359699f3c13e39f268832d1d22afdaf4d6fbff89ffc3f08f"
+    },
+    "requestedReads": [
+      "codex/global/probe.txt",
+      "rules/project/probe.txt",
+      "claude/global/probe.txt",
+      "claude/project/probe.txt",
+      "zh-CN/codex/global/probe.txt",
+      "zh-CN/rules/project/probe.txt",
+      "zh-CN/claude/global/probe.txt",
+      "zh-CN/claude/project/probe.txt",
+      "control/probe.txt"
+    ],
+    "readPaths": [
+      "codex/global/probe.txt",
+      "rules/project/probe.txt",
+      "claude/global/probe.txt",
+      "claude/project/probe.txt",
+      "zh-CN/codex/global/probe.txt",
+      "zh-CN/rules/project/probe.txt",
+      "zh-CN/claude/global/probe.txt",
+      "zh-CN/claude/project/probe.txt",
+      "control/probe.txt"
+    ],
+    "hooks": [
+      {
+        "file": "[user-or-managed]",
+        "reason": "session_start"
+      },
+      {
+        "file": "CLAUDE.md",
+        "reason": "session_start"
+      },
+      {
+        "file": "control/CLAUDE.md",
+        "reason": "nested_traversal"
+      }
+    ],
+    "initialRdSkills": [
+      "anthropic-skills:rd-delivery",
+      "anthropic-skills:rd-design",
+      "anthropic-skills:rd-feasibility",
+      "anthropic-skills:rd-requirement",
+      "anthropic-skills:rd-research",
+      "anthropic-skills:rd-review",
+      "anthropic-skills:rd-solution",
+      "anthropic-skills:rd-specification",
+      "anthropic-skills:rd-writing"
+    ],
+    "skillResults": {
+      "layout-probe-control": {
+        "is_error": false,
+        "unknown": false,
+        "launched": true
+      },
+      "claude/project:rd-research": {
+        "is_error": true,
+        "unknown": true,
+        "launched": false
+      },
+      "zh-CN/claude/project:rd-research": {
+        "is_error": true,
+        "unknown": true,
+        "launched": false
+      }
+    },
+    "terminal": {
+      "subtype": "success",
+      "is_error": false
+    },
+    "stderrPresent": false
+  },
+  "assertions": {
+    "allRequestedFilesRead": true,
+    "nativeMemoryControlLoaded": true,
+    "noTemplateMemoryLoaded": true,
+    "nativeSkillControlLaunched": true,
+    "bothFormerNestedSkillNamesUnknown": true,
+    "nineAccountRdSkillsDiscovered": true
+  },
+  "packages": [
+    {
+      "language": "en",
+      "sourceFilesUnchanged": 62,
+      "archives": 9,
+      "payloadFiles": 24,
+      "packagePayloadMatchesBaseline": true
+    },
+    {
+      "language": "zh-CN",
+      "sourceFilesUnchanged": 62,
+      "archives": 9,
+      "payloadFiles": 24,
+      "packagePayloadMatchesBaseline": true
+    }
+  ],
+  "limits": [
+    "One run with inherited user-level settings and account Skills; not a clean-account or repeated behavioral evaluation.",
+    "Native memory and Skill positive controls establish that observation was active. Absence of the former nested names is bounded to this migrated fixture.",
+    "Discovery of account Skills does not prove every Skill was invoked, is current on claude.ai, or works in the desktop app.",
+    "No Cursor runtime, Codex instruction-loading runtime, MCP connection, account upload, or business acceptance is established.",
+    "Archive comparisons establish exact payload equality with canonical source and the pre-migration baseline, excluding evals and agents; they do not establish upload or server-side replacement.",
+    "InstructionsLoaded does not report direct AGENTS.md loading; hook observations alone do not prove AGENTS template loading or exclusion."
+  ],
+  "installationRecipes": {
+    "method": "Executed the project-only PowerShell blocks extracted from both installation guides against independent temporary target directories; source paths remained in the checkout.",
+    "results": [
+      {
+        "language": "en",
+        "client": "cursor",
+        "nativePayload": "pass",
+        "repeatedInstallRefusedWithoutChanges": true
+      },
+      {
+        "language": "en",
+        "client": "claude",
+        "nativePayload": "pass",
+        "repeatedInstallRefusedWithoutChanges": true
+      },
+      {
+        "language": "zh-CN",
+        "client": "cursor",
+        "nativePayload": "pass",
+        "repeatedInstallRefusedWithoutChanges": true
+      },
+      {
+        "language": "zh-CN",
+        "client": "claude",
+        "nativePayload": "pass",
+        "repeatedInstallRefusedWithoutChanges": true
+      }
+    ],
+    "assertions": "Ten native .mdc files or the three Claude project files matched source SHA-256 values. A repeated install refused without changing any target file. Claude recipes created no project Skills.",
+    "limits": "PowerShell file installation only; no personal destination, Bash execution, target-client discovery, MCP activation, or runtime acceptance."
+  }
+}

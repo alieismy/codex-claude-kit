@@ -1,4 +1,0 @@
-interface:
-  display_name: "研究与事实核查"
-  short_description: "使用已检查的一手来源为技术决策、配置研究和事实核查建立可追踪证据"
-  default_prompt: "使用 $rd-research 和已检查的一手来源研究影响决策的主张，并产出可审计证据包。"

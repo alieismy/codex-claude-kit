@@ -1,4 +1,0 @@
-interface:
-  display_name: "Requirements Analysis"
-  short_description: "Turn raw needs into traceable requirements"
-  default_prompt: "Use $rd-requirement to structure the supplied needs into bounded, prioritized, traceable, and verifiable requirements."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "详细设计"
-  short_description: "将已批准需求和架构决策转化为可进入实现阶段的详细设计契约"
-  default_prompt: "使用 $rd-design 把已批准需求和架构决策转化为可进入实现阶段的详细设计。"

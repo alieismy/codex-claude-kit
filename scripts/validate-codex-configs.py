@@ -37,6 +37,8 @@ CONFIGS = (
     Path("codex/examples/config.full-access.example.toml"),
     Path("zh-CN/codex/examples/config.example.toml"),
     Path("zh-CN/codex/examples/config.full-access.example.toml"),
+    Path("codex/project/config.example.toml"),
+    Path("zh-CN/codex/project/config.example.toml"),
 )
 STANDARD_CONFIGS = (
     Path("codex/examples/config.example.toml"),
@@ -177,6 +179,7 @@ def main() -> int:
     mirror_pairs = (
         (CONFIGS[0], CONFIGS[2], "standard"),
         (CONFIGS[1], CONFIGS[3], "full-access"),
+        (CONFIGS[4], CONFIGS[5], "project"),
     )
     for english_path, chinese_path, label in mirror_pairs:
         if english_path not in documents or chinese_path not in documents:
@@ -210,6 +213,19 @@ def main() -> int:
                     f"{relative_path.as_posix()}: required contract {dotted_key} "
                     f"must be {expected!r}, found {current!r}"
                 )
+
+    expected_project = {
+        "approval_policy": "on-request",
+        "sandbox_mode": "workspace-write",
+        "sandbox_workspace_write": {"network_access": False},
+    }
+    for relative_path in CONFIGS[4:]:
+        document = documents.get(relative_path)
+        if document is not None and document != expected_project:
+            errors.append(
+                f"{relative_path.as_posix()}: project Codex example must contain only "
+                "the reviewed approval and workspace sandbox overrides"
+            )
 
     if errors:
         print("Codex config validation failed:", file=sys.stderr)

@@ -14,7 +14,7 @@
 
 进入 **设置 → 个性化**，开启自定义功能，只将下方[指令文本块](#可直接复制的指令)内的正文粘贴到 **自定义指令** 字段。
 
-2026-10-11 核对的 [ChatGPT 自定义指令官方说明](https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions)列明：**Free、Go 上限为 1,500 字符；Plus、Pro、Enterprise、Business、Education 上限为 5,000 字符**。本版本按 Business 套餐的字段容量设计；产品限制变化时重新核对当前界面和官方说明。已确认正文于 2026-10-11 对照 [global v7.8 基线](../codex/global/AGENTS.md)完成完整性、一致性与网页版适用性自检后修订。
+2026-10-11 核对的 [ChatGPT 自定义指令官方说明](https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions)列明：**Free、Go 上限为 1,500 字符；Plus、Pro、Enterprise、Business、Education 上限为 5,000 字符**。本版本按 Business 套餐的字段容量设计；产品限制变化时重新核对当前界面和官方说明。已确认正文于 2026-10-11 对照 [global v7.8 基线](../codex/global/AGENTS.md.template)完成完整性、一致性与网页版适用性自检后修订。
 
 - 已确认的中文正文为 **2,942 字符、14 段**，包含空格和 LF 段落换行，不含 Markdown 代码块标记；符合文档所列的 5,000 字符上限，但超过 1,500 字符。
 - 英文完整参考译文按相同口径计为 **11,312 字符、14 段**，**不适合直接粘贴**到文档所列容量的字段中。请使用本页中文正文，不应静默截断译文或删除保障条款以适配长度。

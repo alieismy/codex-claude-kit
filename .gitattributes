@@ -6,6 +6,7 @@
 *.mdc text eol=lf
 *.mdx text eol=lf
 *.markdown text eol=lf
+*.template text eol=lf
 
 # Configuration and data files.
 *.gitattributes text eol=lf

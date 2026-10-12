@@ -1,4 +1,0 @@
-interface:
-  display_name: "标准规范"
-  short_description: "按效力、范围、术语、引用和符合性判据起草或修订规范性条款"
-  default_prompt: "使用 $rd-specification 按明确的效力、范围、术语和符合性判据起草或修订指定条款。"

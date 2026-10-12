@@ -1,0 +1,8 @@
+# 可选的项目覆盖配置；合并到可信项目的 .codex/config.toml。
+# 除非项目有经过审查的覆盖理由，否则保留用户级模型、provider、MCP 和 Skill 选择。
+# 本文件不安装规则或 Skills。
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = false

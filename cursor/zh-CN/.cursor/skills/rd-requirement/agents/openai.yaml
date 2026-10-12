@@ -1,4 +1,0 @@
-interface:
-  display_name: "需求分析"
-  short_description: "将原始诉求转化为范围明确、可追踪且可验证的结构化需求"
-  default_prompt: "使用 $rd-requirement 将所提供诉求结构化为有边界、分优先级、可追踪且可验证的需求。"

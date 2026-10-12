@@ -1,4 +1,0 @@
-interface:
-  display_name: "Detailed Design"
-  short_description: "Specify implementation-ready contracts"
-  default_prompt: "Use $rd-design to turn approved requirements and architecture decisions into an implementation-ready detailed design."

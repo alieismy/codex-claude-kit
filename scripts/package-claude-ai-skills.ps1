@@ -18,10 +18,10 @@ Set-StrictMode -Version Latest
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $sourceRelative = if ($Language -eq "zh-CN") {
-    "zh-CN/claude/project/.claude/skills"
+    "zh-CN/skills"
 }
 else {
-    "claude/project/.claude/skills"
+    "skills"
 }
 $sourceRoot = [System.IO.Path]::GetFullPath((Join-Path $repoRoot $sourceRelative))
 
