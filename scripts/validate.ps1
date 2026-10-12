@@ -991,7 +991,7 @@ foreach ($cursorRuleRoot in $cursorRuleRoots) {
         if ($cursorRuleText -match '\]\(\.\./skills/') {
             Add-Failure "Cursor rules must reference discovered Skills instead of removed project Skill paths: $($cursorRuleFile.FullName)"
         }
-        if ($cursorRuleText -match '\.cursor/skills/rd-') {
+        if ($cursorRuleText -match '\.cursor/skills/') {
             Add-Failure "Cursor rules must not direct RD Skills to a project .cursor/skills copy: $($cursorRuleFile.FullName)"
         }
         $alwaysApplyMatch = [regex]::Match($cursorRuleText, '(?m)^alwaysApply:\s*(?<value>true|false)\s*$')

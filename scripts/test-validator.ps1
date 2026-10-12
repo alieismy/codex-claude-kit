@@ -918,7 +918,7 @@ try {
 
         $path = Join-Path $caseRoot "zh-CN/cursor/project/rules/02-spec-injection.mdc.template"
         $text = Get-Content -LiteralPath $path -Raw
-        $mutated = $text.Replace('已发现的 `rd-*` Skill（默认 `.agents/skills/` 或 `~/.agents/skills/`）', '`.cursor/skills/rd-*/SKILL.md`')
+        $mutated = $text.Replace('2. 检查已发现的相关 Skill（默认 `.agents/skills/` 或 `~/.agents/skills/`）。', '2. 检查 `.cursor/skills/` 中的相关 Skill。')
         if ($mutated -eq $text) { throw "Fixture could not restore the retired project Skill path." }
         Set-LfText -Path $path -Content $mutated
     }
