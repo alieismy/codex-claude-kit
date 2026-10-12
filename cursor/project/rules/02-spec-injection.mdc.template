@@ -14,7 +14,7 @@ Project specs are stored in the repository so Cursor Agent can load consistent c
 | User global | Cursor User Rules | Applied from Cursor settings |
 | Project specs | `.cursor/rules/*.mdc` | Project-scoped rules |
 | Module specs | Nested `.cursor/rules/` or `globs` in `.mdc` frontmatter | Scoped to matching paths |
-| Task capabilities | `.cursor/skills/rd-*/SKILL.md` | Invoked by Cursor Agent when relevant |
+| Task capabilities | Discovered `rd-*` Skills (default `.agents/skills/` or `~/.agents/skills/`) | Invoked by Cursor Agent when relevant |
 | Interoperable fallback | `AGENTS.md` | Plain markdown alternative where appropriate |
 
 ## Rule Authoring
@@ -30,7 +30,7 @@ Project specs are stored in the repository so Cursor Agent can load consistent c
 Before requirements, feasibility, design, standards, or review work:
 
 1. Check `.cursor/rules/` for project conventions.
-2. Check relevant skills in `.cursor/skills/`.
+2. Check relevant discovered Skills (default `.agents/skills/` or `~/.agents/skills/`).
 3. Check existing templates, glossaries, review forms, standards references, and prior decisions before creating new rules.
 4. Persist only stable, reusable agent-operating conventions approved by the user or authorized owner in rules. Keep approved architecture, product, and adoption decisions in linked project documents, with rule pointers only when they affect agent behavior.
 

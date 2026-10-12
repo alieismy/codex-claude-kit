@@ -58,5 +58,5 @@ alwaysApply: false
 - 配置是可执行行为，应谨慎处理。
 - 不把 Codex-only 或 Claude-only 配置语法复制到 Cursor 文件。
 - Cursor 项目规则使用 `.cursor/rules/*.mdc`；需要普通 Markdown 指令时使用 `AGENTS.md`。
-- Cursor 项目 Skills 使用 `.cursor/skills/rd-*/SKILL.md`。
+- RD Skills 使用已发现的 `rd-*` Skill 来源；复用已有的明确 `.agents/skills` 安装，不新增同名 `.cursor/skills` 副本。
 - Cursor MCP 示例保持显式选择启用；验证 `.cursor/mcp.json`、凭据和 Cursor MCP 状态前，不假定服务器已启用。

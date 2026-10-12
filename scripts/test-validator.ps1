@@ -913,7 +913,17 @@ try {
         Set-LfText -Path $path -Content $mutated
     }
 
-    Write-Host "Validator negative tests passed (30/30)." -ForegroundColor Green
+    Invoke-NegativeCase -Name "cursor-project-skill-copy-reference" -ExpectedPattern "Cursor rules must not direct RD Skills to a project .cursor/skills copy" -Mutate {
+        param($caseRoot)
+
+        $path = Join-Path $caseRoot "zh-CN/cursor/project/rules/02-spec-injection.mdc.template"
+        $text = Get-Content -LiteralPath $path -Raw
+        $mutated = $text.Replace('2. 检查已发现的相关 Skill（默认 `.agents/skills/` 或 `~/.agents/skills/`）。', '2. 检查 `.cursor/skills/` 中的相关 Skill。')
+        if ($mutated -eq $text) { throw "Fixture could not restore the retired project Skill path." }
+        Set-LfText -Path $path -Content $mutated
+    }
+
+    Write-Host "Validator negative tests passed (31/31)." -ForegroundColor Green
 }
 finally {
     $resolvedRunRoot = [System.IO.Path]::GetFullPath($runRoot)

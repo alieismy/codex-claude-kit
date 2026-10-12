@@ -140,7 +140,7 @@ cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/sett
 
 ### Cursor
 
-英文入口是 `cursor/README.md`，中文入口是 [Cursor 适配说明](cursor/README.md)。从 `zh-CN/cursor/project/rules/*.mdc.template` 安装项目规则时去掉 `.template` 后缀，目标为 `.cursor/rules/*.mdc`；从 `zh-CN/cursor/global/RULES.md.template` 选择内容加入 Customize → Rules 是用户级规则，两者作用域不同。
+英文入口是 `cursor/README.md`，中文入口是 [Cursor 适配说明](cursor/README.md)。从 `zh-CN/cursor/project/rules/*.mdc.template` 安装项目规则时去掉 `.template` 后缀，目标为 `.cursor/rules/*.mdc`；从 `zh-CN/cursor/global/RULES.md.template` 选择内容加入 Customize → Rules 是用户级规则，两者作用域不同。这些 MDC 规则是同一项目契约的 Cursor 原生分拆版本，单独维护，不由共享项目核心生成；共享核心由 Codex 原生读取、由 Claude Code 适配通过 `@AGENTS.md` 导入。修改项目级行为时需同步更新两者，与共享 `AGENTS.md` 共装时见 [Cursor 多客户端共装](cursor/README.md#skills-与多客户端共装)。
 
 MCP 示例为 `zh-CN/cursor/project/mcp.example.json`，审查凭据与用途后才安装到项目 `.cursor/mcp.json`。Skills 从共享中文源单独选择，不复制适配目录或新增同名副本。完整命令见[安装说明](docs/installation.md)。
 
@@ -199,7 +199,7 @@ pwsh ./scripts/validate.ps1
 pwsh ./scripts/test-validator.ps1
 ```
 
-Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+ 及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。二十九项负向回归在既有 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置用例之外，新增覆盖 Codex Schema/运行基线一致的配置契约、Cursor 仅一条常驻规则的加载策略、跨平台推理与长期指引治理，GSD 当前/归档来源归属、明确交付编排请求边界及 Claude 共享导入安装保护。
+Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+ 及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。三十一项负向回归在既有 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置用例之外，新增覆盖 Codex Schema/运行基线一致的配置契约、Cursor 仅一条常驻规则的加载策略、跨平台推理与长期指引治理，GSD 当前/归档来源归属、明确交付编排请求边界、Claude 共享导入安装保护及已废弃的 Cursor 项目 Skill 引用。
 
 公开发布前还必须执行联网动态门禁：
 

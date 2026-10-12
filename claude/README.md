@@ -25,8 +25,6 @@ The project MCP example defines the official OpenAI documentation HTTP server at
 
 Global rules install to `~/.claude/CLAUDE.md`; merge the user settings example into `~/.claude/settings.json`. The project recipe installs only the shared core, thin adapter, and settings, without default project Skills.
 
-
-
 Install user-level Claude Code memory:
 
 ```bash

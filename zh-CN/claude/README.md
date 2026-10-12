@@ -38,8 +38,6 @@ zh-CN/claude/
 
 用户全局规则安装到 `~/.claude/CLAUDE.md`；用户 settings 示例合并到 `~/.claude/settings.json`。项目配方仅装共享核心、薄适配和 settings，不默认安装项目 Skills。
 
-
-
 安装用户级 Claude Code memory（记忆）：
 
 ```bash

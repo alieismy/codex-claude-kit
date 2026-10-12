@@ -21,6 +21,8 @@ Cursor documents project/user `.agents/skills/` and `.cursor/skills/`, plus comp
 
 Cursor reads `CLAUDE.md` as always-on guidance; review its effect when combining the Claude adapter. Nested `AGENTS.md` applies to its directory and descendants, with more-specific guidance taking precedence. Confirm native discovery and same-name Skill selection in a fresh target Cursor session; this migration has no real Cursor client verification. [Official rules FAQ](https://cursor.com/help/customization/rules)
 
+The project rules here are a separately maintained MDC rendering of the shared project contract; they are not generated from `rules/project/AGENTS.md.template`. Cursor also supports a project-root `AGENTS.md`, so a project that installs the shared core for Codex or Claude Code as well as these rules can present overlapping project guidance from both sources. The official rules page (checked 2026-10-12) does not state how `AGENTS.md` combines with Project Rules or which takes precedence. Install both from the same language and source revision, update both when project-wide behavior changes, and confirm the applied rules in a fresh Cursor session. For Skill roots in mixed-client teams, see [installation](../docs/installation.md#mixed-client-teams). [Official rules](https://cursor.com/docs/rules)
+
 User `.agents/skills` discovery is local and does not automatically copy those Skills to Cloud Agents, remote SSH, or self-hosted workers. Cursor CLI has its own `~/.cursor/cli-config.json` and project `.cursor/cli.json` (permissions only); project rules and an MCP example are not complete client settings. [CLI configuration](https://cursor.com/docs/cli/reference/configuration)
 
 ## Optional MCP
