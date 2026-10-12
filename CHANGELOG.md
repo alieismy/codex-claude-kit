@@ -4,7 +4,7 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
-## Unreleased
+## 2.0.1 - 2026-10-12
 
 - Corrected the English and Chinese Cursor engineering-discipline and spec-injection rules, which still directed RD Skills to a project `.cursor/skills` copy after v2.0.0 removed that mirror. They now point to the discovered `rd-*` Skill and the default `.agents/skills` roots. The validator rejects `.cursor/skills/rd-` references in Cursor rules, with a new Chinese-rule negative case (31 cases).
 - Documented mixed-client Skill-root arrangements and their costs, using Codex, Claude Code, and Cursor Skills documentation checked on 2026-10-12. Also documented that Cursor MDC project rules are maintained separately from the shared project core and can overlap with an installed root `AGENTS.md`. Scoped the README and Claude installation "one shared source" statements to Codex and Claude Code. None of these arrangements was verified in a real Cursor client.
