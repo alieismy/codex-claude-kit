@@ -43,7 +43,7 @@ alwaysApply: false
 - 可研任务必须区分事实、假设、估算和未知项。
 - 重要证据缺口需要专业研究流程时使用 `/rd-research`，常规辅助核查由主工作流完成；面向受众的成稿使用 `/rd-writing`，独立结论使用 `/rd-review`。
 - `/rd-delivery` 只用于明确的多文档或跨会话协调；单一交付物应直接路由。
-- 用户明确请求 `/rd-delivery` 编排时，读取并遵循 [rd-delivery Skill](../skills/rd-delivery/SKILL.md) 的制品效力和阶段门禁契约。通用授权与证据边界仍适用于所有任务。
+- 用户明确请求 `/rd-delivery` 编排时，读取并遵循已发现的 `rd-delivery` Skill 的制品效力和阶段门禁契约。通用授权与证据边界仍适用于所有任务。
 
 ## 并行工作
 

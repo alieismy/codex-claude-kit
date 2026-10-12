@@ -903,7 +903,17 @@ try {
         Set-LfText -Path $mcpPath -Content (($mcp | ConvertTo-Json -Depth 10) + "`n")
     }
 
-    Write-Host "Validator negative tests passed (29/29)." -ForegroundColor Green
+    Invoke-NegativeCase -Name "cursor-discovered-skill-reference" -ExpectedPattern "Cursor rules must reference discovered Skills instead of removed project Skill paths" -Mutate {
+        param($caseRoot)
+
+        $path = Join-Path $caseRoot "cursor/project/rules/09-task-routing.mdc.template"
+        $text = Get-Content -LiteralPath $path -Raw
+        $mutated = $text.Replace('the discovered `rd-delivery` Skill', 'the [rd-delivery Skill](../skills/rd-delivery/SKILL.md)')
+        if ($mutated -eq $text) { throw "Fixture could not restore the removed project Skill reference." }
+        Set-LfText -Path $path -Content $mutated
+    }
+
+    Write-Host "Validator negative tests passed (30/30)." -ForegroundColor Green
 }
 finally {
     $resolvedRunRoot = [System.IO.Path]::GetFullPath($runRoot)

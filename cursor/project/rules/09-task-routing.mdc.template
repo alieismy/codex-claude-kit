@@ -43,7 +43,7 @@ The eight specialist `rd-*` research and document skills can be used independent
 - For feasibility work, separate facts, assumptions, estimates, and unknowns.
 - Use `/rd-research` when a material evidence gap needs its specialist workflow; keep routine supporting checks in the primary workflow. Use `/rd-writing` for audience-ready narrative and `/rd-review` for an independent verdict.
 - Use `/rd-delivery` only for explicit multi-document or cross-session coordination; route a single deliverable directly.
-- For an explicitly requested `/rd-delivery` engagement, read and follow the [rd-delivery Skill](../skills/rd-delivery/SKILL.md) for its artifact-authority and phase-gate contract. General authorization and evidence boundaries remain applicable to all tasks.
+- For an explicitly requested `/rd-delivery` engagement, read and follow the discovered `rd-delivery` Skill for its artifact-authority and phase-gate contract. General authorization and evidence boundaries remain applicable to all tasks.
 
 ## Parallel Work
 
