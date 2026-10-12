@@ -137,12 +137,27 @@ pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -DestinationRoot 'pat
 
 源始终是对应语言的共享 Skills 树。选择项目/团队安装时明确谁负责更新与验收；Claude Code 官方支持 `.claude/skills`，不能把 `.agents/skills` 宣称为三平台通用发现根。用户级 fallback 可将目标设为 `$HOME/.claude/skills`。先盘点同名来源，已有用户/account 副本时不默认追加；仅在授权范围内替换。
 
+<a id="mixed-client-teams"></a>
+
+### 混合客户端团队
+
+没有一个已文档化的项目 Skill 根能同时服务三个客户端。Codex 读取仓库内 `.agents/skills` 和 `$HOME/.agents/skills`；Claude Code 文档列出 `.claude/skills` 和账号同步 Skills，未列出 `.agents/skills`；Cursor 发现 `.agents/skills`、`.cursor/skills` 以及兼容的 `.claude/skills`、`.codex/skills`，同名优先级未文档化。每个项目选择一种安排，并记录语言和源修订：
+
+| 安排 | 覆盖 | 代价 |
+|---|---|---|
+| 项目 `.agents/skills`；Claude Code 使用账号 Skills | Codex 与 Cursor 读取同一份随仓库版本管理的副本 | Claude Skill 版本取决于各成员的账号上传，不随仓库修订 |
+| 项目 `.agents/skills` 与 `.claude/skills` 来自同一源修订 | 三个客户端都读取随仓库版本管理的副本 | 两份副本须一起更新和核对；Cursor 会同时发现两份，同名选择未定义 |
+| 仅项目 `.claude/skills` | Claude Code 与 Cursor | Codex 文档列出的根不含 `.claude/skills`，Codex 成员需另做用户级安装 |
+
+第一种安排与 Claude 适配优先使用账号 Skills 的约定一致，且只保留一份项目副本。每份本地副本用安装脚本更新，并用 `-CheckOnly` 确认。个人 `~/.claude/skills` fallback 同时是 Cursor 兼容根，会再增加一份同名副本。Cursor MDC 规则与共享 `AGENTS.md` 同时安装时的规则重叠另见 [Cursor 多客户端共装](../cursor/README.md#skills-与多客户端共装)。以上安排均未在真实 Cursor 客户端验证。[Codex Skills](https://learn.chatgpt.com/docs/build-skills)、[Claude Code Skills](https://code.claude.com/docs/en/skills)、[Cursor Skills](https://cursor.com/docs/skills)（2026-10-12 核对）
+
 ## Codex 配置
 
 ### 项目配置示例
 
 审阅 `zh-CN/codex/project/config.example.toml` 后，按需合并为目标项目 `.codex/config.toml`；该最小示例采用 `on-request`、`workspace-write` 和禁用沙箱网络。项目须经 Codex 信任后才读取项目配置。它不替代用户 `config.toml`，也不授权安装或部署。
 
+### 用户配置示例
 
 从经过评审、具有明确取向的 `workspace-write` 示例开始：
 

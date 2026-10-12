@@ -190,7 +190,7 @@ The source tree separates shared rules and Skills from platform-specific carrier
 | Cursor global/project rules | `cursor/global/RULES.md.template`; `cursor/project/rules/*.mdc.template` | same paths under `zh-CN/` | User Rules in Customize; `{project}/.cursor/rules/*.mdc` |
 | Shared RD Skills | `skills/rd-*` | `zh-CN/skills/rd-*` | deliberate user/project root or claude.ai upload |
 
-The Claude project adapter imports the installed shared project core with `@AGENTS.md`; change shared behavior in the shared source. Cursor project rules use native MDC activation semantics. `00-global-principles` is project-wide conduct, distinct from Cursor user-level global rules.
+The shared project core is read natively by Codex and imported by the Claude project adapter with `@AGENTS.md`; change behavior shared by those adapters in the shared source. Cursor project rules are a separately maintained MDC rendering of the same contract with native activation semantics; they are not generated from the shared core, so project-wide changes must update both (see [combined clients](cursor/README.md#skills-and-combined-clients)). `00-global-principles` is project-wide conduct, distinct from Cursor user-level global rules.
 
 [Claude Code](claude/README.md) and [Cursor](cursor/README.md) explain platform-specific settings, MCP, Skill discovery, and optional installation. The [installation guide](docs/installation.md) gives the complete source → destination mapping. The [layout migration guide](docs/layout-migration.md) maps former paths and explains why a repository move does not change a personal installation. Remove `.template` when installing rule files; do not recursively copy a source adapter directory into a project.
 
@@ -295,7 +295,7 @@ The validator checks common release blockers:
 - obvious secret leaks;
 - stale private/internal strings.
 
-The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects twenty-nine regression cases. In addition to the existing Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it now covers the Codex schema/runtime-aligned configuration contract, Cursor's exactly-one always-on loading policy, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, and Claude shared-import installation guards.
+The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects thirty-one regression cases. In addition to the existing Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it now covers the Codex schema/runtime-aligned configuration contract, Cursor's exactly-one always-on loading policy, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, Claude shared-import installation guards, and retired Cursor project Skill references.
 
 Before publishing a release, also run the networked dynamic gate:
 

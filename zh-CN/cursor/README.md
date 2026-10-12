@@ -21,6 +21,8 @@ Cursor 官方支持项目/用户 `.agents/skills/`、`.cursor/skills/`，并兼�
 
 Cursor 会读取 `CLAUDE.md` 并常驻应用，合装 Claude 适配时应核对其影响。嵌套 `AGENTS.md` 适用所在目录及后代，较具体规则优先。原生载体与同名 Skill 的实际选择仍须在目标 Cursor 新会话核验；本轮没有真实 Cursor 客户端验证。[官方规则 FAQ](https://cursor.com/help/customization/rules)
 
+这里的项目规则是共享项目契约的 MDC 分拆版本，单独维护，不由 `zh-CN/rules/project/AGENTS.md.template` 生成。Cursor 也支持项目根 `AGENTS.md`；同一项目若为 Codex 或 Claude Code 安装了共享核心，又安装了这些规则，Cursor 可能同时看到两份重叠的项目指令。官方 rules 页面（2026-10-12 核对）没有说明 `AGENTS.md` 与项目规则如何合并或谁优先。两者应来自同一语言和源修订，修改项目级行为时同步更新两者，并在新的 Cursor 会话中确认实际应用的规则。混合客户端团队的 Skill 根选择见[安装说明](../docs/installation.md#mixed-client-teams)。[官方 rules](https://cursor.com/docs/rules)
+
 用户 `.agents/skills` 在本机可被发现，不自动进入 Cloud Agents、远程 SSH 或 self-hosted workers。本轮未扩展完整 CLI/cloud 支持；Cursor CLI 使用自身 `~/.cursor/cli-config.json`、项目 `.cursor/cli.json`（仅 permissions），不能把项目规则或 MCP 示例当作全部客户端 settings。[CLI configuration](https://cursor.com/docs/cli/reference/configuration)
 
 ## 选配 MCP
