@@ -14,7 +14,9 @@ $configPaths = @(
     "codex/examples/config.example.toml",
     "codex/examples/config.full-access.example.toml",
     "zh-CN/codex/examples/config.example.toml",
-    "zh-CN/codex/examples/config.full-access.example.toml"
+    "zh-CN/codex/examples/config.full-access.example.toml",
+    "codex/project/config.example.toml",
+    "zh-CN/codex/project/config.example.toml"
 )
 
 function Get-Sha256 {
@@ -153,7 +155,7 @@ try {
         Write-Host "Codex strict-load passed: $relativePath" -ForegroundColor Green
     }
 
-    Write-Host "Release validation passed (live schema, Codex $($metadata.source_version), 4 strict-loads)." -ForegroundColor Green
+    Write-Host "Release validation passed (live schema, Codex $($metadata.source_version), $($configPaths.Count) strict-loads)." -ForegroundColor Green
 }
 finally {
     $resolvedRunRoot = [System.IO.Path]::GetFullPath($runRoot)

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Research and Fact Check"
-  short_description: "Build traceable evidence for decisions"
-  default_prompt: "Use $rd-research to verify the decision-critical claims with inspected primary sources and produce an auditable evidence package."

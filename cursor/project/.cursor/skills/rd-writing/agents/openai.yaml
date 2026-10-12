@@ -1,4 +1,0 @@
-interface:
-  display_name: "Professional Technical Writing"
-  short_description: "Write evidence-led professional documents"
-  default_prompt: "Use $rd-writing to turn verified material into an audience-ready professional document with traceable claims and explicit limitations."

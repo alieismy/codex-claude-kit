@@ -2,6 +2,29 @@
 
 本仓库提供模板。请把模板合并进你的本地 Codex、Claude Code 或项目配置，不要盲目覆盖已有文件。
 
+<a id="source-and-destination-map"></a>
+
+## 源与安装目标映射
+
+规则、settings/MCP 和 Skills 分别选择。源模板不活动；安装时去掉 `.template` 后缀，已有目标先做可验证备份再合并。中文使用下表源路径前加 `zh-CN/`。不要递归复制源适配目录，也不要把账号同步缓存作为源。
+
+| 载体 | 源 | 原生安装目标 |
+|---|---|---|
+| 共享项目规则 | `rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
+| Codex 全局规则 | `codex/global/AGENTS.md.template` | `{CODEX_HOME}/AGENTS.md` （默认 `~/.codex`） |
+| Codex 用户配置 | `codex/examples/config.example.toml` | `{CODEX_HOME}/config.toml` |
+| Codex 项目配置 | `codex/project/config.example.toml` | `{project}/.codex/config.toml` （受信任项目） |
+| Claude 全局/项目规则 | `claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
+| Claude 用户/项目 settings | `claude/{global,project}/settings.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
+| Claude 项目 MCP | `claude/project/mcp.example.json` | `{project}/.mcp.json` |
+| Cursor 用户规则 | `cursor/global/RULES.md.template` | 在 Customize → Rules 选择内容 |
+| Cursor 项目规则 | `cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
+| Cursor 项目 MCP | `cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json` |
+| 本地共享 Skills | `skills/rd-*` | 所选用户/项目 Skill 根 |
+| Claude 账号 Skills | `skills/rd-*`, 通过上传打包脚本 | claude.ai Customize → Skills；Code 接收账号同步 |
+
+Claude 用户/local MCP 在 `~/.claude.json`，用 `claude mcp add --scope user` 或 `--scope local` 管理，不是 settings JSON 中的服务器定义。Cursor 用户 MCP 可在 `~/.cursor/mcp.json`。Cursor IDE User Rules、IDE 设置和 CLI 配置载体不同；本轮不扩展完整 CLI/cloud 支持。官方契约见 [Claude 适配说明](../claude/README.md)和 [Cursor 适配说明](../cursor/README.md)。源目录迁移不会更新个人安装，见[布局迁移](layout-migration.md)。
+
 ## Codex 规则
 
 安装全局规则：
@@ -10,7 +33,7 @@
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 mkdir -p "$codex_home"
 if [ ! -s "$codex_home/AGENTS.override.md" ] && [ ! -e "$codex_home/AGENTS.md" ]; then
-  cp zh-CN/codex/global/AGENTS.md "$codex_home/AGENTS.md"
+  cp zh-CN/codex/global/AGENTS.md.template "$codex_home/AGENTS.md"
 fi
 ```
 
@@ -18,7 +41,7 @@ fi
 
 ```bash
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/codex/project/AGENTS.md /path/to/your-project/AGENTS.md
+  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -53,6 +76,8 @@ codex --cd path/to/nested-directory --sandbox read-only --ask-for-approval never
 既有项目应保留控制性文档、术语、批准记录和工作惯例。先在一个范围明确的真实任务上使用合适的专业 Skill，检查输出与证据边界，再按实际收益扩大采用。研究和评审在任务确实需要时是合适入口，不是所有文档的强制前置阶段。
 
 采用范围与安装范围不同：下方 PowerShell 安装器管理全部九个声明的 `rd-*` 目录，不提供单 Skill 选择功能；可以先使用已安装套件中的少数能力。组合多个客户端前，先明确来源与作用域，并按下方平台说明检查实际发现结果；多装一份不代表多获得一项有效能力。
+
+已有明确用户级安装时优先复用，不默认追加项目 Skill。首次本地安装可用下方配方；项目/团队和 Claude Code 本地 fallback 属于单独选择。Claude 桌面/聊天和 Claude Code 账户共享见 [claude.ai 上传](../claude/README.md#claudeai-skill-upload)。
 
 ### Skill 来源与作用域
 
@@ -99,7 +124,25 @@ done
 cp -R zh-CN/skills/rd-* "$skill_target/"
 ```
 
+<a id="optional-projectteam-and-claude-code-local-fallback"></a>
+
+### 可选项目/团队与 Claude Code 本地 fallback
+
+```powershell
+pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -DestinationRoot 'path/to/your-project/.agents/skills'
+pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -DestinationRoot 'path/to/your-project/.agents/skills' -CheckOnly
+# Claude Code local fallback: choose instead of account Skills where required
+pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -DestinationRoot 'path/to/your-project/.claude/skills'
+```
+
+源始终是对应语言的共享 Skills 树。选择项目/团队安装时明确谁负责更新与验收；Claude Code 官方支持 `.claude/skills`，不能把 `.agents/skills` 宣称为三平台通用发现根。用户级 fallback 可将目标设为 `$HOME/.claude/skills`。先盘点同名来源，已有用户/account 副本时不默认追加；仅在授权范围内替换。
+
 ## Codex 配置
+
+### 项目配置示例
+
+审阅 `zh-CN/codex/project/config.example.toml` 后，按需合并为目标项目 `.codex/config.toml`；该最小示例采用 `on-request`、`workspace-write` 和禁用沙箱网络。项目须经 Codex 信任后才读取项目配置。它不替代用户 `config.toml`，也不授权安装或部署。
+
 
 从经过评审、具有明确取向的 `workspace-write` 示例开始：
 
@@ -135,11 +178,11 @@ if [ -e ~/.claude/CLAUDE.md ] || [ -L ~/.claude/CLAUDE.md ]; then
   exit 1
 fi
 mkdir -p ~/.claude
-cp zh-CN/claude/global/CLAUDE.md ~/.claude/CLAUDE.md
+cp zh-CN/claude/global/CLAUDE.md.template ~/.claude/CLAUDE.md
 )
 ```
 
-安装项目级 Claude Code 规则和 Skills。项目级 `CLAUDE.md` 是通过 `@AGENTS.md` 导入共享项目核心的薄适配文件；目标项目已有 `AGENTS.md`（例如已按 Codex 方式安装）时保留并手动合并，不要覆盖：
+安装项目级 Claude Code 规则和 settings，不复制 Skills。项目级 `CLAUDE.md` 是通过 `@AGENTS.md` 导入共享项目核心的薄适配文件；目标项目已有 `AGENTS.md`（例如已按 Codex 方式安装）时保留并手动合并，不要覆盖：
 
 ```bash
 (
@@ -153,14 +196,15 @@ if [ -s /path/to/your-project/AGENTS.override.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/codex/project/AGENTS.md /path/to/your-project/AGENTS.md
+  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
   exit 1
 fi
-cp zh-CN/claude/project/CLAUDE.md /path/to/your-project/CLAUDE.md
-cp -r zh-CN/claude/project/.claude /path/to/your-project/.claude
+cp zh-CN/claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
+mkdir -p /path/to/your-project/.claude
+cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -168,43 +212,46 @@ cp -r zh-CN/claude/project/.claude /path/to/your-project/.claude
 
 如果目标项目已有 `CLAUDE.md` 或 `.claude/`，请手动合并。
 
+用户 settings 可从 `zh-CN/claude/global/settings.example.json` 合并到 `~/.claude/settings.json`；项目 MCP 可从 `zh-CN/claude/project/mcp.example.json` 合并到项目根 `.mcp.json`。规则安装不会自动启用这两项。用户/local MCP 应通过 CLI 管理 `~/.claude.json`；`enableAllProjectMcpServers=false` 不能证明 headless 会话连接被阻止。
+
 ## Cursor 适配包
 
-复制 Cursor 适配包前，应检查 Cursor 会发现的全部 Skill 根：项目级和用户级 `.agents/skills/`、`.cursor/skills/`、`.claude/skills/` 与 `.codex/skills/`（[Cursor Skills](https://cursor.com/docs/skills.md)）。官方文档没有定义在多个根中发现同名 Skill 时的优先级或去重行为。上文的共享/Codex 安装已经把 `rd-*` 放在 `.agents/skills/` 或 `~/.agents/skills/`；再复制本适配包的 `.cursor/skills/` 时，即使未安装 Claude Code，也会产生多个同名可发现定义。
+Cursor 官方支持项目与用户 `.agents/skills/`、`.cursor/skills/`，并兼容 `.claude/skills/` 和 `.codex/skills/`；同名来源优先级未明确。默认复用已有明确来源的 shared Skills，不随项目规则安装追加副本。新会话核对实际发现与选中来源；本轮未进行真实 Cursor 客户端验证。[官方 Skills](https://cursor.com/docs/skills)
 
-只选择一个项目适配包，不能消除用户级根中已有的同名副本。共享、Claude Code 和 Cursor 三套 `rd-*` Skill 树（包括 `rd-delivery`）的内容现已一致，剩余风险是同名定义的选择歧义，而不是调用策略不一致。本仓库目前还没有经过运行验证、能够消除该歧义的安装方案。若只使用 Cursor，应确保每个 `rd-*` Skill 在该环境中只有一个可发现的定义。如 Cursor 必须与 Codex 或 Claude Code 共用环境，应在新的 Cursor 会话中验证实际选择的定义，并记录接受的安装安排。移除或迁移既有 Skill 副本前，应取得与其作用域相称的授权。
-
-Claude Code 适配包会再增加一个 Skill 根和项目级 `CLAUDE.md`。Cursor 读取 `CLAUDE.md` 的方式与 `AGENTS.md` 相同，并会将其应用于每个会话，不受任何 `alwaysApply` 设置影响（[Cursor rules FAQ](https://cursor.com/help/customization/rules#how-does-claudemd-work-in-cursor)，2026-09-16 核查）。组合适配包前，应同时审查同名 Skill 来源和常驻指令文件；在目标 Cursor 运行时验证完成前，不应声称它们已经去重。详见 `cursor/README.md`。
-
-安装 Cursor 英文适配包：
+仅安装项目规则（Bash，首次创建规则目录）：
 
 ```bash
-cp -r cursor/project/.cursor /path/to/your-project/.cursor
-cp cursor/project/PROMPTS.md /path/to/your-project/PROMPTS.cursor.md
+(
+set -e
+if [ -e /path/to/your-project/.cursor/rules ] || [ -L /path/to/your-project/.cursor/rules ]; then
+  printf '%s\n' 'Stop: merge existing Cursor rules manually before installing.' >&2
+  exit 1
+fi
+mkdir -p /path/to/your-project/.cursor/rules
+for rule_source in zh-CN/cursor/project/rules/*.mdc.template; do
+  rule_name=$(basename "$rule_source" .template)
+  cp "$rule_source" "/path/to/your-project/.cursor/rules/$rule_name"
+done
+)
 ```
 
-Cursor 中文适配包保留在：
+PowerShell:
 
-```text
-cursor/zh-CN/
+```powershell
+& {
+    $target = (Resolve-Path -LiteralPath 'path/to/your-project').Path
+    $rulesTarget = Join-Path $target '.cursor/rules'
+    if (Test-Path -LiteralPath $rulesTarget) { throw 'Stop: merge existing Cursor rules manually before installing.' }
+    New-Item -ItemType Directory -Path $rulesTarget -ErrorAction Stop | Out-Null
+    Get-ChildItem -LiteralPath 'zh-CN/cursor/project/rules' -Filter '*.mdc.template' -File | ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $rulesTarget ($_.Name -replace '\.template$', '')) -ErrorAction Stop
+    }
+}
 ```
 
-复制 `.cursor` 目录到 Cursor 工作区：
+从 `zh-CN/cursor/global/RULES.md.template` 选择内容加入 Customize → Rules，为所有项目提供用户级偏好。`00-global-principles.mdc` 只在项目范围常驻，不等同用户全局规则。Cursor 也读取 `CLAUDE.md`，合装 Claude 薄适配时审阅其常驻影响。[官方规则说明](https://cursor.com/help/customization/rules)
 
-```bash
-cp -r cursor/zh-CN/.cursor /path/to/your-project/.cursor
-cp cursor/zh-CN/PROMPTS.md /path/to/your-project/PROMPTS.cursor.zh-CN.md
-```
-
-如果目标项目已有 `.cursor/`，请手动合并。
-
-Cursor MCP 需要显式启用。最小示例只包含 Context7。先审查凭据、数据流和使用场景，再把示例文件复制为目标项目的 `.cursor/mcp.json`：
-
-```bash
-cp cursor/zh-CN/.cursor/mcp.example.json /path/to/your-project/.cursor/mcp.json
-```
-
-配置 `CONTEXT7_API_KEY` 后，在 Cursor MCP 状态中确认 server。其它 server 只有在存在已验证用途时才分别加入，不要把路由说明中的全部候选项一次写入配置。
+MCP 按需启用：先审阅 `zh-CN/cursor/project/mcp.example.json`，再合并为项目 `.cursor/mcp.json` 或用户 `~/.cursor/mcp.json`；在宿主环境设置 `CONTEXT7_API_KEY` 并到目标客户端核验 server。示例仅含 Context7，不复制完整路由目录。
 
 ## 环境变量
 
@@ -237,14 +284,15 @@ Windows 用户级环境变量也可用 `setx` 设置，但设置后需要重启 
     }
     $core = Join-Path $target 'AGENTS.md'
     if (-not (Test-Path -LiteralPath $core)) {
-        Copy-Item -LiteralPath 'zh-CN/codex/project/AGENTS.md' -Destination $core -ErrorAction Stop
+        Copy-Item -LiteralPath 'zh-CN/rules/project/AGENTS.md.template' -Destination $core -ErrorAction Stop
     }
     if (-not (Test-Path -LiteralPath $core) -or (Get-Item -LiteralPath $core).Length -eq 0) {
         throw 'Stop: the shared AGENTS.md import target must be non-empty.'
     }
-    Copy-Item -LiteralPath 'zh-CN/claude/project/CLAUDE.md' -Destination (Join-Path $target 'CLAUDE.md') -ErrorAction Stop
-    Copy-Item -LiteralPath 'zh-CN/claude/project/.claude' -Destination $target -Recurse -ErrorAction Stop
+    Copy-Item -LiteralPath 'zh-CN/claude/project/CLAUDE.md.template' -Destination (Join-Path $target 'CLAUDE.md') -ErrorAction Stop
+    New-Item -ItemType Directory -Path (Join-Path $target '.claude') -ErrorAction Stop | Out-Null
+    Copy-Item -LiteralPath 'zh-CN/claude/project/settings.example.json' -Destination (Join-Path $target '.claude/settings.json') -ErrorAction Stop
 }
 ```
 
-Bash 项目安装示例使用子 shell，因此 guard 中的 `exit 1` 只停止安装块，不退出父交互式 shell；这些命令仍需 Bash，例如 Windows 上的 Git Bash。上面的 PowerShell 示例使用原生命令。安装后检查非空共享核心、`@AGENTS.md` 导入、settings 和九个 Skills。回退时先检查后续编辑，仅移除本次新建的文件；主动合并的文件应从安装前备份恢复。
+Bash 项目安装示例使用子 shell，因此 guard 中的 `exit 1` 只停止安装块，不退出父交互式 shell；这些命令仍需 Bash，例如 Windows 上的 Git Bash。上面的 PowerShell 示例使用原生命令。安装后检查非空共享核心、`@AGENTS.md` 导入和 settings；Skills 按所选来源/作用域单独验收。回退时先检查后续编辑，仅移除本次新建的文件；主动合并的文件应从安装前备份恢复。

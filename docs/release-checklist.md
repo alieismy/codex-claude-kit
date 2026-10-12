@@ -49,6 +49,10 @@ git status --short --ignored -- .tmp/local/
 - [ ] Confirm that generated files, caches, dependency directories, coverage output, local logs, and downloaded packages are excluded unless deliberately released.
 - [ ] Confirm that every new dependency, external source, copied asset, and attribution has a documented reason and license basis.
 - [ ] Check links, version references, document status, authority pointers, and release asset names.
+- [ ] Verify the shared project core, `.template` sources, and all Chinese platform directories; native installation names must not retain template suffixes or activate source directories.
+- [ ] Confirm Skills are maintained only under `skills/` and `zh-CN/skills/`; optional installation and claude.ai packaging read those sources. Account caches are read-only comparison targets, never editable packaging sources.
+- [ ] Check former paths against [layout migration](layout-migration.md), preserving historical evidence paths. Keep rules, settings/MCP, and Skills independent; public installation must not depend on a maintainer's global state.
+
 - [ ] Review the final diff for unrelated formatting, broken references, duplicate authority records, stale mirrors, and local-only assumptions.
 
 ## 5. Run the Repository Gates
@@ -72,7 +76,7 @@ pwsh ./scripts/validate-release.ps1
 - [ ] If a diagnostic command itself fails, repair and rerun it; a parser, quoting, network, or tool failure is not a passed check.
 - [ ] When Skills change and the official Skill validator is available, run it against all nine English and nine Chinese canonical Skills with UTF-8 enabled and record the exact validator source/version.
 - [ ] Use Python 3.9+ with the pinned validation dependency; parse changed JSON, YAML, and TOML with an appropriate real parser, and do not equate visual inspection with parser acceptance.
-- [ ] Confirm that the release gate matched the current official Codex schema to the tracked snapshot, validated all four examples against the live schema, matched the installed Codex CLI to the schema version, and completed four isolated strict-load checks.
+- [ ] Confirm that the release gate matched the current official Codex schema to the tracked snapshot, validated every maintained public user/project example against the live schema, matched the installed Codex CLI to the schema version, and completed the maintained inventory of isolated strict-load checks.
 - [ ] Explain every skipped, unavailable, flaky, or environment-limited check and constrain release claims accordingly.
 
 ## 6. Commit and Pull Request

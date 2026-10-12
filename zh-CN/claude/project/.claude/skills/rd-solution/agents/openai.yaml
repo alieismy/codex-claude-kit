@@ -1,4 +1,0 @@
-interface:
-  display_name: "解决方案架构"
-  short_description: "比较候选方案并形成有依据、可验证且有退出路径的解决方案架构"
-  default_prompt: "使用 $rd-solution 形成包含候选方案、架构依据、风险和核验需求的决策级技术方案。"

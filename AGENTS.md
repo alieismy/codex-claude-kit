@@ -6,7 +6,7 @@ This file governs maintenance of the `codex-three-layer-delivery` source reposit
 
 - `README.md` is the authority for repository purpose, the three-layer model, supported adapters, and published layout.
 - The English root is the canonical baseline. `zh-CN/` is a translation pack; Claude and Cursor files are platform adapters that preserve documented platform differences.
-- `codex/global/AGENTS.md` and `codex/project/AGENTS.md` are distributable templates. Do not make this maintainer file a byte-for-byte copy of either template.
+- `codex/global/AGENTS.md.template` and `rules/project/AGENTS.md.template` are distributable templates. Do not make this maintainer file a byte-for-byte copy of either template.
 - Detailed RD methods belong in the owning `skills/rd-*/SKILL.md`; this file keeps only repository-wide maintenance controls and pointers.
 
 ## Before Editing
@@ -16,9 +16,9 @@ This file governs maintenance of the `codex-three-layer-delivery` source reposit
 - Re-read affected or decision-critical sources after revision changes, external edits, new evidence, context compaction, task redirection, or conflicting observations. Do not rescan the entire repository by default, and do not claim prior context remains current without checking applicable change detectors.
 - For complex or high-impact maintenance, briefly identify the reused baseline and newly refreshed dynamic evidence at the first meaningful checkpoint when that improves reviewability; do not impose a fixed context-accounting format on simple tasks.
 - Treat versions, installed tools, external releases, generated configuration, runtime state, and test results as dynamic evidence. Recheck them when they affect a conclusion; keep version snapshots in `docs/compatibility.md`, not in this file.
-- This root `AGENTS.md` is the sole repository-maintainer authority. Files under `codex/`, `zh-CN/`, `cursor/`, and `claude/` are distributable templates or adapters, not maintainer guidance. If an editor surfaces them as effective instructions while maintaining this source repository, treat that as an unresolved adapter-isolation conflict: do not assume this root file overrides a more specific instruction, and record reproduced platform behavior in `docs/compatibility.md` rather than turning a single observation into a repository-wide runtime claim.
+- This root `AGENTS.md` is the sole repository-maintainer authority. Files under `rules/`, `codex/`, `zh-CN/`, `cursor/`, and `claude/` are distributable templates or adapters, not maintainer guidance. Keep instruction sources under non-discoverable `.template` filenames and Skills only in the shared `skills/` and `zh-CN/skills/` source trees. If an editor surfaces distributable sources as effective instructions, treat that as an unresolved adapter-isolation conflict: do not assume this root file overrides a more specific instruction, and record reproduced platform behavior in `docs/compatibility.md` rather than turning a single observation into a repository-wide runtime claim.
 
-The maintainer-only `.claude/settings.json` excludes the declared distributable instruction templates from automatic loading while keeping them readable as source. It does not ship as a downstream project configuration; see `docs/compatibility.md` for the bounded loading evidence.
+The root `.claude/settings.json` is maintainer-only and intentionally empty. Source isolation comes from inactive template names and the absence of nested native Skill roots; personal Skill overrides are not a repository requirement. It does not ship as a downstream project configuration. See `docs/layout-migration.md` and the bounded loading evidence in `docs/compatibility.md`.
 
 ## Change and Mirror Discipline
 

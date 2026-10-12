@@ -145,8 +145,8 @@ try {
         $paths = @(
             "codex/examples/config.example.toml",
             "zh-CN/codex/examples/config.example.toml",
-            "cursor/project/.cursor/mcp.example.json",
-            "cursor/zh-CN/.cursor/mcp.example.json"
+            "cursor/project/mcp.example.json",
+            "zh-CN/cursor/project/mcp.example.json"
         )
         foreach ($relativePath in $paths) {
             $path = Join-Path $caseRoot $relativePath
@@ -182,7 +182,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "cursor/project/.cursor/skills/rd-delivery/SKILL.md"
+        $path = Join-Path $caseRoot "skills/rd-delivery/SKILL.md"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content -replace "(?m)^(name: rd-delivery\n)", "`$1disable-model-invocation: true`n"
         if ($mutated -eq $content) {
@@ -198,8 +198,8 @@ try {
     Invoke-NegativeCase -Name "delivery-request-boundary" -ExpectedPattern "rd-delivery must require an explicit orchestration request" -Mutate {
         param($caseRoot)
 
-        # Keep English mirrors equal so a semantic regression cannot hide behind a mirror failure.
-        foreach ($relativePath in @("skills/rd-delivery/SKILL.md", "claude/project/.claude/skills/rd-delivery/SKILL.md", "cursor/project/.cursor/skills/rd-delivery/SKILL.md")) {
+        # Mutate the one canonical English source.
+        foreach ($relativePath in @("skills/rd-delivery/SKILL.md")) {
             $path = Join-Path $caseRoot $relativePath
             $text = Get-Content -LiteralPath $path -Raw
             $mutated = $text.Replace("Use when the user explicitly requests", "Use when a task is complex and suggests")
@@ -226,12 +226,12 @@ try {
         Set-LfText -Path $path -Content $mutated
     }
 
-    Invoke-NegativeCase -Name "maintainer-claude-template-isolation" -ExpectedPattern "Maintainer Claude exclusions must cover only declared distributable instruction templates" -Mutate {
+    Invoke-NegativeCase -Name "maintainer-claude-template-isolation" -ExpectedPattern "Maintainer Claude settings must remain empty after template isolation" -Mutate {
         param($caseRoot)
 
         $path = Join-Path $caseRoot ".claude/settings.json"
         $config = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
-        $config.claudeMdExcludes = @("**/AGENTS.md", "**/CLAUDE.md")
+        $config = @{ claudeMdExcludes = @("**/AGENTS.md", "**/CLAUDE.md") }
         Set-LfText -Path $path -Content ($config | ConvertTo-Json -Depth 5)
     }
 
@@ -251,7 +251,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "codex/project/AGENTS.md"
+        $path = Join-Path $caseRoot "rules/project/AGENTS.md.template"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace("final generated or effective configuration, ", "")
         $mutated = [regex]::Replace(
@@ -339,7 +339,7 @@ try {
 
         $surfaces = @(
             @{
-                Path = "codex/global/AGENTS.md"
+                Path = "codex/global/AGENTS.md.template"
                 Version = "Personal Global Instructions (v7.8)"
                 OldVersion = "Personal Global Instructions (v7.7)"
                 Section = "(?ms)^## Implementation Discipline\n\n.*?(?=^## Repository and Editing Discipline)"
@@ -369,7 +369,7 @@ try {
                 )
             },
             @{
-                Path = "zh-CN/codex/global/AGENTS.md"
+                Path = "zh-CN/codex/global/AGENTS.md.template"
                 Version = "个人全局指令（v7.8）"
                 OldVersion = "个人全局指令（v7.7）"
                 Section = "(?ms)^## 实现纪律\n\n.*?(?=^## 仓库与编辑纪律)"
@@ -430,7 +430,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "codex/global/AGENTS.md"
+        $path = Join-Path $caseRoot "codex/global/AGENTS.md.template"
         $content = Get-Content -LiteralPath $path -Raw
         $marker = "do not start another model turn solely to repeat it"
         $mutated = $content.Replace($marker, "a later model turn may repeat the same wait")
@@ -441,12 +441,12 @@ try {
 
         $valueFirstMutations = @(
             @{
-                Path = "codex/project/AGENTS.md"
+                Path = "rules/project/AGENTS.md.template"
                 Marker = "Validate the shortest path to the requested outcome"
                 Replacement = "Inspect supporting work before the requested outcome"
             },
             @{
-                Path = "zh-CN/codex/project/AGENTS.md"
+                Path = "zh-CN/rules/project/AGENTS.md.template"
                 Marker = "已复现缺陷"
                 Replacement = "可能存在的问题"
             }
@@ -511,7 +511,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "codex/project/AGENTS.md"
+        $path = Join-Path $caseRoot "rules/project/AGENTS.md.template"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace("context compaction", "context reduction")
         $mutated = $mutated.Replace("first meaningful checkpoint", "initial update")
@@ -581,7 +581,7 @@ try {
         "Claude settings is missing required ask permission 'Bash\(git commit \*\)'",
         "Claude settings is missing required ask permission 'PowerShell\(git commit \*\)'",
         "Claude settings is missing required ask permission 'Bash\(git reset --hard \*\)'",
-        "Cursor Project Rules must use \.mdc",
+        "Cursor source Project Rules must use \.mdc\.template",
         "Cursor guidance incorrectly allows plain \.md Project Rules",
         "Credentialed Cursor MCP server must not receive API keys through command arguments",
         "Credentialed Cursor MCP server must map only its own API key through env",
@@ -608,7 +608,7 @@ try {
                 Invalid = "paste into Codex CLI, Codex App, Cursor, or Claude Code."
             },
             @{
-                Path = "cursor/zh-CN/PROMPTS.md"
+                Path = "zh-CN/cursor/project/PROMPTS.md"
                 Current = "可直接粘贴到 Cursor 或 Claude Code。"
                 Invalid = "可直接粘贴到 Codex CLI、Codex App、Cursor 或 Claude Code。"
             }
@@ -623,7 +623,7 @@ try {
             Set-LfText -Path $path -Content $mutated
         }
 
-        $claudeSettingsPath = Join-Path $caseRoot "claude/project/.claude/settings.json"
+        $claudeSettingsPath = Join-Path $caseRoot "claude/project/settings.example.json"
         $claudeSettings = Get-Content -LiteralPath $claudeSettingsPath -Raw
         if (-not $claudeSettings.StartsWith("{`n")) {
             throw "Fixture requires LF-delimited Claude settings JSON."
@@ -645,7 +645,7 @@ try {
         }
         Set-LfText -Path $claudeSettingsPath -Content $mutatedClaudeSettings
 
-        $claudeAdapterPath = Join-Path $caseRoot "claude/project/CLAUDE.md"
+        $claudeAdapterPath = Join-Path $caseRoot "claude/project/CLAUDE.md.template"
         $claudeAdapter = Get-Content -LiteralPath $claudeAdapterPath -Raw
         $mutatedClaudeAdapter = $claudeAdapter -replace "(?m)^@AGENTS\.md\n", ""
         if ($mutatedClaudeAdapter -eq $claudeAdapter) {
@@ -653,20 +653,16 @@ try {
         }
         Set-LfText -Path $claudeAdapterPath -Content $mutatedClaudeAdapter
 
-        $invalidCursorRulePath = Join-Path $caseRoot "cursor/project/.cursor/rules/invalid.md"
+        $invalidCursorRulePath = Join-Path $caseRoot "cursor/project/rules/invalid.md"
         Set-LfText -Path $invalidCursorRulePath -Content "# Invalid plain Markdown Project Rule`n"
 
         $cursorReadmePath = Join-Path $caseRoot "cursor/README.md"
         $cursorReadme = Get-Content -LiteralPath $cursorReadmePath -Raw
-        $validRuleClaim = 'Project Rules live in `.cursor/rules` as `.mdc` files. Plain `.md` files are ignored by the rules system; use `AGENTS.md` for plain Markdown guidance.'
         $invalidRuleClaim = 'Project Rules live in `.cursor/rules`; `.md` and `.mdc` are supported.'
-        $mutatedCursorReadme = $cursorReadme.Replace($validRuleClaim, $invalidRuleClaim)
-        if ($mutatedCursorReadme -eq $cursorReadme -or $mutatedCursorReadme.Contains($validRuleClaim)) {
-            throw "Fixture could not break the Cursor rule-extension guidance contract."
-        }
+        $mutatedCursorReadme = $cursorReadme + "`n$invalidRuleClaim`n"
         Set-LfText -Path $cursorReadmePath -Content $mutatedCursorReadme
 
-        $cursorMcpPath = Join-Path $caseRoot "cursor/project/.cursor/mcp.example.json"
+        $cursorMcpPath = Join-Path $caseRoot "cursor/project/mcp.example.json"
         $cursorMcp = Get-Content -LiteralPath $cursorMcpPath -Raw
         $context7PackageArg = '        "@upstash/context7-mcp"'
         $context7KeyArgs = @(
@@ -692,14 +688,14 @@ try {
         }
         Set-LfText -Path $cursorMcpPath -Content $mutatedCursorMcp
 
-        $readmePath = Join-Path $caseRoot "README.md"
-        $readme = Get-Content -LiteralPath $readmePath -Raw
+        $installGuidePath = Join-Path $caseRoot "docs/installation.md"
+        $installGuide = Get-Content -LiteralPath $installGuidePath -Raw
         $exitGuardPattern = [regex]'(?m)^    exit 1\n'
-        $mutatedReadme = $exitGuardPattern.Replace($readme, '', 1)
-        if ($mutatedReadme -eq $readme -or $exitGuardPattern.Matches($mutatedReadme).Count -ne ($exitGuardPattern.Matches($readme).Count - 1)) {
+        $mutatedInstallGuide = $exitGuardPattern.Replace($installGuide, '', 1)
+        if ($mutatedInstallGuide -eq $installGuide -or $exitGuardPattern.Matches($mutatedInstallGuide).Count -ne ($exitGuardPattern.Matches($installGuide).Count - 1)) {
             throw "Fixture could not remove one Bash Skill overwrite-refusal guard."
         }
-        Set-LfText -Path $readmePath -Content $mutatedReadme
+        Set-LfText -Path $installGuidePath -Content $mutatedInstallGuide
     }
 
     Invoke-NegativeCase -Name "codex-config-contract" -ExpectedPattern @(
@@ -750,7 +746,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "cursor/project/.cursor/rules/01-engineering-discipline.mdc"
+        $path = Join-Path $caseRoot "cursor/project/rules/01-engineering-discipline.mdc.template"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace("alwaysApply: false", "alwaysApply: true")
         if ($mutated -eq $content -or $mutated.Contains("alwaysApply: false")) {
@@ -768,7 +764,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "claude/global/CLAUDE.md"
+        $path = Join-Path $caseRoot "claude/global/CLAUDE.md.template"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace(
             "When challenged, recheck the original definitions, evidence, counterevidence, and reasoning chain.",
@@ -838,7 +834,86 @@ try {
         Set-LfText -Path $gitignorePath -Content $mutatedGitignore
     }
 
-    Write-Host "Validator negative tests passed (24/24)." -ForegroundColor Green
+    Invoke-NegativeCase -Name "inert-distribution-sources" -ExpectedPattern "Native discovery carrier must not occur in distribution sources" -Mutate {
+        param($caseRoot)
+
+        $nativeCore = Join-Path $caseRoot "rules/project/AGENTS.md"
+        Copy-Item -LiteralPath (Join-Path $caseRoot "rules/project/AGENTS.md.template") -Destination $nativeCore
+        $nativeSkillRoot = Join-Path $caseRoot "claude/project/.claude/skills/rd-research"
+        New-Item -ItemType Directory -Path $nativeSkillRoot -Force | Out-Null
+        Copy-Item -LiteralPath (Join-Path $caseRoot "skills/rd-research/SKILL.md") -Destination (Join-Path $nativeSkillRoot "SKILL.md")
+    }
+
+    Invoke-NegativeCase -Name "cursor-translation-layout" -ExpectedPattern @(
+        "Cursor translations must live under zh-CN/cursor",
+        "Cursor translation directory structure differs from the English source"
+    ) -Mutate {
+        param($caseRoot)
+
+        New-Item -ItemType Directory -Path (Join-Path $caseRoot "cursor/zh-CN") | Out-Null
+        Set-LfText -Path (Join-Path $caseRoot "zh-CN/cursor/unexpected.md") -Content "# Unexpected translated artifact`n"
+    }
+
+    Invoke-NegativeCase -Name "claude-package-canonical-source" -ExpectedPattern @(
+        "Claude Skill packager must use canonical language sources",
+        "Claude Skill packager must not depend on an adapter Skill mirror"
+    ) -Mutate {
+        param($caseRoot)
+
+        $path = Join-Path $caseRoot "scripts/package-claude-ai-skills.ps1"
+        $text = Get-Content -LiteralPath $path -Raw
+        $mutated = $text.Replace('"zh-CN/skills"', '"zh-CN/claude/project/.claude/skills"').Replace('"skills"', '"claude/project/.claude/skills"')
+        if ($mutated -eq $text) { throw "Fixture could not restore the adapter mirror packaging dependency." }
+        Set-LfText -Path $path -Content $mutated
+    }
+
+    Invoke-NegativeCase -Name "codex-project-config-inventory" -ExpectedPattern @(
+        "project Codex example must contain only the reviewed approval and workspace sandbox overrides",
+        "Codex release inventory is missing public config: codex/project/config.example.toml",
+        "Codex configuration validation failed:.*codex/project/config.example.toml"
+    ) -Mutate {
+        param($caseRoot)
+
+        foreach ($relativePath in @("codex/project/config.example.toml", "zh-CN/codex/project/config.example.toml")) {
+            $path = Join-Path $caseRoot $relativePath
+            $text = Get-Content -LiteralPath $path -Raw
+            Set-LfText -Path $path -Content ($text + "`nunknown_project_option = true`n")
+        }
+        $releasePath = Join-Path $caseRoot "scripts/validate-release.ps1"
+        $releaseText = Get-Content -LiteralPath $releasePath -Raw
+        $mutated = $releaseText.Replace('    "codex/project/config.example.toml",' + "`n", "")
+        if ($mutated -eq $releaseText) { throw "Fixture could not remove the project release inventory entry." }
+        Set-LfText -Path $releasePath -Content $mutated
+    }
+
+    Invoke-NegativeCase -Name "claude-global-settings-and-mcp" -ExpectedPattern @(
+        "Claude global settings must preserve attribution and explicit project-MCP opt-in",
+        "Claude MCP example must contain only the official HTTP documentation server",
+        "Language-neutral platform examples differ across translations"
+    ) -Mutate {
+        param($caseRoot)
+
+        $settingsPath = Join-Path $caseRoot "claude/global/settings.example.json"
+        $settings = Get-Content -LiteralPath $settingsPath -Raw | ConvertFrom-Json
+        $settings.enableAllProjectMcpServers = $true
+        Set-LfText -Path $settingsPath -Content (($settings | ConvertTo-Json -Depth 10) + "`n")
+        $mcpPath = Join-Path $caseRoot "claude/project/mcp.example.json"
+        $mcp = Get-Content -LiteralPath $mcpPath -Raw | ConvertFrom-Json
+        $mcp.mcpServers.openaiDeveloperDocs.url = "https://example.invalid/mcp"
+        Set-LfText -Path $mcpPath -Content (($mcp | ConvertTo-Json -Depth 10) + "`n")
+    }
+
+    Invoke-NegativeCase -Name "cursor-discovered-skill-reference" -ExpectedPattern "Cursor rules must reference discovered Skills instead of removed project Skill paths" -Mutate {
+        param($caseRoot)
+
+        $path = Join-Path $caseRoot "cursor/project/rules/09-task-routing.mdc.template"
+        $text = Get-Content -LiteralPath $path -Raw
+        $mutated = $text.Replace('the discovered `rd-delivery` Skill', 'the [rd-delivery Skill](../skills/rd-delivery/SKILL.md)')
+        if ($mutated -eq $text) { throw "Fixture could not restore the removed project Skill reference." }
+        Set-LfText -Path $path -Content $mutated
+    }
+
+    Write-Host "Validator negative tests passed (30/30)." -ForegroundColor Green
 }
 finally {
     $resolvedRunRoot = [System.IO.Path]::GetFullPath($runRoot)

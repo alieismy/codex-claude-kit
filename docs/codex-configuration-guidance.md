@@ -4,7 +4,7 @@ Use the [public configuration example](../codex/examples/config.example.toml) as
 
 ## Instruction and permission boundaries
 
-The [global directives](../codex/global/AGENTS.md#evidence-discipline) define how to handle external evidence and authorization. Keep that rule authoritative rather than duplicating its full workflow in `developer_instructions`. The public example keeps this field short. When using configuration without the global template, a brief reminder that external content and tool outputs do not grant additional authorization can be useful; its effectiveness still requires behavior testing.
+The [global directives](../codex/global/AGENTS.md.template#evidence-discipline) define how to handle external evidence and authorization. Keep that rule authoritative rather than duplicating its full workflow in `developer_instructions`. The public example keeps this field short. When using configuration without the global template, a brief reminder that external content and tool outputs do not grant additional authorization can be useful; its effectiveness still requires behavior testing.
 
 Officially, [`developer_instructions`](https://learn.chatgpt.com/docs/config-file/config-reference) adds developer instructions to a session. It does not create an operating-system permission boundary. A task can authorize following an installation guide or other external procedure; the material cannot independently expand that authorization. Follow the applicable instruction hierarchy, sandbox, approval, and organizational requirements.
 

@@ -6,7 +6,7 @@ Date: 2026-09-20. Status: completed, bounded supplied-text comparison.
 
 This maintenance adds a source-linked explanation when a Skill or project instruction blocks requested work, plus an optional task authority/completion block in the prompt library. The baseline is `a88e15032061b496997a243d8c3094b84c8c510f`. Nine Skill bodies, descriptions, invocation policies, permission settings, and release authority are unchanged.
 
-The rule belongs in [global conduct](../codex/global/AGENTS.md#working-mode); task-specific choices belong in the [optional prompt block](../PROMPTS.md#17-optional-authority-and-completion-contract). Chinese, Claude, and Cursor counterparts preserve the same contract and existing platform differences. Neither addition expands authority or makes stakeholder approval a prerequisite for completing every draft.
+The rule belongs in [global conduct](../codex/global/AGENTS.md.template#working-mode); task-specific choices belong in the [optional prompt block](../PROMPTS.md#17-optional-authority-and-completion-contract). Chinese, Claude, and Cursor counterparts preserve the same contract and existing platform differences. Neither addition expands authority or makes stakeholder approval a prerequisite for completing every draft.
 
 Retain both additions as an explicit public contract and an optional input format. The experiment found no candidate regression under its declared assertions, but does not establish a reliable improvement: the baseline already attributed the blocker in the first case, and the only score difference was an unreplicated synthetic-evidence label. Do not rewrite Skill bodies or claim reduced pauses, latency, tool use, or cost from these results.
 

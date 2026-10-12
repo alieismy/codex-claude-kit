@@ -1,6 +1,31 @@
 # 兼容性
 
-npm registry 最新版本已于 2026-10-10 重新核查；本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.296`。早先 Claude Code `2.1.287` 的观察日期仍为 2026-10-02，当前 registry 版本不代表已通过运行测试。其它已安装版本和运行测试保留各自原有日期：Cursor 版本为 2026-09-11，Cursor Rules、Skills 和 FAQ 文档为 2026-09-16，Claude Code 详细文档检查为 2026-09-04，Context7 有边界 stdio 探针为 2026-08-14。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+npm registry 最新版本已于 2026-10-12 重新核查；本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.296`。早先 Claude Code `2.1.287` 的观察日期仍为 2026-10-02，当前 registry 版本不代表已通过运行测试。其它已安装版本和运行测试保留各自原有日期：Cursor 版本为 2026-09-11，Cursor Rules、Skills 和 FAQ 文档为 2026-09-16，Claude Code 详细文档检查为 2026-09-04，Context7 有边界 stdio 探针为 2026-08-14。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+
+## 2026-10-12 布局与平台契约
+
+本次源布局把共享项目核移至 `zh-CN/rules/project/AGENTS.md.template`，全局/Claude/Cursor 分发指令采用 `.template` 后缀与非原生源目录，中文 Cursor 统一在 `zh-CN/cursor/`，四棵平台 Skill 镜像移除；仅维护 `skills/` 与 `zh-CN/skills/`。路径映射及独立个人安装边界见[布局迁移](layout-migration.md)，当前安装配方见[安装说明](installation.md)。以下日期化记录中的旧路径、样本数、版本、fixture 和运行结果均保留为历史布局证据，不用于验证新布局。
+
+2026-10-12 实际打开的官方文档确认：Claude 用户/项目 settings 与 MCP 的作用域、存储位置不同，项目 MCP 使用根 `.mcp.json`，用户/local MCP 在 `~/.claude.json`；Claude Skills 官方列 `.claude/skills`，未将 `.agents/skills` 列为通用发现根。Cursor 官方支持用户/项目 `.agents/skills` 并兼容其他客户端根，User Rules 与项目 MDC、IDE settings、CLI config 分属不同载体。[Claude settings](https://code.claude.com/docs/en/settings)、[Claude MCP](https://code.claude.com/docs/en/mcp)、[Claude Skills](https://code.claude.com/docs/en/skills)、[Cursor Skills](https://cursor.com/docs/skills)、[Cursor rules](https://cursor.com/help/customization/rules)、[Cursor CLI config](https://cursor.com/docs/cli/reference/configuration)
+
+新增的 Codex 项目配置与 Claude 用户 settings/项目 MCP 是选定本机配置入口，Cursor 全局模板供 Customize → Rules 选用，不构成完整 CLI/cloud 支持。Claude 项目 MCP 示例是 OpenAI 官方文档 HTTP 服务；安装到 `.mcp.json` 才成为项目配置。`enableAllProjectMcpServers=false` 不能证明 headless 连接被阻止。claude.ai 打包从 canonical 两语言源读取，账号缓存只作只读比较目标。
+
+根维护者 `.claude/settings.json` 现为空对象；旧 `claudeMdExcludes` 排除列表因源模板改名而移除。目录形状与静态门禁不能单独证明维护会话隔离。迁移没有更改个人安装或上传账号，也没有真实 Cursor 客户端核验。
+
+[本轮脱敏证据](../../docs/evidence/layout-migration-2026-10-12.json)记录一次 Windows Claude Code `2.1.296` 隔离 fixture：八个当前双语规则模板按源相对路径原样放入独立临时 Git 仓库，并配置原生 memory/Skill 正向控制。9 个请求读取均执行；`InstructionsLoaded` 记录根、继承用户/managed 与控制目录的原生 `CLAUDE.md`，未记录任何 `.template` memory 加载；控制 Skill 成功调用，两条旧目录限定 `rd-research` 名称均返回 `Unknown skill`。初始列表发现九个账号 RD Skills，但没有逐个调用。进程退出码 0、14.5 秒。用户级配置和账号 Skills 仍继承，本结果限于单次 fixture，不能泛化 Cursor、Codex 指令加载、MCP 连接、桌面行为或远端账号最新状态。 `InstructionsLoaded` 不报告直接 `AGENTS.md` 加载，因此 hook 不能单独证明 AGENTS 模板的加载或隔离；八个文件是 fixture 输入，不代表全部八个输入均受该 hook 观测。
+
+同一记录的 `installationRecipes` 从两语安装指南原文提取 Cursor/Claude 项目 PowerShell 配方，在四个独立临时目标执行：四条正常安装路径的原生文件均与源 SHA-256 一致（每套 Cursor 10 个 `.mdc`，每套 Claude 3 个项目文件），四次重复安装均拒绝且未改变目标；Claude 配方未创建项目 Skills。这仅验证 PowerShell 文件安装，不涉及个人目录、Bash、客户端启动/发现、MCP 激活或运行验收。
+
+同一记录还保留双语各 9 个 ZIP（各 24 个运行载荷文件）与 canonical 源及迁移前基线的精确载荷比对；两语源各 62 个文件保持不变，`evals/` 和 `agents/` 按打包契约排除。这证明打包载荷一致，不证明已经上传或服务端替换。
+
+| 当前载体 | 英文源路径 | 中文源路径 |
+|---|---|---|
+| 共享项目规则 | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` |
+| Cursor 用户规则 | `cursor/global/RULES.md.template` | `zh-CN/cursor/global/RULES.md.template` |
+| Cursor 项目规则/MCP | `cursor/project/rules/*.mdc.template`；`cursor/project/mcp.example.json` | 同一布局位于 `zh-CN/cursor/project/` |
+| Claude 全局/项目规则 | `claude/{global,project}/CLAUDE.md.template` | 同一布局位于 `zh-CN/claude/` |
+| Claude settings/MCP | `claude/global/settings.example.json`；`claude/project/{settings,mcp}.example.json` | 同一布局位于 `zh-CN/claude/` |
+| Skills | `skills/rd-*` | `zh-CN/skills/rd-*` |
 
 ## Codex
 
@@ -10,9 +35,9 @@ npm registry 最新版本已于 2026-10-10 重新核查；本机 Codex CLI 与�
 
 | 组件 | 已测试版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@openai/codex` npm 包 | `0.147.0` | `0.162.1` | registry 与本机 CLI `0.162.1` 已于 2026-10-10 重新核查。已为本次发布基线获取 tag 固定的 `0.162.1` Schema；发布门禁会将其与实时 Schema 比较并执行四份示例检查。更广的测试基线仍为 `0.147.0`。不要把该版本写进仓库名或 AGENTS 规则。 |
+| `@openai/codex` npm 包 | `0.147.0` | `0.162.1` | registry 与本机 CLI `0.162.1` 已于 2026-10-12 重新核查。已为本次发布基线获取 tag 固定的 `0.162.1` Schema；发布门禁会将其与实时 Schema 比较并检查全部维护的用户/项目示例。更广的测试基线仍为 `0.147.0`。不要把该版本写进仓库名或 AGENTS 规则。 |
 
-仓库在 `schemas/` 下保存带来源和 SHA-256 元数据的 Codex `0.162.1` 配置 Schema 离线快照。`scripts/validate.ps1` 确定性使用该快照；仅发布前执行的 `scripts/validate-release.ps1` 会将其与当前官方 Schema 比较，核对已安装 CLI 版本，使用实时副本验证四份示例，并从隔离的临时 `CODEX_HOME` 严格加载每份示例。
+仓库在 `schemas/` 下保存带来源和 SHA-256 元数据的 Codex `0.162.1` 配置 Schema 离线快照。`scripts/validate.ps1` 确定性使用该快照；仅发布前执行的 `scripts/validate-release.ps1` 会将其与当前官方 Schema 比较，核对已安装 CLI 版本，使用实时副本验证全部六份用户/项目示例，并从隔离的临时 `CODEX_HOME` 严格加载每份示例。
 
 独立的 2026-09-20 [双模型评估](dual-model-compatibility.md)使用 CLI `0.155.1`，请求 `gpt-5.6-sol` 与 `gpt-6-astra`，两者均为 high 推理和 high 输出详细程度。基于所提供文本的断言分别为 42/48 和 46/48，四次原生尝试均受阻。报告保留失败与限制，不证明后端模型身份或隐式路由，也不替代上述发布 Schema 或更广测试基线。
 
@@ -57,7 +82,7 @@ npm registry 最新版本已于 2026-10-10 重新核查；本机 Codex CLI 与�
 
 | 组件 | 已测试 / 已固定版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.296` | registry 与本机 CLI `2.1.296` 已于 2026-10-10 重新核查；早先 `2.1.287` 的观察日期为 2026-10-02；settings Schema、适配器结构和 `claude doctor` 最近一次使用 `2.1.260` 重新核查的日期仍为 2026-09-04。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
+| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.296` | registry 与本机 CLI `2.1.296` 已于 2026-10-12 重新核查；早先 `2.1.287` 的观察日期为 2026-10-02；settings Schema、适配器结构和 `claude doctor` 最近一次使用 `2.1.260` 重新核查的日期仍为 2026-09-04。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
 
 2026-10-01 核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md` 时直接读取 `AGENTS.md`；`CLAUDE.md` 中的 `@AGENTS.md` 导入不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
 
@@ -74,7 +99,7 @@ Claude Code 官方文档核查入口：
 
 [2026-10-09 嵌套 Skill 覆盖探针](../../docs/evidence/claude-nested-skill-overrides-2026-10-09.json)在 CLI `2.1.295` 上用 headless `claude -p` 运行，每种写法一次，临时 fixture 中含两个适配目录的 `rd-research`。不加覆盖时，读取单个适配目录中的文件会以短名 `rd-research` 加载该副本，并由它取代账户副本被调用；读取两个适配目录中的文件则加载 `claude/project:rd-research` 和 `zh-CN/claude/project:rd-research`，短名 `rd-research` 返回 `Unknown skill`。两种 `skillOverrides` 写法失败：只用目录限定名的 `off` 键能屏蔽两个限定名副本，但漏掉单个适配目录的加载，因为该副本保留短名；只写短名 `"rd-research": "off"` 会把 `anthropic-skills:rd-research` 也从会话初始 Skill 列表中移除。短名 `off` 键配合 `"anthropic-skills:rd-research": "on"` 在两种加载形态下都屏蔽了嵌套副本，并保留账户副本可列出、可调用。
 
-随后把这一组合扩展到全部九个名称，写入被忽略的 `.claude/settings.local.json`，在本仓库中只读复核。读取两个适配目录的 `CLAUDE.md` 后，`claude/project:rd-review` 与 `zh-CN/claude/project:rd-review` 返回 `skillOverrides` 错误，九个 `anthropic-skills:rd-*` 均在初始 Skill 列表中，`anthropic-skills:rd-review` 正常运行。Skills 文档没有说明短名键会匹配目录限定的嵌套 Skill，CLI 升级后需要复核。短名 `off` 键也会隐藏同名的个人或项目 Skill。嵌套副本加载后，短名会命中被禁用的副本或返回 `Unknown skill`，不会运行账户副本，因此应使用全名 `anthropic-skills:rd-*` 调用。只实际调用了 `rd-research` 与 `rd-review`，未检查交互式 `/` 菜单。仓库不提交该覆盖，因为它取决于各维护者的 Skill 来源；维护者 `.claude/settings.json` 仍只包含 `claudeMdExcludes`。
+随后把这一组合扩展到全部九个名称，写入被忽略的 `.claude/settings.local.json`，在本仓库中只读复核。读取两个适配目录的 `CLAUDE.md` 后，`claude/project:rd-review` 与 `zh-CN/claude/project:rd-review` 返回 `skillOverrides` 错误，九个 `anthropic-skills:rd-*` 均在初始 Skill 列表中，`anthropic-skills:rd-review` 正常运行。Skills 文档没有说明短名键会匹配目录限定的嵌套 Skill，CLI 升级后需要复核。短名 `off` 键也会隐藏同名的个人或项目 Skill。嵌套副本加载后，短名会命中被禁用的副本或返回 `Unknown skill`，不会运行账户副本，因此应使用全名 `anthropic-skills:rd-*` 调用。只实际调用了 `rd-research` 与 `rd-review`，未检查交互式 `/` 菜单。仓库不提交该覆盖，因为它取决于各维护者的 Skill 来源；该历史布局的维护者 `.claude/settings.json` 当时只包含 `claudeMdExcludes`。
 
 [2026-10-09 Opus 5.5 指令评估](opus-5-5-instruction-review.md)原先对 Claude 全局模板的中英文版本做了三处修改：限制用子代理验证模型自己的工作；删除输出前自我审核；删除三项思维方法。采纳前，在 CLI `2.1.295` 上以 `claude-opus-5-5`、`xhigh` 运行了 12 次 headless `claude -p`，覆盖 4 个 eval 任务 × 3 个臂，每格一个样本。每个历史实验臂都通过了 29 条冻结断言中的 28 条，且三个臂都未通过同一项 T2 字数限制。[历史证据记录](../../docs/evidence/opus-5-5-instruction-ab-2026-10-09.json)保留了完整回复。该结果只说明这些臂未检测到回归，不说明有所改进。
 
@@ -83,7 +108,7 @@ Claude Code 官方文档核查入口：
 
 [2026-10-01 历史冒烟记录](../../docs/evidence/skill-routing-smoke-2026-10-01.json)保留四次完成的 Codex 尝试和四次 Claude 鉴权阻塞（`Not logged in`）。用户确认 10 月 2 日 Claude 通过前已经登录，不能据此归因为升级修复。Codex T3 此前约 271 秒才完成文件捕获，后次上限为 180 秒，不是受控的路由回归比较。
 
-[2026-10-02 源码维护隔离探针](../../docs/evidence/claude-source-isolation-2026-10-02.json)复现了两个 Claude 全局语言模板的嵌套指令加载。排除对应路径后，这些加载消失，正向控制指令仍加载，虚构文件仍可读取；随后用最终排除配置复核了八个模板目录、正向控制文件及根维护者规则的读取。因此源码仓库增加仅用于维护的 `.claude/settings.json`，排除八个声明的指令模板；不得将此根配置复制到下游项目。直接加载 AGENTS 不触发 `InstructionsLoaded`，不能仅凭 hook 证明 AGENTS 的加载或排除行为。测试仍沿用用户级上下文。
+[2026-10-02 源码维护隔离探针](../../docs/evidence/claude-source-isolation-2026-10-02.json)复现了两个 Claude 全局语言模板的嵌套指令加载。排除对应路径后，这些加载消失，正向控制指令仍加载，虚构文件仍可读取；随后用最终排除配置复核了八个模板目录、正向控制文件及根维护者规则的读取。因此历史布局曾增加仅用于维护的 `.claude/settings.json`，排除八个声明的指令模板；此结果不验证本次改名后空配置的行为。不得将根维护配置复制到下游项目。直接加载 AGENTS 不触发 `InstructionsLoaded`，不能仅凭 hook 证明 AGENTS 的加载或排除行为。测试仍沿用用户级上下文。
 
 上轮安装探针曾意外执行组合安装块中的用户级复制，将当时的中文公共模板覆盖到用户 `~/.claude/CLAUDE.md`。本轮识别了该偏离，原文件尚未从可验证备份恢复。当前安装探针隔离 HOME 和目标目录，解读继承上下文时保留这一限制；此处不保留个人标识或凭据。
 
@@ -98,9 +123,11 @@ Cursor Rules、Skills 和 FAQ 官方文档已于 2026-09-16 重新核查；2026-
 - [MCP](https://cursor.com/docs/mcp.md)：项目级 MCP 服务器通过 `.cursor/mcp.json` 配置，全局 MCP 服务器使用 `~/.cursor/mcp.json`。
 - [Rules FAQ](https://cursor.com/help/customization/rules#how-does-claudemd-work-in-cursor)（2026-09-16 核查）：Cursor 读取 `CLAUDE.md` 的方式与 `AGENTS.md` 相同，且 `CLAUDE.md` 会始终应用于每个会话，不受任何 `alwaysApply` frontmatter 设置影响。因此组合 Claude Code 和 Cursor 适配包会再增加一个常驻指令文件和一个可发现 Skill 来源；详见 `cursor/README.md`。
 
-2026-09-16 的一次维护者会话报告：`codex/` 与 `zh-CN/codex/` 下四份可分发 `AGENTS.md` 模板，以及英文和中文 Cursor 的两份 `00-global-principles.mdc`，被同时列为生效指令。这六个文件当前合计 64,928 bytes，并包含互相冲突的语言指令。该结果属于单次会话运行观察，不是已独立复现的加载契约；官方嵌套 `AGENTS.md` 文档描述的是目录范围内应用。目前没有已验证的隔离机制。应把该观察视为源仓库尚未解决的兼容性风险，不能据此断言每个 Cursor 会话都会加载全部六个文件，也不能断言根维护者文件一定能覆盖它们。
+2026-09-16 的一次维护者会话报告：`codex/` 与 `zh-CN/codex/` 下四份可分发 `AGENTS.md` 模板，以及英文和中文 Cursor 的两份 `00-global-principles.mdc`，被同时列为生效指令。该历史记录中的六个文件合计 64,928 bytes，并包含互相冲突的语言指令。该结果属于单次会话运行观察，不是已独立复现的加载契约；官方嵌套 `AGENTS.md` 文档描述的是目录范围内应用。该历史观察没有已验证的隔离机制；本次改名的运行隔离结果须另行核验。应把该观察视为源仓库尚未解决的兼容性风险，不能据此断言每个 Cursor 会话都会加载全部六个文件，也不能断言根维护者文件一定能覆盖它们。
 
-| 适配面 | 仓库路径 | 公开发布姿态 |
+以下为迁移前的历史适配布局，当前路径见上表和迁移指南。
+
+| 历史适配面 | 历史仓库路径 | 当时公开发布姿态 |
 |---|---|---|
 | 英文规则 | `cursor/project/.cursor/rules/*.mdc` | Cursor 原生项目规则 |
 | 英文 Skills | `cursor/project/.cursor/skills/rd-*/SKILL.md` | 与根目录 `skills/rd-*` 镜像 |
@@ -117,11 +144,13 @@ Cursor Rules、Skills 和 FAQ 官方文档已于 2026-09-16 重新核查；2026-
 |---|---|---:|---:|---|
 | Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.3.0` | Codex 示例禁用；Cursor 最小示例唯一 server，复制并配置凭据前不活动 |
 | Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Codex 示例禁用；Cursor 最小示例省略 |
-| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `2026.8.31` | 公共最小示例省略 |
+| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | 公共最小示例省略 |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | 公共最小示例省略 |
 | Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex 示例禁用；Cursor 最小示例省略 |
 | Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex 示例禁用；Cursor 最小示例省略 |
 | Augment Context Engine | `ace-tool-rs` | `0.1.16` | `0.1.16` | 公共最小示例省略 |
+
+2026-10-12 的 v2.0.0 发布预检重新查询了 Codex、Claude Code 和上述七个 MCP 包的 registry 条目，并核对本机 CLI。八个 registry 值与先前记录一致；Sequential Thinking 的 `latest` 标签通过 registry `/latest` 与显式指定官方 registry 的 `npm view ... dist-tags` 均返回 `1.0.0`，先前快照记录的 `2026.8.31` 保留为历史。这里报告当前标签，不推断版本变化原因或升级顺序；该 server 仍未加入公共最小示例，也没有新增 MCP 运行验收。
 
 Context7 `4.0.2` 已对照 [npm 包元数据](https://www.npmjs.com/package/@upstash/context7-mcp/v/4.0.2)和 2026-08-11 发布的 [GitHub 官方 Release](https://github.com/upstash/context7/releases/tag/%40upstash%2Fcontext7-mcp%404.0.2)核实。该包要求 Node.js `>=20.18.1`。在 Windows 与 Node.js `24.18.0` 环境中，包能够返回预期 CLI 版本与参数，完成 MCP 协议 `2025-06-18` 的 stdio `initialize` 交换，并通过 `tools/list` 返回 `resolve-library-id` 和 `query-docs`。
 

@@ -2,6 +2,27 @@
 
 This repository provides templates. Merge them into your local Codex and project setup rather than overwriting existing files blindly.
 
+## Source and destination map
+
+Choose rules, settings/MCP, and Skills independently. Source templates are inactive: remove `.template` on installation, and merge existing destinations after a verified backup. Prefix the source paths below with `zh-CN/` for Chinese. Do not copy source directories recursively or use an account-synced cache as a source.
+
+| Surface | Source | Native destination |
+|---|---|---|
+| Shared project rules | `rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
+| Codex global rules | `codex/global/AGENTS.md.template` | `{CODEX_HOME}/AGENTS.md` (default `~/.codex`) |
+| Codex user configuration | `codex/examples/config.example.toml` | `{CODEX_HOME}/config.toml` |
+| Codex project configuration | `codex/project/config.example.toml` | `{project}/.codex/config.toml` (trusted project) |
+| Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
+| Claude user/project settings | `claude/{global,project}/settings.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
+| Claude project MCP | `claude/project/mcp.example.json` | `{project}/.mcp.json` |
+| Cursor user rules | `cursor/global/RULES.md.template` | selected content in Customize → Rules |
+| Cursor project rules | `cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
+| Cursor project MCP | `cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json` |
+| Local shared Skills | `skills/rd-*` | chosen user/project Skill root |
+| Claude account Skills | `skills/rd-*`, via the upload packager | claude.ai Customize → Skills; Code receives account sync |
+
+Claude user/local MCP lives in `~/.claude.json`, managed with `claude mcp add --scope user` or `--scope local`; it is not a settings JSON key. Cursor user MCP can live in `~/.cursor/mcp.json`. Cursor IDE User Rules, IDE settings, and CLI configuration have distinct carriers. CLI/cloud support is not expanded by these examples. See the [Claude adapter](../claude/README.md) and [Cursor adapter](../cursor/README.md) for the current documentation contracts. Repository relocation does not update personal installations; see [layout migration](layout-migration.md).
+
 ## Codex Rules
 
 Install global rules:
@@ -10,7 +31,7 @@ Install global rules:
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 mkdir -p "$codex_home"
 if [ ! -s "$codex_home/AGENTS.override.md" ] && [ ! -e "$codex_home/AGENTS.md" ]; then
-  cp codex/global/AGENTS.md "$codex_home/AGENTS.md"
+  cp codex/global/AGENTS.md.template "$codex_home/AGENTS.md"
 fi
 ```
 
@@ -18,7 +39,7 @@ Install project rules:
 
 ```bash
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp codex/project/AGENTS.md /path/to/your-project/AGENTS.md
+  cp rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -53,6 +74,8 @@ For a new project, start with the specialist that owns the current deliverable: 
 For an established project, preserve its governing documents, terminology, approvals, and working conventions. Try the appropriate specialist on one bounded real task, inspect its output and evidence limits, and expand use only where it helps. Research and review are useful entry points when those are the actual tasks, not mandatory prerequisites for every document.
 
 Adoption scope and installation scope are different: the PowerShell installer below manages all nine declared `rd-*` directories; it is not a single-Skill selector. Begin by using a small part of the installed suite. Before combining clients, resolve source/scope choices and inspect actual discovery using the platform guidance below; a second installed copy is not proof of a second effective capability.
+
+Reuse a deliberate existing user-level installation; project rules do not add project Skills by default. The recipes below are optional first-time/local installations. Project/team and Claude Code local fallback are separate choices. For desktop/chat and Claude Code account sharing, see [claude.ai upload](../claude/README.md#claudeai-skill-upload).
 
 ### Skill sources and scope
 
@@ -99,7 +122,23 @@ done
 cp -R skills/rd-* "$skill_target/"
 ```
 
+### Optional project/team and Claude Code local fallback
+
+```powershell
+pwsh -File ./scripts/install-rd-skills.ps1 -Language en -DestinationRoot 'path/to/your-project/.agents/skills'
+pwsh -File ./scripts/install-rd-skills.ps1 -Language en -DestinationRoot 'path/to/your-project/.agents/skills' -CheckOnly
+# Claude Code local fallback: choose instead of account Skills where required
+pwsh -File ./scripts/install-rd-skills.ps1 -Language en -DestinationRoot 'path/to/your-project/.claude/skills'
+```
+
+The selected language's shared Skill tree remains the source. Choose an owner for project/team updates and acceptance. Claude Code documents `.claude/skills`; do not claim `.agents/skills` is discovered by all three platforms. A personal fallback can target `$HOME/.claude/skills`. Inventory same-name user/account/project sources before adding a copy; replace only within authorization.
+
 ## Codex Configuration
+
+### Project configuration example
+
+Review `codex/project/config.example.toml` and optionally merge it into the target project `.codex/config.toml`. This minimal example uses `on-request`, `workspace-write`, and disabled sandbox network access. Codex loads project config only for trusted projects. It does not replace user `config.toml` or authorize installation/deployment.
+
 
 Start from the reviewed, opinionated workspace-write example:
 
@@ -137,37 +176,42 @@ On Windows, user-level environment variables can also be set with `setx`, but re
 
 ## Cursor Adapter
 
-Before copying the Cursor adapter, inspect every Skill root that Cursor discovers: project and user `.agents/skills/`, `.cursor/skills/`, `.claude/skills/`, and `.codex/skills/` ([Cursor Skills](https://cursor.com/docs/skills.md)). Cursor does not document precedence or deduplication for the same Skill name found in more than one root. The shared/Codex installation above already places `rd-*` under `.agents/skills/` or `~/.agents/skills/`; copying this adapter's `.cursor/skills/` as well creates multiple discoverable definitions with the same names even when Claude Code is not installed.
+Cursor documents project and user `.agents/skills/` and `.cursor/skills/`, plus compatible `.claude/skills/` and `.codex/skills/` roots. Same-name precedence is unspecified. Reuse a deliberate shared Skill source by default and do not install another copy with project rules. Confirm discovery and selection in a fresh session; this layout change has no real Cursor client verification. [Official Skills](https://cursor.com/docs/skills)
 
-Choosing only one project adapter does not eliminate duplicates already present in user-level roots. The shared, Claude Code, and Cursor `rd-*` trees now carry identical Skill content, including `rd-delivery`, so the remaining risk is same-name selection ambiguity rather than divergent invocation policy. This repository does not yet document a runtime-verified installation recipe that removes that ambiguity. For Cursor-only use, ensure that one copy is the sole discoverable definition of each `rd-*` Skill in that environment. If Cursor must share the environment with Codex or Claude Code, verify which definition Cursor selects in a fresh session and record the accepted arrangement. Remove or relocate an existing Skill copy only with authorization appropriate to its scope.
-
-The Claude Code adapter adds another Skill root and a project `CLAUDE.md`. Cursor reads `CLAUDE.md` the same way it reads `AGENTS.md` and applies it to every conversation regardless of any `alwaysApply` setting ([Cursor rules FAQ](https://cursor.com/help/customization/rules#how-does-claudemd-work-in-cursor), checked 2026-09-16). Review both same-name Skill sources and always-on instruction files before combining adapters; do not call them deduplicated until the target Cursor runtime has been verified. See `cursor/README.md`.
-
-Install the English Cursor adapter:
+Install project rules only (Bash, first-time rules directory):
 
 ```bash
-cp -r cursor/project/.cursor /path/to/your-project/.cursor
-cp cursor/project/PROMPTS.md /path/to/your-project/PROMPTS.cursor.md
+(
+set -e
+if [ -e /path/to/your-project/.cursor/rules ] || [ -L /path/to/your-project/.cursor/rules ]; then
+  printf '%s\n' 'Stop: merge existing Cursor rules manually before installing.' >&2
+  exit 1
+fi
+mkdir -p /path/to/your-project/.cursor/rules
+for rule_source in cursor/project/rules/*.mdc.template; do
+  rule_name=$(basename "$rule_source" .template)
+  cp "$rule_source" "/path/to/your-project/.cursor/rules/$rule_name"
+done
+)
 ```
 
-Install the Simplified Chinese Cursor pack:
+PowerShell:
 
-```bash
-cp -r cursor/zh-CN/.cursor /path/to/your-project/.cursor
-cp cursor/zh-CN/PROMPTS.md /path/to/your-project/PROMPTS.cursor.zh-CN.md
+```powershell
+& {
+    $target = (Resolve-Path -LiteralPath 'path/to/your-project').Path
+    $rulesTarget = Join-Path $target '.cursor/rules'
+    if (Test-Path -LiteralPath $rulesTarget) { throw 'Stop: merge existing Cursor rules manually before installing.' }
+    New-Item -ItemType Directory -Path $rulesTarget -ErrorAction Stop | Out-Null
+    Get-ChildItem -LiteralPath 'cursor/project/rules' -Filter '*.mdc.template' -File | ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $rulesTarget ($_.Name -replace '\.template$', '')) -ErrorAction Stop
+    }
+}
 ```
 
-If the target workspace already has `.cursor/`, merge manually.
+Add selected content from `cursor/global/RULES.md.template` in Customize → Rules for user-level preferences across projects. `00-global-principles.mdc` is always-on at project scope, not a global user rule. Cursor also reads `CLAUDE.md`; review its always-on effect when combining adapters. [Official rules](https://cursor.com/help/customization/rules)
 
-Cursor MCP is intentionally opt-in. The minimal example contains only Context7. Review credentials and data flow, then copy it to the Cursor project MCP location:
-
-```bash
-cp cursor/project/.cursor/mcp.example.json /path/to/your-project/.cursor/mcp.json
-```
-
-Configure `CONTEXT7_API_KEY`, confirm the server in Cursor's MCP status, and add any other server separately only when a verified use case requires it. Do not copy every candidate from the routing guide into one configuration.
-
-The Cursor adapter is optional and should be kept aligned with the Codex and Claude Code adapters when rules change.
+MCP is opt-in. Review `cursor/project/mcp.example.json`, then merge it into project `.cursor/mcp.json` or user `~/.cursor/mcp.json`. Set `CONTEXT7_API_KEY` in the host environment and verify the server in the target client. The example contains only Context7; do not copy the complete routing catalog.
 
 ## Simplified Chinese Pack
 
@@ -183,10 +227,10 @@ Install Chinese Codex rules:
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 mkdir -p "$codex_home"
 if [ ! -s "$codex_home/AGENTS.override.md" ] && [ ! -e "$codex_home/AGENTS.md" ]; then
-  cp zh-CN/codex/global/AGENTS.md "$codex_home/AGENTS.md"
+  cp zh-CN/codex/global/AGENTS.md.template "$codex_home/AGENTS.md"
 fi
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/codex/project/AGENTS.md /path/to/your-project/AGENTS.md
+  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -225,16 +269,17 @@ if [ -e ~/.claude/CLAUDE.md ] || [ -L ~/.claude/CLAUDE.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/codex/project/AGENTS.md /path/to/your-project/AGENTS.md
+  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
   exit 1
 fi
 mkdir -p ~/.claude
-cp zh-CN/claude/global/CLAUDE.md ~/.claude/CLAUDE.md
-cp zh-CN/claude/project/CLAUDE.md /path/to/your-project/CLAUDE.md
-cp -r zh-CN/claude/project/.claude /path/to/your-project/.claude
+cp zh-CN/claude/global/CLAUDE.md.template ~/.claude/CLAUDE.md
+cp zh-CN/claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
+mkdir -p /path/to/your-project/.claude
+cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -252,11 +297,11 @@ if [ -e ~/.claude/CLAUDE.md ] || [ -L ~/.claude/CLAUDE.md ]; then
   exit 1
 fi
 mkdir -p ~/.claude
-cp claude/global/CLAUDE.md ~/.claude/CLAUDE.md
+cp claude/global/CLAUDE.md.template ~/.claude/CLAUDE.md
 )
 ```
 
-Install project-level Claude Code rules and skills. The project `CLAUDE.md` is a thin adapter that imports the shared project core with `@AGENTS.md`; if the target already has `AGENTS.md` (for example from the Codex installation), keep it and merge instead of overwriting:
+Install project-level Claude Code rules and settings without copying Skills. The project `CLAUDE.md` is a thin adapter that imports the shared project core with `@AGENTS.md`; if the target already has `AGENTS.md` (for example from the Codex installation), keep it and merge instead of overwriting:
 
 ```bash
 (
@@ -270,14 +315,15 @@ if [ -s /path/to/your-project/AGENTS.override.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp codex/project/AGENTS.md /path/to/your-project/AGENTS.md
+  cp rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
   exit 1
 fi
-cp claude/project/CLAUDE.md /path/to/your-project/CLAUDE.md
-cp -r claude/project/.claude /path/to/your-project/.claude
+cp claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
+mkdir -p /path/to/your-project/.claude
+cp claude/project/settings.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -285,7 +331,7 @@ If a non-empty `AGENTS.override.md` exists, the recipe stops before installing t
 
 If the target workspace already has `CLAUDE.md` or `.claude/`, merge manually. Claude Code reads `AGENTS.md` directly only when no `CLAUDE.md` exists (v2.1.277 or later); the explicit import works on earlier versions as well and does not load `AGENTS.md` twice. Run `/memory` or `/context` in a new session to confirm that both files loaded.
 
-Project rules now have one source: change `codex/project/AGENTS.md` for project-wide behavior and `claude/project/CLAUDE.md` only for Claude Code-specific guidance.
+Project rules have one shared source: change `rules/project/AGENTS.md.template` for project-wide behavior and `claude/project/CLAUDE.md.template` only for Claude Code-specific guidance. User settings can be merged from `claude/global/settings.example.json`; project MCP can be merged from `claude/project/mcp.example.json` into `.mcp.json`. Neither is enabled by the rules recipe.
 
 ### Windows PowerShell project installation
 
@@ -304,14 +350,15 @@ Run from this repository root with an existing target project directory. This pr
     }
     $core = Join-Path $target 'AGENTS.md'
     if (-not (Test-Path -LiteralPath $core)) {
-        Copy-Item -LiteralPath 'codex/project/AGENTS.md' -Destination $core -ErrorAction Stop
+        Copy-Item -LiteralPath 'rules/project/AGENTS.md.template' -Destination $core -ErrorAction Stop
     }
     if (-not (Test-Path -LiteralPath $core) -or (Get-Item -LiteralPath $core).Length -eq 0) {
         throw 'Stop: the shared AGENTS.md import target must be non-empty.'
     }
-    Copy-Item -LiteralPath 'claude/project/CLAUDE.md' -Destination (Join-Path $target 'CLAUDE.md') -ErrorAction Stop
-    Copy-Item -LiteralPath 'claude/project/.claude' -Destination $target -Recurse -ErrorAction Stop
+    Copy-Item -LiteralPath 'claude/project/CLAUDE.md.template' -Destination (Join-Path $target 'CLAUDE.md') -ErrorAction Stop
+    New-Item -ItemType Directory -Path (Join-Path $target '.claude') -ErrorAction Stop | Out-Null
+    Copy-Item -LiteralPath 'claude/project/settings.example.json' -Destination (Join-Path $target '.claude/settings.json') -ErrorAction Stop
 }
 ```
 
-The Bash project recipes run in a subshell so a guard's `exit 1` stops the installation block rather than the parent interactive shell. The commands still require Bash (for example Git Bash on Windows); the PowerShell recipe above uses native cmdlets. After installation, verify the non-empty core, the `@AGENTS.md` import, settings and all nine Skills. Roll back only files newly created by this installation after checking for subsequent edits; restore any deliberately merged files from their pre-install backup.
+The Bash project recipes run in a subshell so a guard's `exit 1` stops the installation block rather than the parent interactive shell. The commands still require Bash (for example Git Bash on Windows); the PowerShell recipe above uses native cmdlets. After installation, verify the non-empty core, the `@AGENTS.md` import and settings; verify Skills separately for the chosen source/scope. Roll back only files newly created by this installation after checking for subsequent edits; restore any deliberately merged files from their pre-install backup.

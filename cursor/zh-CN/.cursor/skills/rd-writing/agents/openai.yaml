@@ -1,4 +1,0 @@
-interface:
-  display_name: "专业技术写作"
-  short_description: "将已核实材料转化为面向真实受众、主张可追踪的专业技术文档"
-  default_prompt: "使用 $rd-writing 把已核实材料转为面向受众、主张可追踪且限制明确的专业文档。"

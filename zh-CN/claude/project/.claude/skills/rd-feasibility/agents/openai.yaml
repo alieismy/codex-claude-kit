@@ -1,4 +1,0 @@
-interface:
-  display_name: "可行性分析"
-  short_description: "综合评估技术、经济、运行、安全、合规、生命周期条件和风险"
-  default_prompt: "使用 $rd-feasibility 从技术、经济、运行、安全、合规和生命周期证据评估候选方案。"

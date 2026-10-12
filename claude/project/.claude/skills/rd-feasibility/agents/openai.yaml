@@ -1,4 +1,0 @@
-interface:
-  display_name: "Feasibility Analysis"
-  short_description: "Evaluate viability, conditions, and risks"
-  default_prompt: "Use $rd-feasibility to evaluate the options against technical, economic, operational, security, compliance, and lifecycle evidence."

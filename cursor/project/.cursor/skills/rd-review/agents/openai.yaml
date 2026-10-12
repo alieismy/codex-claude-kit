@@ -1,4 +1,0 @@
-interface:
-  display_name: "Independent Review"
-  short_description: "Find evidence-backed defects and verdicts"
-  default_prompt: "Use $rd-review to independently review the target, lead with severity-graded findings, and derive a defensible verdict."
