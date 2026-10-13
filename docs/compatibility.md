@@ -1,12 +1,14 @@
 # Compatibility
 
-The npm registry latest versions were rechecked on 2026-10-12; the installed Codex CLI and release schema baseline are `0.162.1`, and the installed Claude Code CLI is `2.1.296`. The earlier Claude Code `2.1.287` observation retains its 2026-10-02 date; registry latest does not establish runtime testing. Other installed versions and runtime observations retain their original dates: Cursor version 2026-09-11, Cursor Rules/Skills/FAQ documentation 2026-09-16, detailed Claude Code documentation 2026-09-04, and the bounded Context7 stdio probe 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
+The npm registry latest versions were rechecked on 2026-10-13; the installed Codex CLI and release schema baseline are `0.162.1`, and the installed Claude Code CLI is `2.1.296`. The earlier Claude Code `2.1.287` observation retains its 2026-10-02 date; registry latest does not establish runtime testing. Other installed versions and runtime observations retain their original dates: Cursor version 2026-09-11, Cursor Rules/Skills/FAQ documentation 2026-09-16, detailed Claude Code documentation 2026-09-04, and the bounded Context7 stdio probe 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
 
 ## 2026-10-13 current support scope
 
 The repository adopts `codex-claude-kit`, with Codex and Claude Code as the primary entry points. Applicable Claude web/desktop custom instructions and Skills, plus ChatGPT web custom instructions, remain supported. Cursor-specific distributable sources, installation recipes, and current validation contracts are retired; earlier dated Cursor documentation checks, paths, and probes remain historical evidence.
 
-This change covers support scope, source layout, and references. It does not refresh the software/package baselines below or establish new client runtime, MCP, account-upload, or production acceptance. See the current source map below, [installation](installation.md), and [retirement/prompt migration](layout-migration.md).
+This change covers support scope, source layout, and references without changing software/package versions. See the current source map below, [installation](installation.md), and [retirement/prompt migration](layout-migration.md).
+
+The 2026-10-13 v3.0.0 release preflight rechecked both installed CLIs and all nine registry entries; they matched the 2026-10-12 values. The release gate matched the live Codex schema to the tracked `0.162.1` snapshot, validated all six public user/project configuration examples, and completed six strict-load checks with isolated `CODEX_HOME` directories. This establishes schema and Codex configuration-startup evidence only; it does not establish new Claude runtime, MCP integration, account-upload, or business/production acceptance.
 
 ## 2026-10-12 layout and platform contracts (historical record)
 

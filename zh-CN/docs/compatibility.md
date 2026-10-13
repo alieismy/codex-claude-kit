@@ -1,12 +1,14 @@
 # 兼容性
 
-npm registry 最新版本已于 2026-10-12 重新核查；本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.296`。早先 Claude Code `2.1.287` 的观察日期仍为 2026-10-02，当前 registry 版本不代表已通过运行测试。其它已安装版本和运行测试保留各自原有日期：Cursor 版本为 2026-09-11，Cursor Rules、Skills 和 FAQ 文档为 2026-09-16，Claude Code 详细文档检查为 2026-09-04，Context7 有边界 stdio 探针为 2026-08-14。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+npm registry 最新版本已于 2026-10-13 重新核查；本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.296`。早先 Claude Code `2.1.287` 的观察日期仍为 2026-10-02，当前 registry 版本不代表已通过运行测试。其它已安装版本和运行测试保留各自原有日期：Cursor 版本为 2026-09-11，Cursor Rules、Skills 和 FAQ 文档为 2026-09-16，Claude Code 详细文档检查为 2026-09-04，Context7 有边界 stdio 探针为 2026-08-14。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
 
 ## 2026-10-13 当前支持范围
 
 仓库采用 `codex-claude-kit` 名称，以 Codex 和 Claude Code 为主要入口，保留 Claude 网页版／桌面版适用的自定义指令与 Skills，以及 ChatGPT 网页版专用指令。Cursor 专属分发源、安装配方与当前验证契约退役；此前日期化 Cursor 文档检查、路径和探针保留为历史证据。
 
-这次调整涉及支持范围、源布局与引用，不更新下方软件版本或包基线，也不新增客户端运行、MCP、账户上传或生产验收结论。当前来源见下方映射，安装见[安装说明](installation.md)，退役和提示词迁移见[布局迁移](layout-migration.md)。
+这次调整涉及支持范围、源布局与引用，不改变软件或包版本。当前来源见下方映射，安装见[安装说明](installation.md)，退役和提示词迁移见[布局迁移](layout-migration.md)。
+
+2026-10-13 的 v3.0.0 发布预检重新核查两个已安装 CLI 和全部九项 registry 版本，均与 2026-10-12 的值一致。发布门禁确认实时 Codex Schema 与仓库内 `0.162.1` 快照一致，六份公开用户／项目配置示例均通过 Schema 校验，并在隔离的 `CODEX_HOME` 中完成六项严格加载检查。这仅建立 Schema 与 Codex 配置启动层面的证据，不新增 Claude 运行、MCP 集成、账户上传或业务／生产验收结论。
 
 ## 2026-10-12 布局与平台契约（历史记录）
 
