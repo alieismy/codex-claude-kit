@@ -1,10 +1,10 @@
-# Codex Three-Layer Delivery 用户提示词模板（zh-CN）
+# Codex & Claude Kit 用户提示词模板（zh-CN）
 
-> 配合 `zh-CN/` 简体中文包使用。将 `{花括号}` 替换为实际信息后，可直接粘贴到 Cursor 或 Claude Code。
+> 配合 `zh-CN/` 简体中文包使用。将 `{花括号}` 替换为实际信息后，可直接粘贴到 Claude Code。
 >
 > Skill 通过 `/rd-*` 前缀匹配。本模板集明确排除编码开发、代码评审、测试执行、部署执行和发布运维任务。
 >
-> 下方命令使用 Cursor 或 Claude Code 本地 Skill 名称。Claude Code 使用账户同步 Skills 时，粘贴前请将每处 `/rd-*` 调用替换为 `/anthropic-skills:rd-*`；不要仅为保留较短名称再安装一份本地副本。
+> 下方命令使用 Claude Code 本地 Skill 名称。Claude Code 使用账户同步 Skills 时，粘贴前请将每处 `/rd-*` 调用替换为 `/anthropic-skills:rd-*`；不要仅为保留较短名称再安装一份本地副本。
 
 ---
 

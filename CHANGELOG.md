@@ -4,6 +4,15 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
+## 3.0.0 - 2026-10-13
+
+- Adopt **Codex & Claude Kit** (`codex-claude-kit`) as the project name. Describe configurations, global/project rules, custom instructions, prompts, and Skills as separately selectable assets for professional work. Retain the three-layer rule/Skill model and the existing RD responsibilities.
+- **Breaking support change:** retire Cursor adapters, installation recipes, and current platform checks. Preserve dated release notes, research, and evidence as historical records; existing personal installations are not changed.
+- Move the shared Cursor/Claude Code prompt templates to `claude/project/PROMPTS.md` and `zh-CN/claude/project/PROMPTS.md`, retaining task bodies and local/account-synced Skill invocation guidance.
+- Make Codex and Claude Code the primary local-agent entry points, retain Claude web/desktop instructions and applicable Skills, and preserve support for the existing ChatGPT web custom-instruction profile. Account instruction bodies and canonical RD Skills are unchanged.
+- Update bilingual installation, compatibility, migration, MCP, and release documentation. Replace Cursor-specific negative cases with a retired-source-root regression and preserve Claude prompt invocation checks; the negative runner now defines 28 cases.
+- Recheck both installed CLIs and all nine registry entries for release; versions remain unchanged from 2026-10-12. Verify the live Codex schema and all six public configuration examples, including isolated strict-load checks under Codex `0.162.1`; this does not establish MCP, account-upload, or production acceptance.
+
 ## 2.0.1 - 2026-10-12
 
 - Corrected the English and Chinese Cursor engineering-discipline and spec-injection rules, which still directed RD Skills to a project `.cursor/skills` copy after v2.0.0 removed that mirror. They now point to the discovered `rd-*` Skill and the default `.agents/skills` roots, including the spec-check step. The validator rejects `.cursor/skills/` path references in Cursor rules, with a new Chinese-rule negative case (31 cases).

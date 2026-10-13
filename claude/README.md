@@ -1,6 +1,8 @@
-# Claude Code Adapter
+# Claude Guide
 
-This adapter maps the shared document-delivery model to Claude Code native rules, selected settings/MCP examples, and a deliberate Skill source. Codex retains the most extensive configuration examples; platform capabilities are not identical.
+Claude Code is the primary Claude entry point in Codex & Claude Kit. This adapter maps the shared document-delivery model to native rules, selected settings/MCP examples, prompts, and a deliberate Skill source. Claude web/desktop instructions and applicable Skills are also maintained. Codex retains the most extensive configuration examples; platform capabilities are not identical.
+
+Use the [Claude Code prompt templates](project/PROMPTS.md) for local or account-synced Skill calls. For Claude web/desktop personalization, see the separate [Instructions for Claude profile](../docs/claude-personalized-instructions.md); its account setting is distinct from local `CLAUDE.md` rules. The [claude.ai upload workflow](#claudeai-skill-upload) covers account Skills. These entry points do not establish complete runtime coverage across Claude products.
 
 This adapter follows Anthropic's Claude Code documentation for [memory](https://code.claude.com/docs/en/memory), [settings](https://code.claude.com/docs/en/settings), [permissions](https://code.claude.com/docs/en/permissions), and [skills](https://code.claude.com/docs/en/skills), re-checked on 2026-09-04; the memory page was re-checked on 2026-10-01 for `AGENTS.md` support.
 
@@ -13,6 +15,7 @@ claude/
   project/CLAUDE.md.template       # @AGENTS.md + Claude-specific guidance
   project/settings.example.json
   project/mcp.example.json
+  project/PROMPTS.md
 ```
 
 The shared project core is `rules/project/AGENTS.md.template`; Skills live only in `skills/`. Source templates are inactive: remove `.template` when installing. Choose rules, settings, MCP, and Skills separately rather than copying an adapter directory. See the [source-to-destination map](../docs/installation.md#source-and-destination-map) and [migration guide](../docs/layout-migration.md).
@@ -77,7 +80,7 @@ Bash project installation runs in a subshell; guard failures leave the parent in
 
 Claude Code v2.1.277 and later can read `AGENTS.md` directly, but only when no `CLAUDE.md` is present. Because this adapter ships a `CLAUDE.md`, the explicit import keeps `AGENTS.md` loaded; it also works on earlier versions and never loads the file twice ([memory documentation](https://code.claude.com/docs/en/memory#agents-md), checked 2026-10-01). Use the import rather than a symlink on Windows. Run `/memory` or `/context` in a new session to confirm that both files loaded.
 
-The import shares textual instructions only; it does not replace Claude Code settings, permissions, hooks, Skill discovery, or other platform controls. Imported content still consumes context. Cursor also reads both `AGENTS.md` and `CLAUDE.md`; review that combination before using both adapters together.
+The import shares textual instructions only; it does not replace Claude Code settings, permissions, hooks, Skill discovery, or other platform controls. Imported content still consumes context.
 
 <a id="claudeai-skill-upload"></a>
 
@@ -100,7 +103,7 @@ pwsh -File ./scripts/package-claude-ai-skills.ps1 -Language en -Changed   # comp
 
 This adapter provides native user/project rules, selected settings/MCP entry points, and a deliberate Skill source. Import syntax, carrier locations, and Skill scopes are checked against official documentation. Current source-maintenance isolation has only bounded Claude CLI fixture verification; it does not establish complete instructions, configuration, MCP, or account acceptance. Report static gates, packaging comparison, and real client results separately; see [compatibility](../docs/compatibility.md).
 
-Project permissions are guardrails. Wrapper/compound-command interception, MCP connections, current remote account state, interactive menus, and business acceptance require target-environment checks. Recheck relevant carriers and versions when changing `CLAUDE.md`, settings, or Skills; do not derive Claude behavior from Codex or Cursor results.
+Project permissions are guardrails. Wrapper/compound-command interception, MCP connections, current remote account state, interactive menus, and business acceptance require target-environment checks. Recheck relevant carriers and versions when changing `CLAUDE.md`, settings, or Skills; do not derive Claude behavior from another product's results.
 
 ## Local fallback and verification boundaries
 

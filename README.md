@@ -1,41 +1,58 @@
-# Codex Three-Layer Delivery
+# Codex & Claude Kit
 
-An unofficial, deliverable-driven framework for system design, architecture documentation, feasibility analysis, and document review with Codex, Claude Code, and Cursor. Settings and MCP examples support the rules and Skills while retaining each platform's native installation locations.
+An unofficial toolkit of configurations, global and project rules, custom instructions, task prompts, and reusable Skills for evidence-driven professional work with Codex and Claude. Its specialist focus is system design, architecture, research, requirements, standards, writing, and review.
 
-This repository packages a three-layer operating model:
+Codex and Claude Code are the primary local-agent entry points. Claude web/desktop instructions and Skills are also in scope, and ChatGPT web custom instructions remain a supported companion. Select each asset separately and retain its product-specific installation location and verification boundary.
+
+The rules and Skills retain a three-layer operating model within the broader toolkit:
 
 1. **Global directives**: personal behavioral rules for accuracy, evidence discipline, and response style.
 2. **Project document-delivery discipline**: project-level `AGENTS.md` rules for scope control, quality gates, security, MCP routing, and verification.
 3. **Research and document-delivery skills**: eight independent specialist `rd-*` skills plus one explicit delivery orchestrator for requirements, feasibility studies, evidence research, technical proposals, detailed designs, standards work, professional writing, independent review, and cross-session handoff.
 
-Codex retains the most extensive configuration examples. Claude Code and Cursor have native global/project rule adapters and selected settings/MCP entry points; this does not claim identical capabilities or full CLI/cloud coverage.
+Codex retains the most extensive configuration examples. Claude Code has native global/project rules and selected settings/MCP entry points; support does not imply identical capabilities or full CLI/cloud coverage. The RD Skills remain focused on decision and document work; coding, test execution, deployment, and release execution use the client's core or specialist workflows.
 
-> This project is independent and is not affiliated with OpenAI, Cursor, Anthropic, or any referenced framework. See `ATTRIBUTION.md` for inspiration references.
+> This project is independent and is not affiliated with OpenAI, Anthropic, or any referenced framework. See `ATTRIBUTION.md` for inspiration references.
 
-Simplified Chinese users can start from `zh-CN/`. The English root remains the canonical baseline; `zh-CN/` is a translation pack, every maintained Chinese platform adapter is under `zh-CN/`, including `zh-CN/cursor/`.
+Simplified Chinese users can start from `zh-CN/`. The English root remains the canonical baseline; `zh-CN/` is a translation pack, and every maintained Chinese platform adapter is under `zh-CN/`. Cursor support is retired; dated release notes and evidence retain their historical scope. See the [migration guide](docs/layout-migration.md).
 
 ## Who This Is For
 
-Use this repository if you want AI agents to produce verifiable system-design and documentation deliverables instead of unstructured chat output.
+Use this repository to configure a professional AI work environment and produce verifiable judgments, research, system designs, and documents.
 
 It is designed for:
 
 - system designers, solution architects, and technical leads writing PRDs, feasibility reports, proposals, and designs;
 - product managers who need requirements to remain structured, prioritized, and traceable;
 - standards contributors and reviewers working on national, industry, enterprise, or internal specifications;
+- researchers and technical writers producing evidence reports, articles, and decision briefs;
+- AI-assisted developers and team tool maintainers selecting reusable configurations, instructions, and Skills;
 - teams that need explicit evidence discipline, clause-level review rigor, and final verification reporting.
+
+## Supported Products and Entry Points
+
+| Product | Maintained assets | Start here |
+|---|---|---|
+| Codex | Configuration/MCP examples, global and project rules, prompts, and RD Skills | [Configuration](docs/codex-configuration-guidance.md), [installation](docs/installation.md), [prompts](PROMPTS.md) |
+| Claude Code (primary Claude entry point) | Settings/MCP examples, global and project rules, prompts, local and account-synced Skills guidance | [Claude guide](claude/README.md), [prompts](claude/project/PROMPTS.md) |
+| Claude web/desktop | Applicable account instructions, task prompts, and Skill packaging/upload guidance | [Instructions for Claude](docs/claude-personalized-instructions.md), [Skill upload](claude/README.md#claudeai-skill-upload) |
+| ChatGPT web | Dedicated custom-instruction profile and product-scope guidance | [ChatGPT Web Custom Instructions](docs/personalized-custom-instructions.md) |
+
+Configuration controls client features and permissions; global rules carry stable working agreements; project rules carry project authority and constraints; custom instructions target a specific product entry point; prompts start a task; Skills supply reusable methods. These are asset categories, not six competing instruction hierarchies. Web account settings do not install local-agent rules or grant tool permissions. Adapt task text for web/desktop use; the slash commands in the Claude Code prompt file are client-specific.
 
 ## Architecture
 
 ```text
-Layer 1: Global AGENTS.md
+Layer 1: Global rules
   ~/.codex/AGENTS.md
+  ~/.claude/CLAUDE.md
   - language and tone
   - truthfulness and anti-anchoring
   - reasoning and response patterns
 
-Layer 2: Project AGENTS.md
+Layer 2: Project rules
   {project}/AGENTS.md
+  {project}/CLAUDE.md imports the shared core
   - document delivery discipline
   - spec injection
   - document quality gates
@@ -44,6 +61,7 @@ Layer 2: Project AGENTS.md
 
 Layer 3: Document Delivery Skills
   ~/.agents/skills/rd-*/SKILL.md or {project}/.agents/skills/rd-*/SKILL.md
+  Claude: deliberate local .claude/skills root or account upload
   - rd-requirement
   - rd-feasibility
   - rd-research
@@ -58,9 +76,8 @@ Source mappings (templates are inactive until installed):
   Shared project core: rules/project/AGENTS.md.template
   Codex: codex/global/AGENTS.md.template; codex/examples/; codex/project/config.example.toml
   Claude Code: claude/{global,project}/CLAUDE.md.template; settings and MCP examples
-  Cursor: cursor/global/RULES.md.template; cursor/project/rules/*.mdc.template; MCP example
   Shared Skills: skills/ (English); zh-CN/skills/ (Chinese)
-  Simplified Chinese adapters: zh-CN/{rules,codex,claude,cursor}/
+  Simplified Chinese adapters: zh-CN/{rules,codex,claude}/
 ```
 
 The source repository's root `AGENTS.md` is a maintainer-specific Layer 2 instruction file. It governs changes to this repository and is intentionally distinct from the distributable `rules/project/AGENTS.md.template` template copied into downstream document-delivery projects.
@@ -87,7 +104,7 @@ If a destination has a non-empty `AGENTS.override.md`, that file is the effectiv
 
 ### 2. Choose a Skill source
 
-Rules, configuration, and Skills are selected separately. If the nine RD Skills are already installed in a deliberate user-level source, reuse that source; the project-rule recipes do not install another Skill tree. Codex supports `~/.agents/skills/`, and Cursor documents compatibility with that root. Confirm actual discovery in a fresh client session; this repository does not establish Cursor runtime selection.
+Rules, configuration, and Skills are selected separately. If the nine RD Skills are already installed in a deliberate user-level source, reuse that source; the project-rule recipes do not install another Skill tree. Codex supports `~/.agents/skills/`; choose a documented local or account source for Claude. Confirm actual discovery in a fresh client session.
 
 For a new local installation, use the canonical source and the verified PowerShell installer:
 
@@ -138,17 +155,7 @@ Use the Simplified Chinese translation pack:
 zh-CN/
 ```
 
-Cursor English files are available under:
-
-```text
-cursor/project/
-```
-
-Cursor-specific Chinese files are under:
-
-```text
-zh-CN/cursor/project/
-```
+For Claude Code rules, configuration, prompts, and account Skill packaging, start from the [English Claude guide](claude/README.md) or [Simplified Chinese Claude guide](zh-CN/claude/README.md).
 
 ## Skill Reference: Eight Specialists and One Explicit Orchestrator
 
@@ -166,7 +173,7 @@ zh-CN/cursor/project/
 
 The first eight specialist Skills in the table are independently usable and do not form a forced pipeline. `rd-delivery` is the ninth Skill and serves only as an explicit orchestrator. Use `$rd-research` when external or contested evidence is needed, `$rd-writing` when verified evidence must become an audience-ready narrative, and `$rd-review` when an independent verdict is required. Use `$rd-delivery` only when the request explicitly asks for cross-artifact orchestration, phase gates, or a durable handoff; the request need not name the Skill, but complexity or multiple outputs alone do not qualify. This boundary lives in the Skill description, the shared routing rules, and the trigger evals; no platform-specific invocation flag restricts it to named invocation.
 
-Each skill includes output and trigger-boundary cases under `evals/` plus ChatGPT/Codex desktop metadata under `agents/openai.yaml`. Multi-mode Skills keep their common workflow in `SKILL.md` and load only the selected checklist from `references/`. Shared bodies use neutral `rd-*` identifiers; Codex examples use `$rd-*`, Cursor and local Claude Code fallback use `/rd-*`, while Claude account-synced Skills use `/anthropic-skills:rd-*`.
+Each skill includes output and trigger-boundary cases under `evals/` plus ChatGPT/Codex desktop metadata under `agents/openai.yaml`. Multi-mode Skills keep their common workflow in `SKILL.md` and load only the selected checklist from `references/`. Shared bodies use neutral `rd-*` identifiers; Codex examples use `$rd-*`, local Claude Code fallback uses `/rd-*`, while Claude account-synced Skills use `/anthropic-skills:rd-*`.
 
 For an optional external-model experiment over retained synthetic evaluation responses, see the [Jev semantic-check pilot](docs/jev-pilot.md). It records a high-confidence false positive and keeps Jev advisory; it is not a default dependency, Skill router, or release gate.
 
@@ -187,12 +194,12 @@ The source tree separates shared rules and Skills from platform-specific carrier
 | Shared project rules | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
 | Codex global rules | `codex/global/AGENTS.md.template` | `zh-CN/codex/global/AGENTS.md.template` | `{CODEX_HOME}/AGENTS.md` |
 | Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | `zh-CN/claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
-| Cursor global/project rules | `cursor/global/RULES.md.template`; `cursor/project/rules/*.mdc.template` | same paths under `zh-CN/` | User Rules in Customize; `{project}/.cursor/rules/*.mdc` |
+| Claude Code prompts | `claude/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` | current Claude Code task |
 | Shared RD Skills | `skills/rd-*` | `zh-CN/skills/rd-*` | deliberate user/project root or claude.ai upload |
 
-The shared project core is read natively by Codex and imported by the Claude project adapter with `@AGENTS.md`; change behavior shared by those adapters in the shared source. Cursor project rules are a separately maintained MDC rendering of the same contract with native activation semantics; they are not generated from the shared core, so project-wide changes must update both (see [combined clients](cursor/README.md#skills-and-combined-clients)). `00-global-principles` is project-wide conduct, distinct from Cursor user-level global rules.
+The shared project core is read natively by Codex and imported by the Claude project adapter with `@AGENTS.md`; change behavior shared by those adapters in the shared source. Native settings, permissions, MCP configuration, and Skill discovery remain product-specific.
 
-[Claude Code](claude/README.md) and [Cursor](cursor/README.md) explain platform-specific settings, MCP, Skill discovery, and optional installation. The [installation guide](docs/installation.md) gives the complete source → destination mapping. The [layout migration guide](docs/layout-migration.md) maps former paths and explains why a repository move does not change a personal installation. Remove `.template` when installing rule files; do not recursively copy a source adapter directory into a project.
+The [Claude guide](claude/README.md) explains native settings, MCP, Skill discovery, and optional installation. The [installation guide](docs/installation.md) gives the complete source → destination mapping. The [layout migration guide](docs/layout-migration.md) maps former paths and explains why a repository move does not change a personal installation. Remove `.template` when installing rule files; do not recursively copy a source adapter directory into a project.
 
 ## Reviewed Public Defaults
 
@@ -204,15 +211,14 @@ The public examples combine safety boundaries with explicit capability choices; 
 - no default third-party relay URL;
 - Codex uses `workspace-write`, live search, Memories, full shell-environment inheritance, and the default sensitive-name exclusions; merge these choices manually for the target environment;
 - Codex MCP servers remain disabled until credentials and use cases are reviewed;
-- Cursor adapter MCP config is shipped as a one-server Context7 `mcp.example.json`, not as an active `.cursor/mcp.json`;
 - Claude Code project settings deny direct reads of common secret paths at any depth under the working directory and ask for confirmation on matching Bash and Windows PowerShell commit, push, tag, publish, delete, and uncommitted-work-discarding Git command prefixes (`reset --hard`, `clean`, `checkout --`, `restore`); these permission patterns are guardrails, not a complete security boundary for every wrapper or complex command;
 - package versions are documented in `docs/compatibility.md` and should be refreshed before release;
-- Context7 uses the same unversioned package name across Codex/Cursor examples; compatibility documents retain the historical tested version, and each resolved version needs separate client-runtime verification.
+- Context7 uses the same unversioned package name across Codex examples; compatibility documents retain the historical tested version, and each resolved version needs separate client-runtime verification.
 
 ## Repository Layout
 
 ```text
-codex-three-layer-delivery/
+codex-claude-kit/
   AGENTS.md                         # repository-maintainer authority
   rules/project/AGENTS.md.template   # shared downstream project core
   skills/rd-*/                      # canonical English Skills
@@ -227,11 +233,6 @@ codex-three-layer-delivery/
     project/CLAUDE.md.template
     project/settings.example.json
     project/mcp.example.json
-  cursor/
-    README.md
-    global/RULES.md.template
-    project/rules/*.mdc.template
-    project/mcp.example.json
     project/PROMPTS.md
   zh-CN/
     README.md
@@ -240,13 +241,14 @@ codex-three-layer-delivery/
     skills/                         # Chinese Skills, one source tree
     codex/
     claude/
-    cursor/
     docs/
   docs/
     installation.md
     layout-migration.md
     compatibility.md
     release-checklist.md
+    personalized-custom-instructions.md
+    claude-personalized-instructions.md
   scripts/
     install-rd-skills.ps1
     package-claude-ai-skills.ps1
@@ -276,26 +278,26 @@ pwsh ./scripts/test-validator.ps1
 
 The validator checks common release blockers:
 
-- CRLF drift in Markdown, TOML, MDC, and script files;
+- CRLF drift in Markdown, TOML, and script files;
 - malformed or duplicate-key Skill YAML, missing or invalid frontmatter, unresolved or escaping one-level references, per-step completion criteria, metadata, and eval coverage;
 - inconsistent canonical English/Chinese Skill sets or unsupported platform payload mirrors;
-- missing evidence-state and no-change controls across Codex, Claude, and Cursor surfaces;
+- missing evidence-state and no-change controls across Codex and Claude surfaces;
 - a missing or weakened repository-maintainer root `AGENTS.md`, revision-aware context-reuse contract, or dynamic task-state boundary;
 - loss of the value-first shortest-path and bounded-gate-expansion contract across maintained agent surfaces;
 - loss of the public Codex execution-efficiency and context-hygiene contract;
-- invalid platform prompt prefixes, Claude permission/attribution settings, Cursor rule extensions or MCP credential transport, or Unix global Skill installation prerequisites;
+- invalid platform prompt prefixes, Claude permission/attribution settings, or Unix global Skill installation prerequisites;
 - Codex TOML parse/schema errors, English/Chinese semantic drift, or loss of the reviewed `web_search`, shell-environment, and Memories contract;
-- more than one always-on Cursor Project Rule, non-trigger-oriented on-demand descriptions, or loss of cross-platform anti-anchoring, context-repair, and durable-guidance approval controls;
+- reintroduced retired Cursor source roots, or loss of cross-platform anti-anchoring, context-repair, and durable-guidance approval controls;
 - loss of the optional greenfield open-source research and approval-gate prompt contract;
 - loss of the optional high-impact bidirectional-argument and critical-clarification prompt contract;
-- Context7 package-policy drift across Codex/Cursor examples and bilingual historical-version mismatches;
+- Context7 package-policy drift across Codex examples and bilingual historical-version mismatches;
 - unsafe or private values in the public Codex config example;
 - stale GSD canonical attribution or a missing archived-source marker;
 - a missing `.tmp/local/` boundary;
 - obvious secret leaks;
 - stale private/internal strings.
 
-The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects thirty-one regression cases. In addition to the existing Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it now covers the Codex schema/runtime-aligned configuration contract, Cursor's exactly-one always-on loading policy, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, Claude shared-import installation guards, and retired Cursor project Skill references.
+The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects twenty-eight regression cases. In addition to Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it covers the Codex schema/runtime-aligned configuration contract, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, Claude shared-import installation guards, Claude prompt invocation syntax, and retired Cursor source roots.
 
 Before publishing a release, also run the networked dynamic gate:
 

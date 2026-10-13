@@ -1,12 +1,12 @@
 # 安装说明
 
-本仓库提供模板。请把模板合并进你的本地 Codex、Claude Code 或项目配置，不要盲目覆盖已有文件。
+codex-claude-kit 提供配置、规则、指令、提示词与 Skills 模板，以 Codex 和 Claude Code 为主要入口，同时覆盖 Claude 网页版／桌面版适用的指令与 Skills，以及 ChatGPT 网页版专用指令。请审阅并合并到目标作用域，不要盲目覆盖已有文件。
 
 <a id="source-and-destination-map"></a>
 
 ## 源与安装目标映射
 
-规则、settings/MCP 和 Skills 分别选择。源模板不活动；安装时去掉 `.template` 后缀，已有目标先做可验证备份再合并。中文使用下表源路径前加 `zh-CN/`。不要递归复制源适配目录，也不要把账号同步缓存作为源。
+规则、settings/MCP 和 Skills 分别选择。源模板不活动；安装时去掉 `.template` 后缀，已有目标先做可验证备份再合并。中文通常使用下表源路径前加 `zh-CN/`；Claude 账户指令指南直接使用所链接的共用英文版文档（无中文版指令正文）。不要递归复制源适配目录，也不要把账号同步缓存作为源。
 
 | 载体 | 源 | 原生安装目标 |
 |---|---|---|
@@ -17,13 +17,13 @@
 | Claude 全局/项目规则 | `claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
 | Claude 用户/项目 settings | `claude/{global,project}/settings.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
 | Claude 项目 MCP | `claude/project/mcp.example.json` | `{project}/.mcp.json` |
-| Cursor 用户规则 | `cursor/global/RULES.md.template` | 在 Customize → Rules 选择内容 |
-| Cursor 项目规则 | `cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
-| Cursor 项目 MCP | `cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json` |
+| Claude Code 提示词 | `claude/project/PROMPTS.md` | 选用任务启动提示词；不是常驻规则 |
+| Claude 账户指令 | [Claude 账户指令指南](../../docs/claude-personalized-instructions.md) | Claude 网页版／桌面版账户自定义指令 |
+| ChatGPT 网页版专用指令 | `docs/personalized-custom-instructions.md` | ChatGPT 网页版自定义指令 |
 | 本地共享 Skills | `skills/rd-*` | 所选用户/项目 Skill 根 |
 | Claude 账号 Skills | `skills/rd-*`, 通过上传打包脚本 | claude.ai Customize → Skills；Code 接收账号同步 |
 
-Claude 用户/local MCP 在 `~/.claude.json`，用 `claude mcp add --scope user` 或 `--scope local` 管理，不是 settings JSON 中的服务器定义。Cursor 用户 MCP 可在 `~/.cursor/mcp.json`。Cursor IDE User Rules、IDE 设置和 CLI 配置载体不同；本轮不扩展完整 CLI/cloud 支持。官方契约见 [Claude 适配说明](../claude/README.md)和 [Cursor 适配说明](../cursor/README.md)。源目录迁移不会更新个人安装，见[布局迁移](layout-migration.md)。
+Claude 用户/local MCP 在 `~/.claude.json`，用 `claude mcp add --scope user` 或 `--scope local` 管理，不是 settings JSON 中的服务器定义。settings 与 MCP 的作用域和存储位置须分别选择，见 [Claude 适配说明](../claude/README.md)。源目录迁移不会更新个人安装，见[布局迁移](layout-migration.md)。
 
 ## Codex 规则
 
@@ -135,21 +135,21 @@ pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -DestinationRoot 'pat
 pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -DestinationRoot 'path/to/your-project/.claude/skills'
 ```
 
-源始终是对应语言的共享 Skills 树。选择项目/团队安装时明确谁负责更新与验收；Claude Code 官方支持 `.claude/skills`，不能把 `.agents/skills` 宣称为三平台通用发现根。用户级 fallback 可将目标设为 `$HOME/.claude/skills`。先盘点同名来源，已有用户/account 副本时不默认追加；仅在授权范围内替换。
+源始终是对应语言的共享 Skills 树。选择项目/团队安装时明确谁负责更新与验收；Claude Code 官方支持 `.claude/skills`，不能把 `.agents/skills` 宣称为 Codex 与 Claude Code 通用发现根。用户级 fallback 可将目标设为 `$HOME/.claude/skills`。先盘点同名来源，已有用户/account 副本时不默认追加；仅在授权范围内替换。
 
 <a id="mixed-client-teams"></a>
 
 ### 混合客户端团队
 
-没有一个已文档化的项目 Skill 根能同时服务三个客户端。Codex 读取仓库内 `.agents/skills` 和 `$HOME/.agents/skills`；Claude Code 文档列出 `.claude/skills` 和账号同步 Skills，未列出 `.agents/skills`；Cursor 发现 `.agents/skills`、`.cursor/skills` 以及兼容的 `.claude/skills`、`.codex/skills`，同名优先级未文档化。每个项目选择一种安排，并记录语言和源修订：
+Codex 与 Claude Code 没有共同的已文档化项目 Skill 发现根。Codex 读取仓库内 `.agents/skills` 和 `$HOME/.agents/skills`；Claude Code 文档列出 `.claude/skills` 和账号同步 Skills，未列出 `.agents/skills`。每个项目选择一种安排，并记录语言和源修订：
 
 | 安排 | 覆盖 | 代价 |
 |---|---|---|
-| 项目 `.agents/skills`；Claude Code 使用账号 Skills | Codex 与 Cursor 读取同一份随仓库版本管理的副本 | Claude Skill 版本取决于各成员的账号上传，不随仓库修订 |
-| 项目 `.agents/skills` 与 `.claude/skills` 来自同一源修订 | 三个客户端都读取随仓库版本管理的副本 | 两份副本须一起更新和核对；Cursor 会同时发现两份，同名选择未定义 |
-| 仅项目 `.claude/skills` | Claude Code 与 Cursor | Codex 文档列出的根不含 `.claude/skills`，Codex 成员需另做用户级安装 |
+| 项目 `.agents/skills`；Claude Code 使用账号 Skills | Codex 使用随仓库版本管理的副本；Claude Code 使用账号上传 | Claude Skill 版本取决于各成员的账号上传，不随仓库修订 |
+| 项目 `.agents/skills` 与 `.claude/skills` 来自同一源修订 | Codex 与 Claude Code 各自读取原生项目副本 | 两份副本须一起更新和核对 |
+| 仅项目 `.claude/skills` | Claude Code 使用项目副本 | Codex 文档列出的根不含 `.claude/skills`，Codex 成员需另做用户级安装 |
 
-第一种安排与 Claude 适配优先使用账号 Skills 的约定一致，且只保留一份项目副本。每份本地副本用安装脚本更新，并用 `-CheckOnly` 确认。个人 `~/.claude/skills` fallback 同时是 Cursor 兼容根，会再增加一份同名副本。Cursor MDC 规则与共享 `AGENTS.md` 同时安装时的规则重叠另见 [Cursor 多客户端共装](../cursor/README.md#skills-与多客户端共装)。以上安排均未在真实 Cursor 客户端验证。[Codex Skills](https://learn.chatgpt.com/docs/build-skills)、[Claude Code Skills](https://code.claude.com/docs/en/skills)、[Cursor Skills](https://cursor.com/docs/skills)（2026-10-12 核对）
+第一种安排与 Claude 适配优先使用账号 Skills 的约定一致，且只保留一份项目副本。每份本地副本用安装脚本更新，并用 `-CheckOnly` 确认。加入个人 `~/.claude/skills` fallback 前应盘点同名账号／用户／项目来源。原生发现根和账号同步契约分别适用；静态安装不能证明实际选中来源。[Codex Skills](https://learn.chatgpt.com/docs/build-skills)、[Claude Code Skills](https://code.claude.com/docs/en/skills)（2026-10-12 核对）
 
 ## Codex 配置
 
@@ -229,45 +229,6 @@ cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/sett
 
 用户 settings 可从 `zh-CN/claude/global/settings.example.json` 合并到 `~/.claude/settings.json`；项目 MCP 可从 `zh-CN/claude/project/mcp.example.json` 合并到项目根 `.mcp.json`。规则安装不会自动启用这两项。用户/local MCP 应通过 CLI 管理 `~/.claude.json`；`enableAllProjectMcpServers=false` 不能证明 headless 会话连接被阻止。
 
-## Cursor 适配包
-
-Cursor 官方支持项目与用户 `.agents/skills/`、`.cursor/skills/`，并兼容 `.claude/skills/` 和 `.codex/skills/`；同名来源优先级未明确。默认复用已有明确来源的 shared Skills，不随项目规则安装追加副本。新会话核对实际发现与选中来源；本轮未进行真实 Cursor 客户端验证。[官方 Skills](https://cursor.com/docs/skills)
-
-仅安装项目规则（Bash，首次创建规则目录）：
-
-```bash
-(
-set -e
-if [ -e /path/to/your-project/.cursor/rules ] || [ -L /path/to/your-project/.cursor/rules ]; then
-  printf '%s\n' 'Stop: merge existing Cursor rules manually before installing.' >&2
-  exit 1
-fi
-mkdir -p /path/to/your-project/.cursor/rules
-for rule_source in zh-CN/cursor/project/rules/*.mdc.template; do
-  rule_name=$(basename "$rule_source" .template)
-  cp "$rule_source" "/path/to/your-project/.cursor/rules/$rule_name"
-done
-)
-```
-
-PowerShell:
-
-```powershell
-& {
-    $target = (Resolve-Path -LiteralPath 'path/to/your-project').Path
-    $rulesTarget = Join-Path $target '.cursor/rules'
-    if (Test-Path -LiteralPath $rulesTarget) { throw 'Stop: merge existing Cursor rules manually before installing.' }
-    New-Item -ItemType Directory -Path $rulesTarget -ErrorAction Stop | Out-Null
-    Get-ChildItem -LiteralPath 'zh-CN/cursor/project/rules' -Filter '*.mdc.template' -File | ForEach-Object {
-        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $rulesTarget ($_.Name -replace '\.template$', '')) -ErrorAction Stop
-    }
-}
-```
-
-从 `zh-CN/cursor/global/RULES.md.template` 选择内容加入 Customize → Rules，为所有项目提供用户级偏好。`00-global-principles.mdc` 只在项目范围常驻，不等同用户全局规则。Cursor 也读取 `CLAUDE.md`，合装 Claude 薄适配时审阅其常驻影响。[官方规则说明](https://cursor.com/help/customization/rules)
-
-MCP 按需启用：先审阅 `zh-CN/cursor/project/mcp.example.json`，再合并为项目 `.cursor/mcp.json` 或用户 `~/.cursor/mcp.json`；在宿主环境设置 `CONTEXT7_API_KEY` 并到目标客户端核验 server。示例仅含 Context7，不复制完整路由目录。
-
 ## 环境变量
 
 复制环境变量示例：
@@ -278,7 +239,7 @@ cp .env.example .env
 
 只填写你实际启用的 MCP 服务器所需 API key。不要提交 `.env`。
 
-Windows 用户级环境变量也可用 `setx` 设置，但设置后需要重启 shell、Codex CLI、Codex App、Cursor 或 Claude Code。
+Windows 用户级环境变量也可用 `setx` 设置，但设置后需要重启 shell、Codex CLI、Codex App 或 Claude Code。
 
 英文根目录仍是权威基线；`zh-CN/` 是简体中文翻译包。目标文件已存在时，应手动合并，避免覆盖本地项目规则。
 

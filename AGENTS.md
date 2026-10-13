@@ -2,10 +2,10 @@
 
 ## Purpose and Authority
 
-This file governs maintenance of the `codex-three-layer-delivery` source repository itself. It is not a distributable project template and must not become a current-task status record.
+This file governs maintenance of the `codex-claude-kit` source repository itself. It is not a distributable project template and must not become a current-task status record.
 
 - `README.md` is the authority for repository purpose, the three-layer model, supported adapters, and published layout.
-- The English root is the canonical baseline. `zh-CN/` is a translation pack; Claude and Cursor files are platform adapters that preserve documented platform differences.
+- The English root is the canonical baseline. `zh-CN/` is a translation pack; Codex and Claude files preserve documented platform differences. ChatGPT web custom instructions remain a separate product surface.
 - `codex/global/AGENTS.md.template` and `rules/project/AGENTS.md.template` are distributable templates. Do not make this maintainer file a byte-for-byte copy of either template.
 - Detailed RD methods belong in the owning `skills/rd-*/SKILL.md`; this file keeps only repository-wide maintenance controls and pointers.
 
@@ -16,7 +16,7 @@ This file governs maintenance of the `codex-three-layer-delivery` source reposit
 - Re-read affected or decision-critical sources after revision changes, external edits, new evidence, context compaction, task redirection, or conflicting observations. Do not rescan the entire repository by default, and do not claim prior context remains current without checking applicable change detectors.
 - For complex or high-impact maintenance, briefly identify the reused baseline and newly refreshed dynamic evidence at the first meaningful checkpoint when that improves reviewability; do not impose a fixed context-accounting format on simple tasks.
 - Treat versions, installed tools, external releases, generated configuration, runtime state, and test results as dynamic evidence. Recheck them when they affect a conclusion; keep version snapshots in `docs/compatibility.md`, not in this file.
-- This root `AGENTS.md` is the sole repository-maintainer authority. Files under `rules/`, `codex/`, `zh-CN/`, `cursor/`, and `claude/` are distributable templates or adapters, not maintainer guidance. Keep instruction sources under non-discoverable `.template` filenames and Skills only in the shared `skills/` and `zh-CN/skills/` source trees. If an editor surfaces distributable sources as effective instructions, treat that as an unresolved adapter-isolation conflict: do not assume this root file overrides a more specific instruction, and record reproduced platform behavior in `docs/compatibility.md` rather than turning a single observation into a repository-wide runtime claim.
+- This root `AGENTS.md` is the sole repository-maintainer authority. Files under `rules/`, `codex/`, `zh-CN/`, and `claude/` are distributable templates or adapters, not maintainer guidance. Keep instruction sources under non-discoverable `.template` filenames and Skills only in the shared `skills/` and `zh-CN/skills/` source trees. If an editor surfaces distributable sources as effective instructions, treat that as an unresolved adapter-isolation conflict: do not assume this root file overrides a more specific instruction, and record reproduced platform behavior in `docs/compatibility.md` rather than turning a single observation into a repository-wide runtime claim.
 
 The root `.claude/settings.json` is maintainer-only and intentionally empty. Source isolation comes from inactive template names and the absence of nested native Skill roots; personal Skill overrides are not a repository requirement. It does not ship as a downstream project configuration. See `docs/layout-migration.md` and the bounded loading evidence in `docs/compatibility.md`.
 
@@ -24,7 +24,7 @@ The root `.claude/settings.json` is maintainer-only and intentionally empty. Sou
 
 - Make the smallest coherent change and preserve unrelated content, encoding, LF line endings, terminology, numbering, and platform-specific behavior.
 - Change the authoritative English source first, then synchronize Simplified Chinese and platform adapters where the same contract applies. Semantic parity is required; byte equality is required only where the validator explicitly defines it.
-- Preserve invocation differences: Codex prompt examples use `$rd-*`; explicit Cursor and Claude Code examples use `/rd-*`; `rd-delivery` is used only when the request explicitly asks for orchestration, without requiring the Skill to be named.
+- Preserve invocation differences: Codex prompt examples use `$rd-*`; Claude Code local Skill examples use `/rd-*`, and account-synced examples use `/anthropic-skills:rd-*`; `rd-delivery` is used only when the request explicitly asks for orchestration, without requiring the Skill to be named.
 - Keep one authoritative source for each rule, fact, decision, or workflow. Use resolvable pointers instead of copying detailed procedures into multiple always-loaded files.
 - Use `.tmp/local/` for ignored task-local clones, downloads, logs, and probes. Do not place durable artifacts, credentials, or the only copy of evidence there.
 
@@ -61,7 +61,7 @@ pwsh ./scripts/validate-release.ps1
 This release-only check compares the tracked Codex configuration schema with the current official schema, validates every public Codex example against the live copy, confirms the installed Codex version matches the pinned schema version, and strict-loads each example from an isolated temporary `CODEX_HOME`.
 
 - A validator change must include a negative case that proves the affected invariant can fail.
-- Static validation establishes repository shape and text contracts only. Do not claim Codex, Claude Code, Cursor, MCP, generated configuration, runtime, or business acceptance without the corresponding higher evidence layer.
+- Static validation establishes repository shape and text contracts only. Do not claim Codex, Claude Code, Claude web/desktop, ChatGPT web, MCP, generated configuration, runtime, or business acceptance without the corresponding higher evidence layer.
 - Before completion, inspect the full diff and confirm that intended mirrors, references, changelog entries, and validation descriptions remain consistent.
 
 ## Security, Git, and Release Boundary

@@ -39,9 +39,9 @@ git status --short --ignored -- .tmp/local/
 - [ ] Record version, date, platform, configuration, command, expected result, observed result, and limitation for every new compatibility claim.
 - [ ] Keep documentation claims, source implementation, static configuration, final generated/effective configuration, runtime state, and business/production acceptance separate.
 - [ ] Treat “no change required” as valid when current evidence does not justify a version or behavior change.
-- [ ] Ensure all Codex/Cursor Context7 examples use the same unversioned package name and bilingual compatibility records agree on historical tested and current registry versions.
+- [ ] Ensure all Codex Context7 examples use the same unversioned package name and bilingual compatibility records agree on historical tested and current registry versions.
 - [ ] Confirm the tracked Codex schema metadata identifies its version, tagged source, live source, retrieval date, byte length, SHA-256 digest, and license.
-- [ ] Verify English/Chinese semantics and Codex/Claude/Cursor adapter parity while preserving documented platform differences.
+- [ ] Verify English/Chinese semantics and Codex/Claude adapter parity while preserving documented platform differences.
 
 ## 4. Inspect Content and Supply-Chain Hygiene
 

@@ -1,8 +1,16 @@
 # Compatibility
 
-The npm registry latest versions were rechecked on 2026-10-12; the installed Codex CLI and release schema baseline are `0.162.1`, and the installed Claude Code CLI is `2.1.296`. The earlier Claude Code `2.1.287` observation retains its 2026-10-02 date; registry latest does not establish runtime testing. Other installed versions and runtime observations retain their original dates: Cursor version 2026-09-11, Cursor Rules/Skills/FAQ documentation 2026-09-16, detailed Claude Code documentation 2026-09-04, and the bounded Context7 stdio probe 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
+The npm registry latest versions were rechecked on 2026-10-13; the installed Codex CLI and release schema baseline are `0.162.1`, and the installed Claude Code CLI is `2.1.296`. The earlier Claude Code `2.1.287` observation retains its 2026-10-02 date; registry latest does not establish runtime testing. Other installed versions and runtime observations retain their original dates: Cursor version 2026-09-11, Cursor Rules/Skills/FAQ documentation 2026-09-16, detailed Claude Code documentation 2026-09-04, and the bounded Context7 stdio probe 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
 
-## 2026-10-12 layout and platform contracts
+## 2026-10-13 current support scope
+
+The repository adopts `codex-claude-kit`, with Codex and Claude Code as the primary entry points. Applicable Claude web/desktop custom instructions and Skills, plus ChatGPT web custom instructions, remain supported. Cursor-specific distributable sources, installation recipes, and current validation contracts are retired; earlier dated Cursor documentation checks, paths, and probes remain historical evidence.
+
+This change covers support scope, source layout, and references without changing software/package versions. See the current source map below, [installation](installation.md), and [retirement/prompt migration](layout-migration.md).
+
+The 2026-10-13 v3.0.0 release preflight rechecked both installed CLIs and all nine registry entries; they matched the 2026-10-12 values. The release gate matched the live Codex schema to the tracked `0.162.1` snapshot, validated all six public user/project configuration examples, and completed six strict-load checks with isolated `CODEX_HOME` directories. This establishes schema and Codex configuration-startup evidence only; it does not establish new Claude runtime, MCP integration, account-upload, or business/production acceptance.
+
+## 2026-10-12 layout and platform contracts (historical record)
 
 The source migration moves the shared project core to `rules/project/AGENTS.md.template`, uses template suffixes and non-native source directories for distributable instructions, consolidates Chinese Cursor files under `zh-CN/cursor/`, and removes four platform Skill mirrors. Only `skills/` and `zh-CN/skills/` are maintained sources. See [layout migration](layout-migration.md) and [current installation](installation.md). Dated records below retain their former paths, sample counts, versions, fixtures, and results as historical-layout evidence; they do not validate this new layout.
 
@@ -18,13 +26,20 @@ The same record's `installationRecipes` extracts the Cursor/Claude project Power
 
 The same record retains exact payload comparison of nine ZIPs per language (24 runtime payload files each) with the canonical source and pre-migration baseline. Each language's 62 source files remains unchanged; `evals/` and `agents/` are excluded by the packaging contract. This establishes package payload equality, not upload or server-side replacement.
 
+## Current source map (2026-10-13)
+
 | Current surface | English source | Chinese source |
 |---|---|---|
+| Codex global rules | `codex/global/AGENTS.md.template` | `zh-CN/codex/global/AGENTS.md.template` |
+| Codex user configuration | `codex/examples/config{,.full-access}.example.toml` | same layout under `zh-CN/codex/examples/` |
+| Codex project configuration | `codex/project/config.example.toml` | `zh-CN/codex/project/config.example.toml` |
+| Codex prompts | `PROMPTS.md` | `zh-CN/PROMPTS.md` |
 | Shared project rules | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` |
-| Cursor user rules | `cursor/global/RULES.md.template` | `zh-CN/cursor/global/RULES.md.template` |
-| Cursor project rules/MCP | `cursor/project/rules/*.mdc.template`; `cursor/project/mcp.example.json` | same layout under `zh-CN/cursor/project/` |
 | Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | same layout under `zh-CN/claude/` |
 | Claude settings/MCP | `claude/global/settings.example.json`; `claude/project/{settings,mcp}.example.json` | same layout under `zh-CN/claude/` |
+| Claude Code prompts | `claude/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` |
+| ChatGPT web instructions | `docs/personalized-custom-instructions.md` | `zh-CN/docs/personalized-custom-instructions.md` |
+| Claude account instructions | `docs/claude-personalized-instructions.md` | Shared English-only profile; no Chinese instruction-body mirror |
 | Skills | `skills/rd-*` | `zh-CN/skills/rd-*` |
 
 ## Codex
@@ -109,18 +124,20 @@ A prior installation probe inadvertently executed a user-level copy from a combi
 
 The user subsequently confirmed that no original backup exists and authorized the revised Chinese global template as the new baseline. The current personal file was backed up before updating `~/.claude/CLAUDE.md`, and its hash matches the revised template. This adopts a new baseline rather than restoring unknown original content; the probes above precede this update.
 
-## Cursor
+## Cursor (retired support; historical evidence)
+
+This section preserves the earlier checked documentation contracts and layouts; it is not a current support or installation guide.
 
 The Cursor Rules, Skills, and FAQ documentation was rechecked on 2026-09-16; the installed Windows desktop version observed on 2026-09-11 was `3.20.10` (system setup):
 
 - [Rules](https://cursor.com/docs/rules.md): Project Rules live in `.cursor/rules` as `.mdc` files. Plain `.md` files are ignored by the rules system; use `AGENTS.md` for plain Markdown guidance. Cursor supports nested `AGENTS.md` files, applies them when working with files in their directory or descendants, combines them with parent instructions, and gives more-specific instructions precedence.
 - [Skills](https://cursor.com/docs/skills.md): Agent Skills are portable, version-controlled packages that can include scripts, templates, and references. Cursor discovers project and user Skills from `.agents/skills/`, `.cursor/skills/`, `~/.agents/skills/`, and `~/.cursor/skills/`, and also loads `.claude/skills/`, `.codex/skills/`, `~/.claude/skills/`, and `~/.codex/skills/`. The official documentation does not define precedence or deduplication for same-name Skills found in multiple roots. A shared/Codex installation under an Agents root combined with the Cursor adapter's `.cursor/skills/` is already a multi-source installation even without Claude Code. Since 2026-10-01 the shared, Claude Code, and Cursor `rd-delivery` copies carry identical content and no platform-specific invocation flag; same-name selection ambiguity remains.
 - [MCP](https://cursor.com/docs/mcp.md): project-specific MCP servers are configured through `.cursor/mcp.json`; global servers use `~/.cursor/mcp.json`.
-- [Rules FAQ](https://cursor.com/help/customization/rules#how-does-claudemd-work-in-cursor) (checked 2026-09-16): Cursor reads `CLAUDE.md` the same way it reads `AGENTS.md`, and `CLAUDE.md` files are always applied to every conversation regardless of any `alwaysApply` frontmatter setting. Combining the Claude Code and Cursor adapters therefore adds another always-on instruction file as well as another discoverable Skill source; see `cursor/README.md`.
+- [Rules FAQ](https://cursor.com/help/customization/rules#how-does-claudemd-work-in-cursor) (checked 2026-09-16): Cursor reads `CLAUDE.md` the same way it reads `AGENTS.md`, and `CLAUDE.md` files are always applied to every conversation regardless of any `alwaysApply` frontmatter setting. Combining the Claude Code and Cursor adapters therefore adds another always-on instruction file as well as another discoverable Skill source; see the historical source path `cursor/README.md`.
 
 A 2026-09-16 maintainer session reported that the four distributable `AGENTS.md` templates under `codex/` and `zh-CN/codex/`, plus the English and Chinese Cursor `00-global-principles.mdc` files, were surfaced together as effective instructions. Those six files in the historical record total 64,928 bytes and contain conflicting language directives. This is a single-session runtime observation, not an independently reproduced loading contract; the official nested-`AGENTS.md` documentation describes directory-scoped application instead. That historical observation has no verified isolation mechanism; runtime isolation after this migration requires separate verification. Treat the observation as an unresolved source-repository compatibility risk, not proof that every Cursor session loads all six files or that the root maintainer file overrides them.
 
-The following table preserves the pre-migration adapter layout; use the current table above and migration guide for new installations.
+The following table preserves the pre-retirement adapter layout; this repository no longer provides Cursor installation entry points.
 
 | Historical adapter surface | Historical repository path | Former public-release posture |
 |---|---|---|
@@ -131,18 +148,18 @@ The following table preserves the pre-migration adapter layout; use the current 
 | Chinese skills | `cursor/zh-CN/.cursor/skills/rd-*/SKILL.md` | Mirrored from `zh-CN/skills/rd-*` |
 | Chinese MCP example | `cursor/zh-CN/.cursor/mcp.example.json` | Example only; copy to `.cursor/mcp.json` after review |
 
-This repository does not ship an active Cursor `.cursor/mcp.json` and does not rely on undocumented `disabled` or `alwaysAllow` fields in Cursor MCP templates.
+Before retirement, this repository did not ship an active Cursor `.cursor/mcp.json` or rely on undocumented `disabled` or `alwaysAllow` fields in Cursor MCP templates.
 
 ## MCP Packages
 
 | MCP server | Package | Tested version | Registry latest checked | Default in public config |
 |---|---|---:|---:|---|
-| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.3.0` | Codex example disabled; sole Cursor minimal example, inactive until copied and credentialed |
-| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Codex example disabled; omitted from Cursor minimal example |
+| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.3.0` | Codex example disabled |
+| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Codex example disabled |
 | Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | Omitted from public minimal examples |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | Omitted from public minimal examples |
-| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex example disabled; omitted from Cursor minimal example |
-| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex example disabled; omitted from Cursor minimal example |
+| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex example disabled |
+| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex example disabled |
 | Augment Context Engine | `ace-tool-rs` | `0.1.16` | `0.1.16` | Omitted from public minimal examples |
 
 The 2026-10-12 v2.0.0 release preflight re-queried the Codex, Claude Code, and seven MCP package registry entries and checked the installed CLIs. Eight registry values matched the preceding record; Sequential Thinking returned a `latest` tag of `1.0.0` through both the registry `/latest` endpoint and `npm view ... dist-tags` with the official registry specified. The previous snapshot recorded `2026.8.31`. This reports the current tag without inferring why it changed or an upgrade order; the server remains omitted from public minimal examples, and no new MCP runtime acceptance is established.
@@ -151,7 +168,7 @@ Context7 `4.0.2` was verified against the [npm package metadata](https://www.npm
 
 This is package, static-configuration, and stdio-protocol evidence. It does not prove authenticated Context7 queries, real Codex/Cursor/Claude Code host integration, or business/production acceptance. Those higher evidence layers must be tested in the target client before being claimed.
 
-All Codex/Cursor Context7 examples use the unversioned `@upstash/context7-mcp` package; other npm MCP invocations are also unpinned. The table's `4.0.2` remains a historical tested baseline, not proof that the version resolved by a future installation has been tested. Check the resolved version and runtime requirements before enabling it; consumers needing reproducible installs should pin their own verified version. Other servers remain routing candidates in `docs/mcp-routing.md` and should be added one at a time for a verified need rather than copied as a full catalog. The versions above remain compatibility evidence and must be re-checked before release.
+All current Codex Context7 examples use the unversioned `@upstash/context7-mcp` package; other npm MCP invocations are also unpinned. The table's `4.0.2` remains a historical tested baseline, not proof that the version resolved by a future installation has been tested. Check the resolved version and runtime requirements before enabling it; consumers needing reproducible installs should pin their own verified version. Other servers remain routing candidates in `docs/mcp-routing.md` and should be added one at a time for a verified need rather than copied as a full catalog. The versions above remain compatibility evidence and must be re-checked before release.
 
 ## Optional Jev pilot
 
@@ -164,7 +181,7 @@ Before tagging a release:
 1. run `npm view <package> version` for each npm MCP package;
 2. update the registry latest column if versions changed;
 3. update tested versions only after re-verification;
-4. keep every Context7 Codex/Cursor example on the unversioned package name; `scripts/validate.ps1` checks this policy and the bilingual historical version records;
+4. keep every Context7 Codex example on the unversioned package name; `scripts/validate.ps1` checks this policy and the bilingual historical version records;
 5. leave npm MCP examples unpinned without an explicit `@latest` suffix; check the resolved version and do not treat registry latest as a tested version;
 6. run `pwsh ./scripts/validate-release.ps1` to detect official Codex schema drift and strict-load the examples with the matching installed CLI;
 7. document any tool-name or API-surface changes in the release notes.

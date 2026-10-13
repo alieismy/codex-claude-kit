@@ -1,12 +1,13 @@
 # Contributing
 
-Contributions are welcome when they improve the framework without weakening its core constraints: evidence discipline, minimal-change execution, safety defaults, and final verification.
+Contributions are welcome when they improve the kit without weakening its core constraints: evidence discipline, minimal-change execution, safety defaults, and final verification.
 
 ## Contribution Types
 
 - maintainer-rule improvements for the root `AGENTS.md`, or distributable-rule improvements for `codex/global/AGENTS.md.template` and `rules/project/AGENTS.md.template`;
 - skill improvements under `skills/rd-*`;
-- Cursor adapter updates under `cursor/`;
+- Claude Code adapter and prompt updates under `claude/`;
+- Claude web/desktop guidance and ChatGPT web custom-instruction updates within their documented product scopes;
 - documentation updates under `docs/`;
 - compatibility updates for Codex CLI or MCP packages;
 - Codex configuration schema, example, or validation-gate updates.

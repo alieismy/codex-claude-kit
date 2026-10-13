@@ -1,10 +1,10 @@
 # Installation
 
-This repository provides templates. Merge them into your local Codex and project setup rather than overwriting existing files blindly.
+codex-claude-kit provides configuration, rule, instruction, prompt, and Skill templates. Codex and Claude Code are the primary entry points; applicable Claude web/desktop instructions and Skills, plus ChatGPT web custom instructions, are also supported. Review and merge each asset into its intended scope rather than overwriting existing files blindly.
 
 ## Source and destination map
 
-Choose rules, settings/MCP, and Skills independently. Source templates are inactive: remove `.template` on installation, and merge existing destinations after a verified backup. Prefix the source paths below with `zh-CN/` for Chinese. Do not copy source directories recursively or use an account-synced cache as a source.
+Choose rules, settings/MCP, and Skills independently. Source templates are inactive: remove `.template` on installation, and merge existing destinations after a verified backup. For Chinese, prefix source paths below with `zh-CN/`, except the shared English-only Claude account-instruction profile at `docs/claude-personalized-instructions.md`. Do not copy source directories recursively or use an account-synced cache as a source.
 
 | Surface | Source | Native destination |
 |---|---|---|
@@ -15,13 +15,13 @@ Choose rules, settings/MCP, and Skills independently. Source templates are inact
 | Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
 | Claude user/project settings | `claude/{global,project}/settings.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
 | Claude project MCP | `claude/project/mcp.example.json` | `{project}/.mcp.json` |
-| Cursor user rules | `cursor/global/RULES.md.template` | selected content in Customize → Rules |
-| Cursor project rules | `cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
-| Cursor project MCP | `cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json` |
+| Claude Code prompts | `claude/project/PROMPTS.md` | Selected task-starting prompts; not always-loaded rules |
+| Claude account instructions | `docs/claude-personalized-instructions.md` | Claude web/desktop account instructions |
+| ChatGPT web instructions | `docs/personalized-custom-instructions.md` | ChatGPT web custom instructions |
 | Local shared Skills | `skills/rd-*` | chosen user/project Skill root |
 | Claude account Skills | `skills/rd-*`, via the upload packager | claude.ai Customize → Skills; Code receives account sync |
 
-Claude user/local MCP lives in `~/.claude.json`, managed with `claude mcp add --scope user` or `--scope local`; it is not a settings JSON key. Cursor user MCP can live in `~/.cursor/mcp.json`. Cursor IDE User Rules, IDE settings, and CLI configuration have distinct carriers. CLI/cloud support is not expanded by these examples. See the [Claude adapter](../claude/README.md) and [Cursor adapter](../cursor/README.md) for the current documentation contracts. Repository relocation does not update personal installations; see [layout migration](layout-migration.md).
+Claude user/local MCP lives in `~/.claude.json`, managed with `claude mcp add --scope user` or `--scope local`; it is not a settings JSON key. Select settings and MCP carriers/scopes separately; see the [Claude adapter](../claude/README.md). Repository relocation does not update personal installations; see [layout migration](layout-migration.md).
 
 ## Codex Rules
 
@@ -131,19 +131,19 @@ pwsh -File ./scripts/install-rd-skills.ps1 -Language en -DestinationRoot 'path/t
 pwsh -File ./scripts/install-rd-skills.ps1 -Language en -DestinationRoot 'path/to/your-project/.claude/skills'
 ```
 
-The selected language's shared Skill tree remains the source. Choose an owner for project/team updates and acceptance. Claude Code documents `.claude/skills`; do not claim `.agents/skills` is discovered by all three platforms. A personal fallback can target `$HOME/.claude/skills`. Inventory same-name user/account/project sources before adding a copy; replace only within authorization.
+The selected language's shared Skill tree remains the source. Choose an owner for project/team updates and acceptance. Claude Code documents `.claude/skills`; do not claim `.agents/skills` is a common discovery root for Codex and Claude Code. A personal fallback can target `$HOME/.claude/skills`. Inventory same-name user/account/project sources before adding a copy; replace only within authorization.
 
 ### Mixed-client teams
 
-No documented project Skill root serves all three clients. Codex reads repository `.agents/skills` and `$HOME/.agents/skills`; Claude Code documents `.claude/skills` and account-synced Skills, not `.agents/skills`; Cursor discovers `.agents/skills` and `.cursor/skills` plus the compatible `.claude/skills` and `.codex/skills` roots, without documented same-name precedence. Choose one arrangement per project and record its language and source revision:
+No documented project Skill root serves both Codex and Claude Code. Codex reads repository `.agents/skills` and `$HOME/.agents/skills`; Claude Code documents `.claude/skills` and account-synced Skills, not `.agents/skills`. Choose one arrangement per project and record its language and source revision:
 
 | Arrangement | Coverage | Cost |
 |---|---|---|
-| Project `.agents/skills`; Claude Code uses account Skills | Codex and Cursor read one repository-versioned copy | Claude Skill versions follow each member's account upload, not the repository revision |
-| Project `.agents/skills` and `.claude/skills` from the same source revision | All three clients read repository-versioned copies | Both copies must be updated and checked together; Cursor discovers both, and its same-name selection is unspecified |
-| Project `.claude/skills` only | Claude Code and Cursor | Codex's documented roots do not include `.claude/skills`, so Codex members need a user-level installation |
+| Project `.agents/skills`; Claude Code uses account Skills | Codex reads a repository-versioned copy; Claude Code uses account uploads | Claude Skill versions follow each member's account upload, not the repository revision |
+| Project `.agents/skills` and `.claude/skills` from the same source revision | Codex and Claude Code each read their native project copies | Both copies must be updated and checked together |
+| Project `.claude/skills` only | Claude Code reads project copies | Codex's documented roots do not include `.claude/skills`, so Codex members need a user-level installation |
 
-The first arrangement matches the Claude adapter's account-Skill preference and keeps one project copy. Update each local copy with the installer and confirm it with `-CheckOnly`. A personal `~/.claude/skills` fallback is also a Cursor compatibility root and adds another same-name copy. Project rules overlap separately when the Cursor MDC rules and the shared `AGENTS.md` are both installed; see [Cursor combined clients](../cursor/README.md#skills-and-combined-clients). None of these arrangements has been verified in a real Cursor client. [Codex Skills](https://learn.chatgpt.com/docs/build-skills), [Claude Code Skills](https://code.claude.com/docs/en/skills), [Cursor Skills](https://cursor.com/docs/skills) (checked 2026-10-12)
+The first arrangement matches the Claude adapter's account-Skill preference and keeps one project copy. Update each local copy with the installer and confirm it with `-CheckOnly`. Inventory same-name account/user/project sources before adding a personal `~/.claude/skills` fallback. Native discovery roots and account sync have separate contracts; static installation does not establish runtime selection. [Codex Skills](https://learn.chatgpt.com/docs/build-skills), [Claude Code Skills](https://code.claude.com/docs/en/skills) (checked 2026-10-12)
 
 ## Codex Configuration
 
@@ -185,46 +185,7 @@ cp .env.example .env
 
 Fill only the API keys for MCP servers you enable. Never commit `.env`.
 
-On Windows, user-level environment variables can also be set with `setx`, but restart your shell and any affected client—Codex CLI, Codex app, Cursor, or Claude Code—after changing them.
-
-## Cursor Adapter
-
-Cursor documents project and user `.agents/skills/` and `.cursor/skills/`, plus compatible `.claude/skills/` and `.codex/skills/` roots. Same-name precedence is unspecified. Reuse a deliberate shared Skill source by default and do not install another copy with project rules. Confirm discovery and selection in a fresh session; this layout change has no real Cursor client verification. [Official Skills](https://cursor.com/docs/skills)
-
-Install project rules only (Bash, first-time rules directory):
-
-```bash
-(
-set -e
-if [ -e /path/to/your-project/.cursor/rules ] || [ -L /path/to/your-project/.cursor/rules ]; then
-  printf '%s\n' 'Stop: merge existing Cursor rules manually before installing.' >&2
-  exit 1
-fi
-mkdir -p /path/to/your-project/.cursor/rules
-for rule_source in cursor/project/rules/*.mdc.template; do
-  rule_name=$(basename "$rule_source" .template)
-  cp "$rule_source" "/path/to/your-project/.cursor/rules/$rule_name"
-done
-)
-```
-
-PowerShell:
-
-```powershell
-& {
-    $target = (Resolve-Path -LiteralPath 'path/to/your-project').Path
-    $rulesTarget = Join-Path $target '.cursor/rules'
-    if (Test-Path -LiteralPath $rulesTarget) { throw 'Stop: merge existing Cursor rules manually before installing.' }
-    New-Item -ItemType Directory -Path $rulesTarget -ErrorAction Stop | Out-Null
-    Get-ChildItem -LiteralPath 'cursor/project/rules' -Filter '*.mdc.template' -File | ForEach-Object {
-        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $rulesTarget ($_.Name -replace '\.template$', '')) -ErrorAction Stop
-    }
-}
-```
-
-Add selected content from `cursor/global/RULES.md.template` in Customize → Rules for user-level preferences across projects. `00-global-principles.mdc` is always-on at project scope, not a global user rule. Cursor also reads `CLAUDE.md`; review its always-on effect when combining adapters. [Official rules](https://cursor.com/help/customization/rules)
-
-MCP is opt-in. Review `cursor/project/mcp.example.json`, then merge it into project `.cursor/mcp.json` or user `~/.cursor/mcp.json`. Set `CONTEXT7_API_KEY` in the host environment and verify the server in the target client. The example contains only Context7; do not copy the complete routing catalog.
+On Windows, user-level environment variables can also be set with `setx`, but restart your shell and any affected client—Codex CLI, Codex app, or Claude Code—after changing them.
 
 ## Simplified Chinese Pack
 
@@ -344,7 +305,7 @@ If a non-empty `AGENTS.override.md` exists, the recipe stops before installing t
 
 If the target workspace already has `CLAUDE.md` or `.claude/`, merge manually. Claude Code reads `AGENTS.md` directly only when no `CLAUDE.md` exists (v2.1.277 or later); the explicit import works on earlier versions as well and does not load `AGENTS.md` twice. Run `/memory` or `/context` in a new session to confirm that both files loaded.
 
-Codex and Claude Code project rules have one shared source: change `rules/project/AGENTS.md.template` for project-wide behavior and `claude/project/CLAUDE.md.template` only for Claude Code-specific guidance. Cursor MDC project rules are maintained separately; see [Cursor combined clients](../cursor/README.md#skills-and-combined-clients). User settings can be merged from `claude/global/settings.example.json`; project MCP can be merged from `claude/project/mcp.example.json` into `.mcp.json`. Neither is enabled by the rules recipe.
+Codex and Claude Code project rules have one shared source: change `rules/project/AGENTS.md.template` for project-wide behavior and `claude/project/CLAUDE.md.template` only for Claude Code-specific guidance. User settings can be merged from `claude/global/settings.example.json`; project MCP can be merged from `claude/project/mcp.example.json` into `.mcp.json`. Neither is enabled by the rules recipe.
 
 ### Windows PowerShell project installation
 

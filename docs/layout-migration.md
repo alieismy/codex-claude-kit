@@ -1,6 +1,6 @@
 # Source Layout Migration
 
-The source layout separates shared rules and Skills from platform-specific templates. All maintained Simplified Chinese surfaces now live under `zh-CN/`. The source paths below are not installation paths: remove `.template` when installing rules into a client's native location.
+codex-claude-kit separates shared rules and Skills from Codex and Claude platform templates. Simplified Chinese surfaces live under `zh-CN/`; the shared English-only Claude account-instruction profile remains in `docs/`. The source paths below are not installation paths: remove `.template` when installing rules into a client's native location.
 
 ## Former and current paths
 
@@ -12,18 +12,26 @@ The source layout separates shared rules and Skills from platform-specific templ
 | `claude/global/CLAUDE.md` | `claude/global/CLAUDE.md.template` | `~/.claude/CLAUDE.md` |
 | `claude/project/CLAUDE.md` | `claude/project/CLAUDE.md.template` | `{project}/CLAUDE.md` |
 | `claude/project/.claude/settings.json` | `claude/project/settings.example.json` | `{project}/.claude/settings.json` |
-| `cursor/project/.cursor/rules/*.mdc` | `cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
-| `cursor/project/.cursor/mcp.example.json` | `cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json` (opt-in) |
-| `cursor/zh-CN/README.md` | `zh-CN/cursor/README.md` | documentation only |
-| `cursor/zh-CN/.cursor/rules/*.mdc` | `zh-CN/cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
-| `cursor/zh-CN/.cursor/mcp.example.json` | `zh-CN/cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json` (opt-in) |
-| `cursor/zh-CN/PROMPTS.md` | `zh-CN/cursor/project/PROMPTS.md` | selected project prompt reference |
 | `claude/project/.claude/skills/rd-*` | `skills/rd-*` | selected local root or account upload |
 | `cursor/project/.cursor/skills/rd-*` | `skills/rd-*` | selected local root |
 | `zh-CN/claude/project/.claude/skills/rd-*` | `zh-CN/skills/rd-*` | selected local root or account upload |
 | `cursor/zh-CN/.cursor/skills/rd-*` | `zh-CN/skills/rd-*` | selected local root |
 
-The Codex and Claude global/project moves also apply to their `zh-CN/` mirrors. The shared project core is platform-neutral; the Claude project template remains a thin `@AGENTS.md` adapter. Existing Codex user-configuration examples retain their published paths. New selected entry points are `codex/project/config.example.toml`, `claude/global/settings.example.json`, `claude/project/mcp.example.json`, and `cursor/global/RULES.md.template`, with Chinese translations.
+The Codex and Claude global/project moves also apply to their `zh-CN/` mirrors. The shared project core is platform-neutral; the Claude project template remains a thin `@AGENTS.md` adapter. Existing Codex user-configuration examples retain their published paths. New selected entry points are `codex/project/config.example.toml`, `claude/global/settings.example.json`, and `claude/project/mcp.example.json`, with Chinese translations.
+
+## Cursor retirement and name migration
+
+The 2026-10-13 scope change adopts `codex-claude-kit` and removes Cursor-specific rules, configuration, installation recipes, and current gates. Claude Code is the primary Claude entry point; applicable Claude web/desktop instructions and Skills, plus ChatGPT web custom instructions, remain supported.
+
+| Former source | Current source / disposition | Purpose |
+|---|---|---|
+| `cursor/project/PROMPTS.md` | `claude/project/PROMPTS.md` | Claude Code task-starting prompts |
+| `zh-CN/cursor/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` | Chinese Claude Code task-starting prompts |
+| Cursor-specific rules, MCP, and adapter guides | Removed from current distributable sources | Current support ends; historical Git records remain |
+
+The former Cursor Skill mirrors in the table above describe the earlier completed source consolidation; shared Skills remain after Cursor retirement. The 2026-10-12 layout/installation probes are retained in [compatibility](compatibility.md), where former paths are historical test inputs, not current installation entry points. Existing personal Cursor installations are not removed or disabled by source retirement.
+
+Local source references and the GitHub repository identity are separate states: remote renaming and remote URL updates must be performed and verified before being reported. Historical reports, evidence paths, and published-version facts retain their original content.
 
 ## Source, installation, and account boundaries
 
@@ -31,7 +39,7 @@ The Codex and Claude global/project moves also apply to their `zh-CN/` mirrors. 
 
 Moving or deleting a repository source path does not move, delete, update, upload, or disable an installed user/project/account Skill. Existing personal settings and rules remain separate deployments. Choose their update language, scope, backup, and authority independently. Do not remove a personal Skill copy merely because its former repository mirror disappeared.
 
-For Codex and local Cursor, reuse an existing deliberate `.agents/skills` installation rather than adding project copies by default. Cursor's compatible discovery is documented, but this migration does not verify its runtime selection. Claude desktop/chat and account-signed-in Claude Code can share account-uploaded Skills. Public project/team installation and Claude Code local fallback remain supported from the canonical language source using the existing installer with `-DestinationRoot`; public use does not depend on any maintainer's personal state.
+For Codex, reuse an existing deliberate `.agents/skills` installation rather than adding project copies by default. Claude desktop/chat and account-signed-in Claude Code can share account-uploaded Skills. Public project/team installation and Claude Code local fallback remain supported from the canonical language source using the existing installer with `-DestinationRoot`; public use does not depend on any maintainer's personal state.
 
 ## Migration procedure
 

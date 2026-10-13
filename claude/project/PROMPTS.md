@@ -1,10 +1,10 @@
 # User Prompt Templates
 
-> Designed for the Codex Three-Layer Delivery document workflow. Replace `{placeholders}` with actual content, then paste into Cursor or Claude Code.
+> Designed for the Codex & Claude Kit document workflow. Replace `{placeholders}` with actual content, then paste into Claude Code.
 >
 > Skills are matched through the `/rd-*` prefix. This template set intentionally excludes coding, code review, testing, deployment execution, and release operations.
 >
-> The commands below use Cursor or Claude Code local Skill names. For Claude Code account-synced Skills, replace each `/rd-*` invocation with `/anthropic-skills:rd-*` before pasting; do not install a second local copy just to preserve the shorter name.
+> The commands below use Claude Code local Skill names. For Claude Code account-synced Skills, replace each `/rd-*` invocation with `/anthropic-skills:rd-*` before pasting; do not install a second local copy just to preserve the shorter name.
 
 ---
 

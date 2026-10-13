@@ -1,8 +1,8 @@
 # 源目录布局迁移
 
-本次布局将共享规则和 Skills 与平台专有模板分开维护，所有中文载体统一放入 `zh-CN/`。下表是源路径，不是安装路径；安装规则时去掉 `.template` 后缀，使用客户端原生文件名。
+codex-claude-kit 将共享规则和 Skills 与 Codex、Claude 平台专有模板分开维护，中文载体放入 `zh-CN/`，共用英文版 Claude 账户指令指南（无中文版指令正文）保留在 `docs/`。下表是源路径，不是安装路径；安装规则时去掉 `.template` 后缀，使用客户端原生文件名。
 
-## 旧路径与新路径
+## 旧路径与当前路径
 
 | 旧源路径 | 当前源路径 | 安装目标 |
 |---|---|---|
@@ -12,18 +12,26 @@
 | `claude/global/CLAUDE.md` | `claude/global/CLAUDE.md.template` | `~/.claude/CLAUDE.md` |
 | `claude/project/CLAUDE.md` | `claude/project/CLAUDE.md.template` | `{project}/CLAUDE.md` |
 | `claude/project/.claude/settings.json` | `claude/project/settings.example.json` | `{project}/.claude/settings.json` |
-| `cursor/project/.cursor/rules/*.mdc` | `cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
-| `cursor/project/.cursor/mcp.example.json` | `cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json`（选配） |
-| `cursor/zh-CN/README.md` | `zh-CN/cursor/README.md` | 仅文档 |
-| `cursor/zh-CN/.cursor/rules/*.mdc` | `zh-CN/cursor/project/rules/*.mdc.template` | `{project}/.cursor/rules/*.mdc` |
-| `cursor/zh-CN/.cursor/mcp.example.json` | `zh-CN/cursor/project/mcp.example.json` | `{project}/.cursor/mcp.json`（选配） |
-| `cursor/zh-CN/PROMPTS.md` | `zh-CN/cursor/project/PROMPTS.md` | 按需安装提示词参考 |
 | `claude/project/.claude/skills/rd-*` | `skills/rd-*` | 所选本地根或账号上传 |
 | `cursor/project/.cursor/skills/rd-*` | `skills/rd-*` | 所选本地根 |
 | `zh-CN/claude/project/.claude/skills/rd-*` | `zh-CN/skills/rd-*` | 所选本地根或账号上传 |
 | `cursor/zh-CN/.cursor/skills/rd-*` | `zh-CN/skills/rd-*` | 所选本地根 |
 
-Codex、Claude 全局/项目模板迁移同样适用于其 `zh-CN/` 镜像。共享项目核不依赖平台，Claude 项目模板继续使用 `@AGENTS.md` 薄适配。既有 Codex 用户配置示例路径保留；新增选定入口包括 `codex/project/config.example.toml`、`claude/global/settings.example.json`、`claude/project/mcp.example.json`、`cursor/global/RULES.md.template` 及其中文版本。
+Codex、Claude 全局/项目模板迁移同样适用于其 `zh-CN/` 镜像。共享项目核不依赖平台，Claude 项目模板继续使用 `@AGENTS.md` 薄适配。既有 Codex 用户配置示例路径保留；新增选定入口包括 `codex/project/config.example.toml`、`claude/global/settings.example.json`、`claude/project/mcp.example.json` 及其中文版本。
+
+## Cursor 退役与名称迁移
+
+2026-10-13 的支持范围调整将仓库名称改为 `codex-claude-kit`，移除 Cursor 专属规则、配置、安装配方与当前门禁。Claude Code 是 Claude 的主要入口；Claude 网页版／桌面版适用的指令与 Skills，以及 ChatGPT 网页版专用指令仍受支持。
+
+| 旧源路径 | 当前源路径／处置 | 用途 |
+|---|---|---|
+| `cursor/project/PROMPTS.md` | `claude/project/PROMPTS.md` | Claude Code 任务启动提示词 |
+| `zh-CN/cursor/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` | 中文 Claude Code 任务启动提示词 |
+| Cursor 专属规则、MCP 与适配说明 | 从当前分发源移除 | 停止当前支持，历史 Git 记录仍保留 |
+
+上表中的旧 Cursor Skill 镜像描述此前已完成的源合并；共享 Skills 不因 Cursor 退役而删除。2026-10-12 的布局／安装探针保留在[兼容性记录](compatibility.md)，其旧路径是历史测试输入，不是当前安装入口。已有个人 Cursor 安装不会随源码退役自动删除或停用。
+
+名称迁移中的本地源引用与 GitHub 仓库身份是不同状态；远端更名及 remote URL 更新须实际执行并核实后报告。历史报告、证据路径和已发布版本的事实保持原样。
 
 ## 源、安装与账户边界
 
@@ -31,7 +39,7 @@ Codex、Claude 全局/项目模板迁移同样适用于其 `zh-CN/` 镜像。共
 
 仓库源路径迁移或删除不会移动、删除、更新、上传或停用用户/项目/账号中已安装的 Skill。个人 settings 与规则同样是独立部署，应另外决定更新语言、范围、备份与授权。不能因旧仓库镜像消失就删除个人副本。
 
-Codex 与本机 Cursor 默认复用明确的 `.agents/skills` 来源，不追加项目副本。Cursor 官方文档支持兼容发现，但本次迁移没有验证运行选中的定义。Claude 桌面/聊天与登录同一账号的 Claude Code 可共享账号上传 Skills。公共项目/团队安装与 Claude Code 本地 fallback 仍可通过既有安装器 `-DestinationRoot` 从所选语言源安装，不依赖维护者的个人机器状态。
+Codex 默认复用明确的 `.agents/skills` 来源，不追加项目副本。Claude 桌面/聊天与登录同一账号的 Claude Code 可共享账号上传 Skills。公共项目/团队安装与 Claude Code 本地 fallback 仍可通过既有安装器 `-DestinationRoot` 从所选语言源安装，不依赖维护者的个人机器状态。
 
 ## 迁移步骤
 

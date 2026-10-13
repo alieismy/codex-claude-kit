@@ -9,7 +9,7 @@ $trimChars = [char[]]@(
     [System.IO.Path]::AltDirectorySeparatorChar
 )
 $systemTempRoot = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath()).TrimEnd($trimChars)
-$runRoot = Join-Path $systemTempRoot ("codex-three-layer-validator-{0}" -f [guid]::NewGuid().ToString("N"))
+$runRoot = Join-Path $systemTempRoot ("codex-claude-kit-validator-{0}" -f [guid]::NewGuid().ToString("N"))
 $pwshPath = (Get-Command pwsh -ErrorAction Stop).Source
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
@@ -144,9 +144,7 @@ try {
 
         $paths = @(
             "codex/examples/config.example.toml",
-            "zh-CN/codex/examples/config.example.toml",
-            "cursor/project/mcp.example.json",
-            "zh-CN/cursor/project/mcp.example.json"
+            "zh-CN/codex/examples/config.example.toml"
         )
         foreach ($relativePath in $paths) {
             $path = Join-Path $caseRoot $relativePath
@@ -574,18 +572,14 @@ try {
     Invoke-NegativeCase -Name "platform-configuration-contracts" -ExpectedPattern @(
         "Prompt platform/invocation contract is missing 'paste into Codex CLI or Codex App\.'",
         "Prompt platform/invocation contract is missing '可直接粘贴到 Codex CLI 或 Codex App。'",
-        "Prompt platform/invocation contract is missing 'paste into Cursor or Claude Code\.'",
-        "Prompt platform/invocation contract is missing '可直接粘贴到 Cursor 或 Claude Code。'",
+        "Prompt platform/invocation contract is missing 'paste into Claude Code\.'",
+        "Prompt platform/invocation contract is missing '可直接粘贴到 Claude Code。'",
+        "Claude Code prompt files must use /rd-\* invocation syntax",
         "Claude settings must not use deprecated includeCoAuthoredBy",
         "Claude settings is missing required deny permission 'Read\(secrets/\*\*\)'",
         "Claude settings is missing required ask permission 'Bash\(git commit \*\)'",
         "Claude settings is missing required ask permission 'PowerShell\(git commit \*\)'",
         "Claude settings is missing required ask permission 'Bash\(git reset --hard \*\)'",
-        "Cursor source Project Rules must use \.mdc\.template",
-        "Cursor guidance incorrectly allows plain \.md Project Rules",
-        "Credentialed Cursor MCP server must not receive API keys through command arguments",
-        "Credentialed Cursor MCP server must map only its own API key through env",
-        "Credentialed Cursor MCP server must not use a shared envFile",
         "Bash Skill install must refuse to overwrite existing target directories before copying",
         "Claude Code project adapter must import the shared project core with '@AGENTS\.md'"
     ) -Mutate {
@@ -595,22 +589,22 @@ try {
             @{
                 Path = "PROMPTS.md"
                 Current = "paste into Codex CLI or Codex App."
-                Invalid = "paste into Codex CLI, Codex App, Cursor, or Claude Code."
+                Invalid = "paste into Codex CLI, Codex App, or Claude Code."
             },
             @{
                 Path = "zh-CN/PROMPTS.md"
                 Current = "可直接粘贴到 Codex CLI 或 Codex App。"
-                Invalid = "可直接粘贴到 Codex CLI、Codex App、Cursor 或 Claude Code。"
+                Invalid = "可直接粘贴到 Codex CLI、Codex App 或 Claude Code。"
             },
             @{
-                Path = "cursor/project/PROMPTS.md"
-                Current = "paste into Cursor or Claude Code."
-                Invalid = "paste into Codex CLI, Codex App, Cursor, or Claude Code."
+                Path = "claude/project/PROMPTS.md"
+                Current = "paste into Claude Code."
+                Invalid = "paste into Codex CLI, Codex App, or Claude Code."
             },
             @{
-                Path = "zh-CN/cursor/project/PROMPTS.md"
-                Current = "可直接粘贴到 Cursor 或 Claude Code。"
-                Invalid = "可直接粘贴到 Codex CLI、Codex App、Cursor 或 Claude Code。"
+                Path = "zh-CN/claude/project/PROMPTS.md"
+                Current = "可直接粘贴到 Claude Code。"
+                Invalid = "可直接粘贴到 Codex CLI、Codex App 或 Claude Code。"
             }
         )
         foreach ($mutation in $promptMutations) {
@@ -622,6 +616,10 @@ try {
             }
             Set-LfText -Path $path -Content $mutated
         }
+
+        $claudePromptPath = Join-Path $caseRoot "claude/project/PROMPTS.md"
+        $claudePrompt = Get-Content -LiteralPath $claudePromptPath -Raw
+        Set-LfText -Path $claudePromptPath -Content ($claudePrompt + "`n" + '$rd-research' + "`n")
 
         $claudeSettingsPath = Join-Path $caseRoot "claude/project/settings.example.json"
         $claudeSettings = Get-Content -LiteralPath $claudeSettingsPath -Raw
@@ -652,41 +650,6 @@ try {
             throw "Fixture could not remove the Claude Code shared-core import."
         }
         Set-LfText -Path $claudeAdapterPath -Content $mutatedClaudeAdapter
-
-        $invalidCursorRulePath = Join-Path $caseRoot "cursor/project/rules/invalid.md"
-        Set-LfText -Path $invalidCursorRulePath -Content "# Invalid plain Markdown Project Rule`n"
-
-        $cursorReadmePath = Join-Path $caseRoot "cursor/README.md"
-        $cursorReadme = Get-Content -LiteralPath $cursorReadmePath -Raw
-        $invalidRuleClaim = 'Project Rules live in `.cursor/rules`; `.md` and `.mdc` are supported.'
-        $mutatedCursorReadme = $cursorReadme + "`n$invalidRuleClaim`n"
-        Set-LfText -Path $cursorReadmePath -Content $mutatedCursorReadme
-
-        $cursorMcpPath = Join-Path $caseRoot "cursor/project/mcp.example.json"
-        $cursorMcp = Get-Content -LiteralPath $cursorMcpPath -Raw
-        $context7PackageArg = '        "@upstash/context7-mcp"'
-        $context7KeyArgs = @(
-            '        "@upstash/context7-mcp",',
-            '        "--api-key",',
-            '        "${env:CONTEXT7_API_KEY}"'
-        ) -join "`n"
-        $mutatedCursorMcp = $cursorMcp.Replace($context7PackageArg, $context7KeyArgs)
-        $context7Environment = @(
-            '      "env": {',
-            '        "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"',
-            '      }'
-        ) -join "`n"
-        $sharedEnvironmentFile = '      "envFile": "${workspaceFolder}/.env"'
-        $mutatedCursorMcp = $mutatedCursorMcp.Replace($context7Environment, $sharedEnvironmentFile)
-        if (
-            $mutatedCursorMcp -eq $cursorMcp -or
-            -not $mutatedCursorMcp.Contains('"--api-key"') -or
-            -not $mutatedCursorMcp.Contains('"envFile"') -or
-            $mutatedCursorMcp.Contains($context7Environment)
-        ) {
-            throw "Fixture could not break the Cursor MCP argument and credential-isolation contracts."
-        }
-        Set-LfText -Path $cursorMcpPath -Content $mutatedCursorMcp
 
         $installGuidePath = Join-Path $caseRoot "docs/installation.md"
         $installGuide = Get-Content -LiteralPath $installGuidePath -Raw
@@ -739,20 +702,6 @@ try {
             throw "Fixture could not break the Codex strict-load working-directory isolation contract."
         }
         Set-LfText -Path $releaseValidatorPath -Content $mutatedReleaseValidator
-    }
-
-    Invoke-NegativeCase -Name "cursor-rule-loading-policy" -ExpectedPattern @(
-        "Cursor rule loading policy requires only 00-global-principles\.mdc to be always-on"
-    ) -Mutate {
-        param($caseRoot)
-
-        $path = Join-Path $caseRoot "cursor/project/rules/01-engineering-discipline.mdc.template"
-        $content = Get-Content -LiteralPath $path -Raw
-        $mutated = $content.Replace("alwaysApply: false", "alwaysApply: true")
-        if ($mutated -eq $content -or $mutated.Contains("alwaysApply: false")) {
-            throw "Fixture could not break the Cursor loading policy."
-        }
-        Set-LfText -Path $path -Content $mutated
     }
 
     Invoke-NegativeCase -Name "cross-platform-reasoning-governance" -ExpectedPattern @(
@@ -844,16 +793,6 @@ try {
         Copy-Item -LiteralPath (Join-Path $caseRoot "skills/rd-research/SKILL.md") -Destination (Join-Path $nativeSkillRoot "SKILL.md")
     }
 
-    Invoke-NegativeCase -Name "cursor-translation-layout" -ExpectedPattern @(
-        "Cursor translations must live under zh-CN/cursor",
-        "Cursor translation directory structure differs from the English source"
-    ) -Mutate {
-        param($caseRoot)
-
-        New-Item -ItemType Directory -Path (Join-Path $caseRoot "cursor/zh-CN") | Out-Null
-        Set-LfText -Path (Join-Path $caseRoot "zh-CN/cursor/unexpected.md") -Content "# Unexpected translated artifact`n"
-    }
-
     Invoke-NegativeCase -Name "claude-package-canonical-source" -ExpectedPattern @(
         "Claude Skill packager must use canonical language sources",
         "Claude Skill packager must not depend on an adapter Skill mirror"
@@ -903,34 +842,27 @@ try {
         Set-LfText -Path $mcpPath -Content (($mcp | ConvertTo-Json -Depth 10) + "`n")
     }
 
-    Invoke-NegativeCase -Name "cursor-discovered-skill-reference" -ExpectedPattern "Cursor rules must reference discovered Skills instead of removed project Skill paths" -Mutate {
+    Invoke-NegativeCase -Name "retired-cursor-adapter" -ExpectedPattern @(
+        "Retired Cursor adapter must not occur in distribution sources: cursor",
+        "Retired Cursor adapter must not occur in distribution sources: zh-CN/cursor"
+    ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "cursor/project/rules/09-task-routing.mdc.template"
-        $text = Get-Content -LiteralPath $path -Raw
-        $mutated = $text.Replace('the discovered `rd-delivery` Skill', 'the [rd-delivery Skill](../skills/rd-delivery/SKILL.md)')
-        if ($mutated -eq $text) { throw "Fixture could not restore the removed project Skill reference." }
-        Set-LfText -Path $path -Content $mutated
+        foreach ($relativeRoot in @("cursor", "zh-CN/cursor")) {
+            $adapterRoot = Join-Path $caseRoot $relativeRoot
+            New-Item -ItemType Directory -Path $adapterRoot -Force | Out-Null
+            Set-LfText -Path (Join-Path $adapterRoot "README.md") -Content "# Retired adapter restored unexpectedly`n"
+        }
     }
 
-    Invoke-NegativeCase -Name "cursor-project-skill-copy-reference" -ExpectedPattern "Cursor rules must not direct RD Skills to a project .cursor/skills copy" -Mutate {
-        param($caseRoot)
-
-        $path = Join-Path $caseRoot "zh-CN/cursor/project/rules/02-spec-injection.mdc.template"
-        $text = Get-Content -LiteralPath $path -Raw
-        $mutated = $text.Replace('2. 检查已发现的相关 Skill（默认 `.agents/skills/` 或 `~/.agents/skills/`）。', '2. 检查 `.cursor/skills/` 中的相关 Skill。')
-        if ($mutated -eq $text) { throw "Fixture could not restore the retired project Skill path." }
-        Set-LfText -Path $path -Content $mutated
-    }
-
-    Write-Host "Validator negative tests passed (31/31)." -ForegroundColor Green
+    Write-Host "Validator negative tests passed (28/28)." -ForegroundColor Green
 }
 finally {
     $resolvedRunRoot = [System.IO.Path]::GetFullPath($runRoot)
     $expectedPrefix = $systemTempRoot + [System.IO.Path]::DirectorySeparatorChar
     $leaf = Split-Path -Leaf $resolvedRunRoot
     $isWithinTemp = $resolvedRunRoot.StartsWith($expectedPrefix, [System.StringComparison]::OrdinalIgnoreCase)
-    if (-not $isWithinTemp -or -not $leaf.StartsWith("codex-three-layer-validator-")) {
+    if (-not $isWithinTemp -or -not $leaf.StartsWith("codex-claude-kit-validator-")) {
         throw "Refusing to remove an unverified temporary path: $resolvedRunRoot"
     }
     if (Test-Path -LiteralPath $resolvedRunRoot) {
