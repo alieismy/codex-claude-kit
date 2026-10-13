@@ -1,6 +1,8 @@
-# Claude Code 简体中文适配包
+# Claude 简体中文使用说明
 
-本目录提供 Claude Code 原生规则、选定 settings/MCP 示例与独立 Skill 来源选择；Codex 仍保留最完整的配置示例，各平台能力并不完全相同。本目录将 Codex Three-Layer Delivery 的三层交付模型映射到 Claude Code 的原生文件约定。
+Claude Code 是 Codex & Claude Kit 的主要 Claude 入口。本目录将共享文档交付模型映射到 Claude Code 原生规则、选定 settings/MCP 示例、提示词与独立 Skill 来源，同时维护 Claude 网页版／桌面版适用的指令与 Skills。Codex 仍保留最完整的配置示例，各平台能力并不完全相同。
+
+本地或账户同步 Skill 的调用见 [Claude Code 提示词](project/PROMPTS.md)。Claude 网页版／桌面版个性化设置见独立的 [Instructions for Claude（仅英文版）](../../docs/claude-personalized-instructions.md)，其账户设置与本地 `CLAUDE.md` 规则作用域不同；账户 Skills 见 [claude.ai 上传流程](#claudeai-skill-upload)。这些入口不表示所有 Claude 产品均已完成运行验收。
 
 参考的 Claude Code 官方载体：
 
@@ -26,6 +28,7 @@ zh-CN/claude/
   project/CLAUDE.md.template       # @AGENTS.md + Claude-specific guidance
   project/settings.example.json
   project/mcp.example.json
+  project/PROMPTS.md
 ```
 
 共享项目核在 `zh-CN/rules/project/AGENTS.md.template`；Skills 只在 `zh-CN/skills/`。源模板不活动，安装时去掉 `.template` 后缀；按需分别选规则、settings、MCP 和 Skills，不递归复制适配目录。完整[源到目标映射](../docs/installation.md#source-and-destination-map)与[迁移说明](../docs/layout-migration.md)。
@@ -90,7 +93,7 @@ Bash 项目安装在子 shell 中运行，guard 失败不会退出父交互式 s
 
 Claude Code v2.1.277 及以上版本可直接读取 `AGENTS.md`，但仅限不存在 `CLAUDE.md` 的情况。本适配包含 `CLAUDE.md`，因此通过显式导入保持 `AGENTS.md` 被加载；该方式同样适用于更早版本，且不会重复加载（[memory 文档](https://code.claude.com/docs/en/memory#agents-md)，2026-10-01 核查）。在 Windows 上应使用导入而不是软链接。可在新会话中运行 `/memory` 或 `/context` 确认两个文件均已加载。
 
-导入只共享文本指令，不能替代 Claude Code 的 settings、permissions、hooks、Skill 发现或其他平台控制；导入内容仍会占用上下文。Cursor 也会同时读取 `AGENTS.md` 和 `CLAUDE.md`，同时使用两个适配包前应先审查这一组合。
+导入只共享文本指令，不能替代 Claude Code 的 settings、permissions、hooks、Skill 发现或其他平台控制；导入内容仍会占用上下文。
 
 <a id="claudeai-skill-upload"></a>
 
@@ -113,7 +116,7 @@ pwsh -File ./scripts/package-claude-ai-skills.ps1 -Language zh-CN -Changed   # �
 
 本适配提供用户/项目原生规则、选定 settings/MCP 入口和独立 Skill 来源。规则导入、载体位置和 Skill scope 已核对官方文档；当前布局的源码维护隔离只在记录的 Claude CLI fixture 中做有界验证，不能升级为全部指令、配置、MCP 或账户行为验收。静态门禁、打包比对与真实客户端结果分别报告，见[兼容性记录](../docs/compatibility.md)。
 
-项目权限模式属于护栏；wrapper/复杂命令拦截、MCP 连接、账户远端最新状态、交互菜单和业务验收需在目标环境核验。修改 `CLAUDE.md`、settings 或 Skills 时复核相关载体与版本，不从 Codex 或 Cursor 的行为推导 Claude 结果。
+项目权限模式属于护栏；wrapper/复杂命令拦截、MCP 连接、账户远端最新状态、交互菜单和业务验收需在目标环境核验。修改 `CLAUDE.md`、settings 或 Skills 时复核相关载体与版本，不从其他产品的行为推导 Claude 结果。
 
 ## 本地 fallback 与验证边界
 

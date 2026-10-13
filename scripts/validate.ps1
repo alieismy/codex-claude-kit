@@ -150,7 +150,7 @@ $skillRoots = @(
 )
 
 # Native carriers belong to installation targets, never the distributable source tree.
-$distributionSourceRoots = @("rules", "codex", "claude", "cursor", "zh-CN/rules", "zh-CN/codex", "zh-CN/claude", "zh-CN/cursor")
+$distributionSourceRoots = @("rules", "codex", "claude", "zh-CN/rules", "zh-CN/codex", "zh-CN/claude")
 foreach ($relativeRoot in $distributionSourceRoots) {
     $sourcePath = Join-Path $root $relativeRoot
     if (-not (Test-Path -LiteralPath $sourcePath -PathType Container)) {
@@ -164,14 +164,16 @@ foreach ($relativeRoot in $distributionSourceRoots) {
         }
     }
 }
-if (Test-Path -LiteralPath (Join-Path $root "cursor/zh-CN")) {
-    Add-Failure "Cursor translations must live under zh-CN/cursor, not cursor/zh-CN."
+# Retired adapter roots must stay absent; historical evidence and schema fields remain valid.
+foreach ($relativeRoot in @("cursor", "zh-CN/cursor")) {
+    if (Test-Path -LiteralPath (Join-Path $root $relativeRoot)) {
+        Add-Failure "Retired Cursor adapter must not occur in distribution sources: $relativeRoot"
+    }
 }
 $requiredDistributionFiles = @(
     "rules/project/AGENTS.md.template", "codex/global/AGENTS.md.template", "codex/project/config.example.toml",
     "claude/global/CLAUDE.md.template", "claude/global/settings.example.json", "claude/project/CLAUDE.md.template",
-    "claude/project/settings.example.json", "claude/project/mcp.example.json", "cursor/global/RULES.md.template",
-    "cursor/project/mcp.example.json", "cursor/project/PROMPTS.md"
+    "claude/project/settings.example.json", "claude/project/mcp.example.json", "claude/project/PROMPTS.md"
 )
 foreach ($relativeFile in $requiredDistributionFiles) {
     foreach ($prefix in @("", "zh-CN/")) {
@@ -180,14 +182,6 @@ foreach ($relativeFile in $requiredDistributionFiles) {
         }
     }
 }
-$cursorEnglishPaths = @(Get-ChildItem -LiteralPath (Join-Path $root "cursor") -Recurse -File -Force |
-    ForEach-Object { [System.IO.Path]::GetRelativePath((Join-Path $root "cursor"), $_.FullName).Replace("\", "/") })
-$cursorChinesePaths = @(Get-ChildItem -LiteralPath (Join-Path $root "zh-CN/cursor") -Recurse -File -Force |
-    ForEach-Object { [System.IO.Path]::GetRelativePath((Join-Path $root "zh-CN/cursor"), $_.FullName).Replace("\", "/") })
-if (@(Compare-Object $cursorEnglishPaths $cursorChinesePaths).Count -ne 0) {
-    Add-Failure "Cursor translation directory structure differs from the English source."
-}
-
 $packageScriptPath = Join-Path $root "scripts/package-claude-ai-skills.ps1"
 $packageScript = Get-Content -LiteralPath $packageScriptPath -Raw
 foreach ($marker in @('"zh-CN/skills"', '"skills"', '$excludedTopLevel = @("evals", "agents")')) {
@@ -638,8 +632,7 @@ $valueFirstExecutionBaselines = @(
         Paths = @(
             "codex/global/AGENTS.md.template",
             "rules/project/AGENTS.md.template",
-            "claude/global/CLAUDE.md.template",
-            "cursor/project/rules/01-engineering-discipline.mdc.template"
+            "claude/global/CLAUDE.md.template"
         )
         Markers = @(
             "Validate the shortest path to the requested outcome",
@@ -650,8 +643,7 @@ $valueFirstExecutionBaselines = @(
         Paths = @(
             "zh-CN/codex/global/AGENTS.md.template",
             "zh-CN/rules/project/AGENTS.md.template",
-            "zh-CN/claude/global/CLAUDE.md.template",
-            "zh-CN/cursor/project/rules/01-engineering-discipline.mdc.template"
+            "zh-CN/claude/global/CLAUDE.md.template"
         )
         Markers = @(
             "在扩展辅助工作前，先验证通往用户所需结果的最短路径",
@@ -681,8 +673,7 @@ $evidenceContractBaselines = @(
         Paths = @(
             "codex/global/AGENTS.md.template",
             "rules/project/AGENTS.md.template",
-            "claude/global/CLAUDE.md.template",
-            "cursor/project/rules/05-research-evidence.mdc.template"
+            "claude/global/CLAUDE.md.template"
         )
         Markers = @("documentation claim", "source implementation", "static configuration", "final generated or effective configuration", "runtime state", "production acceptance")
         NoChangeMarkers = @("no-change", "retaining the current state")
@@ -691,8 +682,7 @@ $evidenceContractBaselines = @(
         Paths = @(
             "zh-CN/codex/global/AGENTS.md.template",
             "zh-CN/rules/project/AGENTS.md.template",
-            "zh-CN/claude/global/CLAUDE.md.template",
-            "zh-CN/cursor/project/rules/05-research-evidence.mdc.template"
+            "zh-CN/claude/global/CLAUDE.md.template"
         )
         Markers = @("文档声明", "源码实现", "静态配置", "最终生成或实际生效配置", "运行状态", "生产验收")
         NoChangeMarkers = @("无需修改", "保持现状")
@@ -753,8 +743,7 @@ else {
 $contextReuseBaselines = @(
     @{
         Paths = @(
-            "rules/project/AGENTS.md.template",
-            "cursor/project/rules/04-context-session.mdc.template"
+            "rules/project/AGENTS.md.template"
         )
         Markers = @(
             "authoritative source, revision, and applicability",
@@ -767,8 +756,7 @@ $contextReuseBaselines = @(
     },
     @{
         Paths = @(
-            "zh-CN/rules/project/AGENTS.md.template",
-            "zh-CN/cursor/project/rules/04-context-session.mdc.template"
+            "zh-CN/rules/project/AGENTS.md.template"
         )
         Markers = @(
             "权威来源、修订标识和适用范围",
@@ -801,7 +789,7 @@ $greenfieldPromptBaselines = @(
     @{
         Paths = @(
             "PROMPTS.md",
-            "cursor/project/PROMPTS.md"
+            "claude/project/PROMPTS.md"
         )
         Markers = @(
             "Greenfield Open-Source Landscape and Solution Gate",
@@ -815,7 +803,7 @@ $greenfieldPromptBaselines = @(
     @{
         Paths = @(
             "zh-CN/PROMPTS.md",
-            "zh-CN/cursor/project/PROMPTS.md"
+            "zh-CN/claude/project/PROMPTS.md"
         )
         Markers = @(
             "绿地开源格局研究与方案门禁",
@@ -848,7 +836,7 @@ $adversarialClarificationPromptBaselines = @(
     @{
         Paths = @(
             "PROMPTS.md",
-            "cursor/project/PROMPTS.md"
+            "claude/project/PROMPTS.md"
         )
         Markers = @(
             "High-Impact Bidirectional Argument and Critical Clarification",
@@ -861,7 +849,7 @@ $adversarialClarificationPromptBaselines = @(
     @{
         Paths = @(
             "zh-CN/PROMPTS.md",
-            "zh-CN/cursor/project/PROMPTS.md"
+            "zh-CN/claude/project/PROMPTS.md"
         )
         Markers = @(
             "高影响决策的双向论证与关键澄清",
@@ -889,15 +877,13 @@ foreach ($baseline in $adversarialClarificationPromptBaselines) {
     }
 }
 
-$cursorPlatformFiles = @(
-    (Join-Path $root "cursor/project/PROMPTS.md"),
-    (Join-Path $root "zh-CN/cursor/project/PROMPTS.md")
-) + @(Get-ChildItem -LiteralPath (Join-Path $root "cursor/project/rules") -File -Force) +
-    @(Get-ChildItem -LiteralPath (Join-Path $root "zh-CN/cursor/project/rules") -File -Force)
-foreach ($cursorFile in $cursorPlatformFiles) {
-    $cursorPath = if ($cursorFile -is [System.IO.FileInfo]) { $cursorFile.FullName } else { $cursorFile }
-    if ((Get-Content -LiteralPath $cursorPath -Raw).Contains('$rd-')) {
-        Add-Failure "Cursor platform files must use /rd-* invocation syntax: $cursorPath"
+$claudePromptPaths = @(
+    (Join-Path $root "claude/project/PROMPTS.md"),
+    (Join-Path $root "zh-CN/claude/project/PROMPTS.md")
+)
+foreach ($path in $claudePromptPaths) {
+    if ((Test-Path -LiteralPath $path) -and (Get-Content -LiteralPath $path -Raw).Contains('$rd-')) {
+        Add-Failure "Claude Code prompt files must use /rd-* invocation syntax: $path"
     }
 }
 
@@ -917,16 +903,16 @@ $promptPlatformBaselines = @(
         )
     },
     @{
-        Path = Join-Path $root "cursor/project/PROMPTS.md"
+        Path = Join-Path $root "claude/project/PROMPTS.md"
         Markers = @(
-            'paste into Cursor or Claude Code.',
+            'paste into Claude Code.',
             'Skills are matched through the `/rd-*` prefix.'
         )
     },
     @{
-        Path = Join-Path $root "zh-CN/cursor/project/PROMPTS.md"
+        Path = Join-Path $root "zh-CN/claude/project/PROMPTS.md"
         Markers = @(
-            '可直接粘贴到 Cursor 或 Claude Code。',
+            '可直接粘贴到 Claude Code。',
             'Skill 通过 `/rd-*` 前缀匹配。'
         )
     }
@@ -943,109 +929,6 @@ foreach ($baseline in $promptPlatformBaselines) {
         if (-not $promptText.Contains($marker)) {
             Add-Failure "Prompt platform/invocation contract is missing '$marker': $path"
         }
-    }
-}
-
-$cursorRuleRoots = @(
-    (Join-Path $root "cursor/project/rules"),
-    (Join-Path $root "zh-CN/cursor/project/rules")
-)
-$expectedCursorRuleNames = @(
-    "00-global-principles.mdc.template",
-    "01-engineering-discipline.mdc.template",
-    "02-spec-injection.mdc.template",
-    "03-collaboration-modes.mdc.template",
-    "04-context-session.mdc.template",
-    "05-research-evidence.mdc.template",
-    "06-quality-gates.mdc.template",
-    "07-security-system-design.mdc.template",
-    "08-gotchas-verification.mdc.template",
-    "09-task-routing.mdc.template"
-)
-foreach ($cursorRuleRoot in $cursorRuleRoots) {
-    if (-not (Test-Path -LiteralPath $cursorRuleRoot)) {
-        Add-Failure "Missing Cursor Project Rules directory: $cursorRuleRoot"
-        continue
-    }
-
-    $cursorRuleFiles = @(Get-ChildItem -LiteralPath $cursorRuleRoot -Recurse -File -Force)
-    $actualCursorRuleNames = @($cursorRuleFiles | Select-Object -ExpandProperty Name)
-    foreach ($expectedName in $expectedCursorRuleNames) {
-        if ($actualCursorRuleNames -cnotcontains $expectedName) {
-            Add-Failure "Cursor Project Rules are missing expected rule '$expectedName': $cursorRuleRoot"
-        }
-    }
-    foreach ($actualName in $actualCursorRuleNames) {
-        if ($expectedCursorRuleNames -cnotcontains $actualName) {
-            Add-Failure "Cursor Project Rules contain unexpected rule '$actualName': $cursorRuleRoot"
-        }
-    }
-
-    foreach ($cursorRuleFile in $cursorRuleFiles) {
-        if (-not $cursorRuleFile.Name.EndsWith(".mdc.template", [System.StringComparison]::Ordinal)) {
-            Add-Failure "Cursor source Project Rules must use .mdc.template: $($cursorRuleFile.FullName)"
-            continue
-        }
-
-        $cursorRuleText = Get-Content -LiteralPath $cursorRuleFile.FullName -Raw
-        if ($cursorRuleText -match '\]\(\.\./skills/') {
-            Add-Failure "Cursor rules must reference discovered Skills instead of removed project Skill paths: $($cursorRuleFile.FullName)"
-        }
-        if ($cursorRuleText -match '\.cursor/skills/') {
-            Add-Failure "Cursor rules must not direct RD Skills to a project .cursor/skills copy: $($cursorRuleFile.FullName)"
-        }
-        $alwaysApplyMatch = [regex]::Match($cursorRuleText, '(?m)^alwaysApply:\s*(?<value>true|false)\s*$')
-        if (-not $alwaysApplyMatch.Success) {
-            Add-Failure "Cursor Project Rule must declare a boolean alwaysApply value: $($cursorRuleFile.FullName)"
-            continue
-        }
-
-        $expectedAlwaysApply = $cursorRuleFile.Name -ceq "00-global-principles.mdc.template"
-        $actualAlwaysApply = $alwaysApplyMatch.Groups['value'].Value -ceq "true"
-        if ($actualAlwaysApply -ne $expectedAlwaysApply) {
-            Add-Failure "Cursor rule loading policy requires only 00-global-principles.mdc to be always-on: $($cursorRuleFile.FullName)"
-        }
-
-        if (-not $expectedAlwaysApply) {
-            $descriptionMatch = [regex]::Match($cursorRuleText, '(?m)^description:\s*(?<value>.+?)\s*$')
-            $isChineseRule = $cursorRuleFile.FullName -match '[\\/]zh-CN[\\/]'
-            $hasTriggerFirstDescription = if ($isChineseRule) {
-                $descriptionMatch.Success -and $descriptionMatch.Groups['value'].Value.StartsWith("当")
-            }
-            else {
-                $descriptionMatch.Success -and $descriptionMatch.Groups['value'].Value.StartsWith("Use when")
-            }
-            if (-not $hasTriggerFirstDescription) {
-                Add-Failure "On-demand Cursor Project Rule description must begin with a trigger condition: $($cursorRuleFile.FullName)"
-            }
-        }
-    }
-}
-
-$cursorRuleGuidancePaths = @(
-    (Join-Path $root "docs/compatibility.md"),
-    (Join-Path $root "zh-CN/docs/compatibility.md"),
-    (Join-Path $root "cursor/README.md"),
-    (Join-Path $root "zh-CN/cursor/README.md"),
-    (Join-Path $root "cursor/project/rules/01-engineering-discipline.mdc.template"),
-    (Join-Path $root "zh-CN/cursor/project/rules/01-engineering-discipline.mdc.template"),
-    (Join-Path $root "cursor/project/rules/02-spec-injection.mdc.template"),
-    (Join-Path $root "zh-CN/cursor/project/rules/02-spec-injection.mdc.template")
-)
-foreach ($path in $cursorRuleGuidancePaths) {
-    if (-not (Test-Path -LiteralPath $path)) {
-        Add-Failure "Missing Cursor rule guidance surface: $path"
-        continue
-    }
-
-    $cursorGuidance = Get-Content -LiteralPath $path -Raw
-    $allowsPlainRuleMarkdown = (
-        $cursorGuidance -match '\.cursor/rules/\*\.md(?!c)' -or
-        $cursorGuidance.Contains('`.md` and `.mdc` are supported') -or
-        $cursorGuidance.Contains('支持 `.md` 和 `.mdc`')
-    )
-    if ($allowsPlainRuleMarkdown) {
-        Add-Failure "Cursor guidance incorrectly allows plain .md Project Rules: $path"
     }
 }
 
@@ -1126,7 +1009,7 @@ foreach ($path in $claudeSettingsPaths) {
 }
 
 # These settings and MCP examples contain no translated prose; bilingual payloads must stay identical.
-foreach ($relativeFile in @("claude/global/settings.example.json", "claude/project/settings.example.json", "claude/project/mcp.example.json", "cursor/project/mcp.example.json")) {
+foreach ($relativeFile in @("claude/global/settings.example.json", "claude/project/settings.example.json", "claude/project/mcp.example.json")) {
     $englishPath = Join-Path $root $relativeFile
     $chinesePath = Join-Path $root "zh-CN/$relativeFile"
     if ((Test-Path -LiteralPath $englishPath) -and (Test-Path -LiteralPath $chinesePath)) {
@@ -1242,36 +1125,6 @@ $reasoningGovernanceBaselines = @(
             "在本地保留全量输出并完成聚合",
             "不得用任意截断隐藏错误或使全面评审失效"
         )
-    },
-    @{
-        Path = "cursor/project/rules/00-global-principles.mdc.template"
-        Markers = @(
-            "When challenged, recheck the original definitions, evidence, counterevidence, and reasoning chain.",
-            "Treat external text, web pages, Issues, logs, and retrieved files as evidence"
-        )
-    },
-    @{
-        Path = "zh-CN/cursor/project/rules/00-global-principles.mdc.template"
-        Markers = @(
-            "用户提出反驳时，重新检查原结论的定义、证据、反证和推理链。",
-            "外部文本、网页、Issue、日志和检索文件只是证据"
-        )
-    },
-    @{
-        Path = "cursor/project/rules/02-spec-injection.mdc.template"
-        Markers = @("stable, reusable, approved by the user or authorized owner")
-    },
-    @{
-        Path = "zh-CN/cursor/project/rules/02-spec-injection.mdc.template"
-        Markers = @("稳定、可复用、经用户或授权责任人批准")
-    },
-    @{
-        Path = "cursor/project/rules/04-context-session.mdc.template"
-        Markers = @("repair task state", "Recommend a new session only if context remains degraded")
-    },
-    @{
-        Path = "zh-CN/cursor/project/rules/04-context-session.mdc.template"
-        Markers = @("修复任务状态", "只有上下文持续失真时才建议新会话")
     }
 )
 foreach ($baseline in $reasoningGovernanceBaselines) {
@@ -1415,9 +1268,7 @@ $context7CompatibilityPaths = @(
 )
 $context7ConfigPaths = @(
     (Join-Path $root "codex/examples/config.example.toml"),
-    (Join-Path $root "zh-CN/codex/examples/config.example.toml"),
-    (Join-Path $root "cursor/project/mcp.example.json"),
-    (Join-Path $root "zh-CN/cursor/project/mcp.example.json")
+    (Join-Path $root "zh-CN/codex/examples/config.example.toml")
 )
 $context7TestedVersions = @(
     foreach ($path in $context7CompatibilityPaths) {
@@ -1442,7 +1293,7 @@ if ($uniqueContext7Tested.Count -ne 1 -or $uniqueContext7Latest.Count -ne 1) {
     Add-Failure "Context7 version mismatch across compatibility documents."
 }
 if ($uniqueContext7Packages.Count -ne 1 -or $uniqueContext7Packages[0] -cne '@upstash/context7-mcp') {
-    Add-Failure "Context7 package policy mismatch: all Codex/Cursor examples must use @upstash/context7-mcp without a version or @latest suffix."
+    Add-Failure "Context7 package policy mismatch: all Codex examples must use @upstash/context7-mcp without a version or @latest suffix."
 }
 
 $tmpPolicyPath = Join-Path $root ".tmp/README.md"
@@ -1465,115 +1316,6 @@ else {
     $gitignoreLines = @(Get-Content -LiteralPath $gitignorePath | ForEach-Object { $_.Trim() })
     if ($gitignoreLines -notcontains ".tmp/local/") {
         Add-Failure ".gitignore must reserve .tmp/local/ for ignored task-local data: $gitignorePath"
-    }
-}
-
-$cursorActiveMcpConfigs = @(
-    (Join-Path $root "cursor/project/mcp.json"),
-    (Join-Path $root "zh-CN/cursor/project/mcp.json")
-)
-foreach ($cursorActiveMcpConfig in $cursorActiveMcpConfigs) {
-    if (Test-Path -LiteralPath $cursorActiveMcpConfig) {
-        Add-Failure "Cursor adapter must ship MCP as mcp.example.json, not active mcp.json: $cursorActiveMcpConfig"
-    }
-}
-
-$cursorMcpExamples = @(
-    (Join-Path $root "cursor/project/mcp.example.json"),
-    (Join-Path $root "zh-CN/cursor/project/mcp.example.json")
-)
-$blockedCursorMcpStrings = @(
-    '@latest',
-    '"disabled"',
-    '"alwaysAllow"',
-    'acemcp.heroman.wtf'
-)
-foreach ($cursorMcpExample in $cursorMcpExamples) {
-    if (-not (Test-Path -LiteralPath $cursorMcpExample)) {
-        Add-Failure "Missing Cursor MCP example: $cursorMcpExample"
-        continue
-    }
-
-    $cursorMcpText = Get-Content -LiteralPath $cursorMcpExample -Raw
-    foreach ($blocked in $blockedCursorMcpStrings) {
-        if ($cursorMcpText.Contains($blocked)) {
-            Add-Failure "Unsafe or unsupported Cursor MCP template string found in $cursorMcpExample`: $blocked"
-        }
-    }
-
-    try {
-        $cursorMcpConfig = $cursorMcpText | ConvertFrom-Json -Depth 100
-    }
-    catch {
-        Add-Failure "Invalid Cursor MCP example JSON: $cursorMcpExample"
-        continue
-    }
-
-    $serverProperties = @($cursorMcpConfig.mcpServers.PSObject.Properties)
-    if ($serverProperties.Count -ne 1 -or $serverProperties[0].Name -cne 'context7-mcp') {
-        Add-Failure "Cursor MCP example must contain exactly the context7-mcp server: $cursorMcpExample"
-        continue
-    }
-
-    $credentialedServerContracts = @(
-        @{ Name = 'context7-mcp'; Variable = 'CONTEXT7_API_KEY' }
-    )
-    foreach ($contract in $credentialedServerContracts) {
-        $serverProperty = $cursorMcpConfig.mcpServers.PSObject.Properties[$contract.Name]
-        if ($null -eq $serverProperty) {
-            Add-Failure "Cursor MCP example is missing credentialed server '$($contract.Name)': $cursorMcpExample"
-            continue
-        }
-
-        $server = $serverProperty.Value
-        $credentialArgs = @($server.args | Where-Object {
-            [string]$_ -match '(?:--api-key|(?:CONTEXT7|TAVILY|BRAVE)_API_KEY|\$\{env:)'
-        })
-        if ($credentialArgs.Count -gt 0) {
-            Add-Failure "Credentialed Cursor MCP server must not receive API keys through command arguments: $($contract.Name) in $cursorMcpExample"
-        }
-
-        $envProperties = if ($null -eq $server.env) {
-            @()
-        }
-        else {
-            @($server.env.PSObject.Properties)
-        }
-        $expectedValue = '${env:' + $contract.Variable + '}'
-        $hasExactEnvironmentMapping = (
-            $envProperties.Count -eq 1 -and
-            $envProperties[0].Name -ceq $contract.Variable -and
-            [string]$envProperties[0].Value -ceq $expectedValue
-        )
-        if (-not $hasExactEnvironmentMapping) {
-            Add-Failure "Credentialed Cursor MCP server must map only its own API key through env: $($contract.Name) in $cursorMcpExample"
-        }
-        if ($server.PSObject.Properties.Name -ccontains 'envFile') {
-            Add-Failure "Credentialed Cursor MCP server must not use a shared envFile: $($contract.Name) in $cursorMcpExample"
-        }
-    }
-}
-
-$cursorCredentialGuidance = @(
-    @{
-        Path = Join-Path $root 'cursor/README.md'
-        Markers = @('maps exactly one API key into the credentialed server through its own `env` object', 'do not replace this mapping with a shared `envFile`')
-    },
-    @{
-        Path = Join-Path $root 'zh-CN/cursor/README.md'
-        Markers = @('只向它映射一个 API key', '不得改用共享 `envFile`')
-    }
-)
-foreach ($guidance in $cursorCredentialGuidance) {
-    if (-not (Test-Path -LiteralPath $guidance.Path)) {
-        Add-Failure "Missing Cursor credential-isolation guidance: $($guidance.Path)"
-        continue
-    }
-    $guidanceText = Get-Content -LiteralPath $guidance.Path -Raw
-    foreach ($marker in $guidance.Markers) {
-        if (-not $guidanceText.Contains($marker)) {
-            Add-Failure "Cursor credential-isolation guidance is missing '$marker': $($guidance.Path)"
-        }
     }
 }
 

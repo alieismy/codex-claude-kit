@@ -2,7 +2,13 @@
 
 npm registry 最新版本已于 2026-10-12 重新核查；本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.296`。早先 Claude Code `2.1.287` 的观察日期仍为 2026-10-02，当前 registry 版本不代表已通过运行测试。其它已安装版本和运行测试保留各自原有日期：Cursor 版本为 2026-09-11，Cursor Rules、Skills 和 FAQ 文档为 2026-09-16，Claude Code 详细文档检查为 2026-09-04，Context7 有边界 stdio 探针为 2026-08-14。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
 
-## 2026-10-12 布局与平台契约
+## 2026-10-13 当前支持范围
+
+仓库采用 `codex-claude-kit` 名称，以 Codex 和 Claude Code 为主要入口，保留 Claude 网页版／桌面版适用的自定义指令与 Skills，以及 ChatGPT 网页版专用指令。Cursor 专属分发源、安装配方与当前验证契约退役；此前日期化 Cursor 文档检查、路径和探针保留为历史证据。
+
+这次调整涉及支持范围、源布局与引用，不更新下方软件版本或包基线，也不新增客户端运行、MCP、账户上传或生产验收结论。当前来源见下方映射，安装见[安装说明](installation.md)，退役和提示词迁移见[布局迁移](layout-migration.md)。
+
+## 2026-10-12 布局与平台契约（历史记录）
 
 本次源布局把共享项目核移至 `zh-CN/rules/project/AGENTS.md.template`，全局/Claude/Cursor 分发指令采用 `.template` 后缀与非原生源目录，中文 Cursor 统一在 `zh-CN/cursor/`，四棵平台 Skill 镜像移除；仅维护 `skills/` 与 `zh-CN/skills/`。路径映射及独立个人安装边界见[布局迁移](layout-migration.md)，当前安装配方见[安装说明](installation.md)。以下日期化记录中的旧路径、样本数、版本、fixture 和运行结果均保留为历史布局证据，不用于验证新布局。
 
@@ -18,13 +24,20 @@ npm registry 最新版本已于 2026-10-12 重新核查；本机 Codex CLI 与�
 
 同一记录还保留双语各 9 个 ZIP（各 24 个运行载荷文件）与 canonical 源及迁移前基线的精确载荷比对；两语源各 62 个文件保持不变，`evals/` 和 `agents/` 按打包契约排除。这证明打包载荷一致，不证明已经上传或服务端替换。
 
+## 当前源映射（2026-10-13）
+
 | 当前载体 | 英文源路径 | 中文源路径 |
 |---|---|---|
+| Codex 全局规则 | `codex/global/AGENTS.md.template` | `zh-CN/codex/global/AGENTS.md.template` |
+| Codex 用户配置 | `codex/examples/config{,.full-access}.example.toml` | 同一布局位于 `zh-CN/codex/examples/` |
+| Codex 项目配置 | `codex/project/config.example.toml` | `zh-CN/codex/project/config.example.toml` |
+| Codex 提示词 | `PROMPTS.md` | `zh-CN/PROMPTS.md` |
 | 共享项目规则 | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` |
-| Cursor 用户规则 | `cursor/global/RULES.md.template` | `zh-CN/cursor/global/RULES.md.template` |
-| Cursor 项目规则/MCP | `cursor/project/rules/*.mdc.template`；`cursor/project/mcp.example.json` | 同一布局位于 `zh-CN/cursor/project/` |
 | Claude 全局/项目规则 | `claude/{global,project}/CLAUDE.md.template` | 同一布局位于 `zh-CN/claude/` |
 | Claude settings/MCP | `claude/global/settings.example.json`；`claude/project/{settings,mcp}.example.json` | 同一布局位于 `zh-CN/claude/` |
+| Claude Code 提示词 | `claude/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` |
+| ChatGPT 网页版专用指令 | `docs/personalized-custom-instructions.md` | `zh-CN/docs/personalized-custom-instructions.md` |
+| Claude 账户指令 | `docs/claude-personalized-instructions.md` | 共用英文版，无中文版指令正文 |
 | Skills | `skills/rd-*` | `zh-CN/skills/rd-*` |
 
 ## Codex
@@ -114,18 +127,20 @@ Claude Code 官方文档核查入口：
 
 用户随后确认没有原备份，并授权以本轮修订后的中文全局模板为准；已先备份当前文件，再更新用户级 `~/.claude/CLAUDE.md`，文件哈希与中文模板一致。这是采用新基线，不是恢复原内容；上述探针均发生在该更新之前。
 
-## Cursor
+## Cursor（退役支持，历史证据）
+
+本节保留此前检查时的文档契约与布局，不构成当前支持或安装说明。
 
 Cursor Rules、Skills 和 FAQ 官方文档已于 2026-09-16 重新核查；2026-09-11 观察到的本机 Windows 桌面版本为 `3.20.10`（system setup）：
 
 - [Rules](https://cursor.com/docs/rules.md)：项目规则必须是 `.cursor/rules` 下的 `.mdc` 文件；规则系统会忽略普通 `.md` 文件。需要普通 Markdown 指令时，应使用 `AGENTS.md`。Cursor 支持嵌套 `AGENTS.md`，在处理其所在目录或后代目录中的文件时应用这些指令，将其与父级指令合并，并使更具体的指令优先。
 - [Skills](https://cursor.com/docs/skills.md)：Agent Skills 是可版本化的能力包，可包含脚本、模板和参考资料。Cursor 会从 `.agents/skills/`、`.cursor/skills/`、`~/.agents/skills/` 和 `~/.cursor/skills/` 发现项目级和用户级 Skill，也会加载 `.claude/skills/`、`.codex/skills/`、`~/.claude/skills/` 和 `~/.codex/skills/`。官方文档没有定义多个根发现同名 Skill 时的优先级或去重行为。共享/Codex Skills 安装在 Agents 根中，再与 Cursor 适配包的 `.cursor/skills/` 组合时，即使未安装 Claude Code，也已经属于多来源安装。自 2026-10-01 起，共享、Claude Code 和 Cursor 的 `rd-delivery` 副本内容一致，均不再使用平台专用调用开关；同名定义的选择歧义仍然存在。
 - [MCP](https://cursor.com/docs/mcp.md)：项目级 MCP 服务器通过 `.cursor/mcp.json` 配置，全局 MCP 服务器使用 `~/.cursor/mcp.json`。
-- [Rules FAQ](https://cursor.com/help/customization/rules#how-does-claudemd-work-in-cursor)（2026-09-16 核查）：Cursor 读取 `CLAUDE.md` 的方式与 `AGENTS.md` 相同，且 `CLAUDE.md` 会始终应用于每个会话，不受任何 `alwaysApply` frontmatter 设置影响。因此组合 Claude Code 和 Cursor 适配包会再增加一个常驻指令文件和一个可发现 Skill 来源；详见 `cursor/README.md`。
+- [Rules FAQ](https://cursor.com/help/customization/rules#how-does-claudemd-work-in-cursor)（2026-09-16 核查）：Cursor 读取 `CLAUDE.md` 的方式与 `AGENTS.md` 相同，且 `CLAUDE.md` 会始终应用于每个会话，不受任何 `alwaysApply` frontmatter 设置影响。因此组合 Claude Code 和 Cursor 适配包会再增加一个常驻指令文件和一个可发现 Skill 来源；详见历史源路径 `cursor/README.md`。
 
 2026-09-16 的一次维护者会话报告：`codex/` 与 `zh-CN/codex/` 下四份可分发 `AGENTS.md` 模板，以及英文和中文 Cursor 的两份 `00-global-principles.mdc`，被同时列为生效指令。该历史记录中的六个文件合计 64,928 bytes，并包含互相冲突的语言指令。该结果属于单次会话运行观察，不是已独立复现的加载契约；官方嵌套 `AGENTS.md` 文档描述的是目录范围内应用。该历史观察没有已验证的隔离机制；本次改名的运行隔离结果须另行核验。应把该观察视为源仓库尚未解决的兼容性风险，不能据此断言每个 Cursor 会话都会加载全部六个文件，也不能断言根维护者文件一定能覆盖它们。
 
-以下为迁移前的历史适配布局，当前路径见上表和迁移指南。
+下表保留退役前适配布局；当前仓库已不提供 Cursor 安装入口。
 
 | 历史适配面 | 历史仓库路径 | 当时公开发布姿态 |
 |---|---|---|
@@ -136,18 +151,18 @@ Cursor Rules、Skills 和 FAQ 官方文档已于 2026-09-16 重新核查；2026-
 | 中文 Skills | `cursor/zh-CN/.cursor/skills/rd-*/SKILL.md` | 与 `zh-CN/skills/rd-*` 镜像 |
 | 中文 MCP 示例 | `cursor/zh-CN/.cursor/mcp.example.json` | 仅示例；审查后复制为 `.cursor/mcp.json` |
 
-本仓库不直接发布活动 Cursor `.cursor/mcp.json`，也不在公开模板中依赖 `disabled` 或 `alwaysAllow` 等未确认的 Cursor MCP 字段。
+退役前仓库不直接发布活动 Cursor `.cursor/mcp.json`，也未在公开模板中依赖 `disabled` 或 `alwaysAllow` 等未确认的 Cursor MCP 字段。
 
 ## MCP 包
 
 | MCP 服务器 | 包名 | 已测试版本 | registry 最新核查版本 | 公开配置默认值 |
 |---|---|---:|---:|---|
-| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.3.0` | Codex 示例禁用；Cursor 最小示例唯一 server，复制并配置凭据前不活动 |
-| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Codex 示例禁用；Cursor 最小示例省略 |
+| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.3.0` | Codex 示例禁用 |
+| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Codex 示例禁用 |
 | Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | 公共最小示例省略 |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | 公共最小示例省略 |
-| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex 示例禁用；Cursor 最小示例省略 |
-| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex 示例禁用；Cursor 最小示例省略 |
+| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex 示例禁用 |
+| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex 示例禁用 |
 | Augment Context Engine | `ace-tool-rs` | `0.1.16` | `0.1.16` | 公共最小示例省略 |
 
 2026-10-12 的 v2.0.0 发布预检重新查询了 Codex、Claude Code 和上述七个 MCP 包的 registry 条目，并核对本机 CLI。八个 registry 值与先前记录一致；Sequential Thinking 的 `latest` 标签通过 registry `/latest` 与显式指定官方 registry 的 `npm view ... dist-tags` 均返回 `1.0.0`，先前快照记录的 `2026.8.31` 保留为历史。这里报告当前标签，不推断版本变化原因或升级顺序；该 server 仍未加入公共最小示例，也没有新增 MCP 运行验收。
@@ -156,7 +171,7 @@ Context7 `4.0.2` 已对照 [npm 包元数据](https://www.npmjs.com/package/@ups
 
 上述结果只构成包、静态配置和 stdio 协议层证据，不证明已完成 Context7 鉴权查询、Codex/Cursor/Claude Code 宿主端到端集成或业务/生产验收。达到更高证据层级前，不得作相应成功声明。
 
-Codex/Cursor 的 Context7 示例统一使用不带版本后缀的 `@upstash/context7-mcp`；其它 npm MCP 调用也不固定版本。表中的 `4.0.2` 仅为历史已测试基线，不代表下一次安装实际解析出的版本已经通过验证。启用前检查实际解析版本及运行要求；需要可复现安装的使用者应在自己的配置中固定已核验版本。其它 server 仍可按 `docs/mcp-routing.md` 路由，但应在存在已验证需求时逐项添加，不应把完整候选目录一次复制进配置。上表版本仍作为兼容性证据，发布前必须重新核查。
+Codex 的 Context7 示例统一使用不带版本后缀的 `@upstash/context7-mcp`；其它 npm MCP 调用也不固定版本。表中的 `4.0.2` 仅为历史已测试基线，不代表下一次安装实际解析出的版本已经通过验证。启用前检查实际解析版本及运行要求；需要可复现安装的使用者应在自己的配置中固定已核验版本。其它 server 仍可按 `docs/mcp-routing.md` 路由，但应在存在已验证需求时逐项添加，不应把完整候选目录一次复制进配置。上表版本仍作为兼容性证据，发布前必须重新核查。
 
 ## 可选 Jev 试验
 
@@ -169,7 +184,7 @@ Codex/Cursor 的 Context7 示例统一使用不带版本后缀的 `@upstash/cont
 1. 对每个 npm MCP 包运行 `npm view <package> version`；
 2. 如果版本变化，更新 `registry latest`（注册表最新版本）列；
 3. 只有重新验证后，才更新已测试版本；
-4. 所有 Codex/Cursor Context7 示例统一使用不带版本后缀的包名；`scripts/validate.ps1` 检查该策略及中英文历史版本记录一致性；
+4. 所有当前 Codex Context7 示例统一使用不带版本后缀的包名；`scripts/validate.ps1` 检查该策略及中英文历史版本记录一致性；
 5. npm MCP 示例不固定版本，也不显式添加 `@latest` 后缀；安装时核对实际解析版本，不把 registry 最新版本等同于已测试版本；
 6. 运行 `pwsh ./scripts/validate-release.ps1`，检测 Codex 官方 Schema 漂移，并使用版本匹配的已安装 CLI 严格加载示例；
 7. 工具名或 API surface 有变化时，在 release notes（发布说明）中说明。

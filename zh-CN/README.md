@@ -1,18 +1,42 @@
-# Codex Three-Layer Delivery 简体中文包
+# Codex & Claude Kit 简体中文包
 
-本目录是 `Codex Three-Layer Delivery` 的简体中文翻译包（translation pack）。本项目面向系统设计师、系统架构师、技术方案作者、产品经理和标准/文档评审人员，聚焦需求分析、可研、方案、概要设计、详细设计、标准规范和文档评审。英文根目录是权威基线（canonical baseline）；本目录只提供中文阅读、复制和安装使用入口，不单独定义新的工程规则。
+本目录是 `Codex & Claude Kit`（`codex-claude-kit`）的简体中文翻译包。项目为基于证据的专业工作提供软件配置、全局与项目规则、自定义指令、任务提示词和可复用 Skills，专业特色是系统设计、架构、研究、需求、标准、写作与评审。英文根目录是权威基线；本目录提供中文阅读、复制和安装入口，不单独定义新的工程规则。
 
-> 本项目独立维护，不隶属于 OpenAI、Cursor、Anthropic 或任何参考框架。具体灵感参考与许可证边界见根目录 `ATTRIBUTION.md`。
+Codex 和 Claude Code 是主要本地代理入口，同时支持 Claude 网页版／桌面版适用的指令与 Skills，并保留 ChatGPT 网页版专用指令。各类资产按需选择，保留产品原生安装位置和验证边界。Codex 仍拥有最完整的配置示例；Claude Code 提供原生全局／项目规则及选定 settings/MCP 入口，支持范围不表示两端能力完全一致或全部 CLI／云端能力已经覆盖。
+
+> 本项目独立维护，不隶属于 OpenAI、Anthropic 或任何参考框架。具体灵感参考与许可证边界见根目录 `ATTRIBUTION.md`。
+
+## 适用角色与场景
+
+- 系统设计师、架构师和技术负责人：需求、可研、方案比较、架构与详细设计。
+- 产品经理和需求分析人员：需求结构化、优先级、追踪与验收。
+- 标准制定者、研究人员、技术作者和评审人员：规范、证据报告、文章、决策简报与独立评审。
+- AI 辅助开发者和团队工具维护者：选择可复用的配置、指令与 Skills，建立专业工作环境。
+- 需要明确证据纪律、条款级评审和最终验证报告的团队。
+
+## 支持产品与入口
+
+| 产品 | 维护内容 | 使用入口 |
+|---|---|---|
+| Codex | 配置／MCP 示例、全局与项目规则、提示词和 RD Skills | [配置说明](docs/codex-configuration-guidance.md)、[安装说明](docs/installation.md)、[提示词](PROMPTS.md) |
+| Claude Code（Claude 的主要入口） | settings／MCP 示例、全局与项目规则、提示词、本地与账户同步 Skills 指引 | [Claude 说明](claude/README.md)、[提示词](claude/project/PROMPTS.md) |
+| Claude 网页版／桌面版 | 适用的账户指令、任务提示词和 Skills 打包／上传指引 | [Instructions for Claude（仅英文版）](../docs/claude-personalized-instructions.md)、[Skill 上传](claude/README.md#claudeai-skill-upload) |
+| ChatGPT 网页版 | 专用自定义指令及产品适用范围说明 | [ChatGPT 网页版自定义指令](docs/personalized-custom-instructions.md) |
+
+配置控制客户端能力与权限；全局规则提供稳定工作约定；项目规则规定项目权威与约束；自定义指令面向特定产品入口；提示词启动单次任务；Skills 提供可复用专业方法。这些是内容类别，不是六套相互竞争的指令层级。网页账户设置不会安装本地代理规则或授予工具权限；在网页／桌面聊天中使用任务文本时应按产品能力改写，Claude Code 提示词中的斜杠命令只适用于对应客户端。
 
 ## 使用边界
 
 - 英文根目录保持发布基线和结构基线。
 - 仓库根 `AGENTS.md` 只治理本源码仓库的维护工作，与供下游项目复制的 `rules/project/AGENTS.md.template` 模板保持不同责任。
-- `zh-CN/` 提供共享规则、Codex、Claude Code、Cursor、Skills 和文档的中文入口。
-- Cursor 英文适配包位于 `cursor/project/`；Cursor 中文适配包统一位于 `zh-CN/cursor/`。
+- `zh-CN/` 提供共享规则、Codex、Claude Code、Skills 和文档的中文入口。
+- Cursor 支持已退役；日期化发布说明与证据保留历史范围，见[布局迁移说明](docs/layout-migration.md)。
+- RD Skills 继续聚焦决策与文档工作；编码、测试执行、部署和发布执行由客户端原生能力或适用专业工作流承担。
 - 不把灵感参考表述为直接派生、实质移植或上游背书。
 
 ## 三层结构
+
+全局规则、项目规则和专业 Skills 继续作为工具包内部的三层组织原则；配置、产品指令和任务提示词围绕它们按需选择。
 
 ```text
 Layer 1: 全局指令
@@ -43,7 +67,7 @@ Skill 清单（8 个专业 Skill + 1 个显式编排 Skill）：
 
 表中前 8 个专业 Skill 可独立使用，不强制组成流水线；`rd-delivery` 是第 9 个 Skill，仅作为显式编排器使用。需要外部或争议证据时使用 `$rd-research`，需要把已核实证据组织为面向受众的成稿时使用 `$rd-writing`，需要独立结论时使用 `$rd-review`。仅当请求明确要求跨制品编排、阶段门禁或持久化交接时，才使用 `$rd-delivery`；请求不必点名该 Skill，但仅因任务复杂或存在多个输出不构成使用理由。该边界由 Skill 描述、共享路由规则和触发评测共同约束，不再使用将其限制为点名调用的平台专用开关。
 
-每个 Skill 都在 `evals/` 下提供输出质量和触发边界用例，并在 `agents/openai.yaml` 中提供 ChatGPT/Codex 桌面元数据。多模式 Skill 在 `SKILL.md` 中保留公共流程，只按所选模式加载 `references/` 检查表。共享 Skill 正文使用中性 `rd-*` 标识；Codex 示例使用 `$rd-*`，Cursor 与 Claude Code 本地 fallback 使用 `/rd-*`，Claude 账号同步 Skills 使用 `/anthropic-skills:rd-*`。
+每个 Skill 都在 `evals/` 下提供输出质量和触发边界用例，并在 `agents/openai.yaml` 中提供 ChatGPT/Codex 桌面元数据。多模式 Skill 在 `SKILL.md` 中保留公共流程，只按所选模式加载 `references/` 检查表。共享 Skill 正文使用中性 `rd-*` 标识；Codex 示例使用 `$rd-*`，Claude Code 本地 fallback 使用 `/rd-*`，Claude 账号同步 Skills 使用 `/anthropic-skills:rd-*`。
 
 如需了解对历史虚构评估回答进行可选外部模型检查的试验，见 [Jev 语义检查试验](docs/jev-pilot.md)。记录保留了一条高置信度误报，Jev 仅作辅助，不是默认依赖、Skill 路由或发布门禁。
 
@@ -57,7 +81,7 @@ Skill 清单（8 个专业 Skill + 1 个显式编排 Skill）：
 
 ## 快速开始
 
-完整的 Codex、Claude Code、Cursor、配置示例和环境变量安装说明见[安装说明](docs/installation.md)。
+完整的 Codex、Claude Code、配置示例和环境变量安装说明见[安装说明](docs/installation.md)。
 
 ### Codex
 
@@ -79,7 +103,7 @@ if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-pro
 fi
 ```
 
-选择 Skill 来源：如已有明确来源的用户级 RD Skills，项目规则安装可直接复用，不默认追加项目副本。Codex 使用 `~/.agents/skills/`；Cursor 官方也支持该根，但仍需在目标客户端核对实际发现结果。本轮目录整理不证明 Cursor 运行选中了哪个定义。
+选择 Skill 来源：如已有明确来源的用户级 RD Skills，项目规则安装可直接复用，不默认追加项目副本。Codex 使用 `~/.agents/skills/`；Claude 选择文档规定的本地或账户来源，并在新客户端会话中核对实际发现结果。
 
 首次安装可使用带备份和精确比对的 PowerShell 脚本：
 
@@ -138,11 +162,7 @@ cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/sett
 
 存在非空 `AGENTS.override.md` 时，示例会在安装适配文件前停止。应先有意识地合并这一 Codex 生效来源，再选择对应的 Claude 导入（例如 `@AGENTS.override.md`）后继续；Claude 不会自动发现 override 文件。已有但为空的 `AGENTS.md` 也必须先手动修复。
 
-### Cursor
-
-英文入口是 `cursor/README.md`，中文入口是 [Cursor 适配说明](cursor/README.md)。从 `zh-CN/cursor/project/rules/*.mdc.template` 安装项目规则时去掉 `.template` 后缀，目标为 `.cursor/rules/*.mdc`；从 `zh-CN/cursor/global/RULES.md.template` 选择内容加入 Customize → Rules 是用户级规则，两者作用域不同。这些 MDC 规则是同一项目契约的 Cursor 原生分拆版本，单独维护，不由共享项目核心生成；共享核心由 Codex 原生读取、由 Claude Code 适配通过 `@AGENTS.md` 导入。修改项目级行为时需同步更新两者，与共享 `AGENTS.md` 共装时见 [Cursor 多客户端共装](cursor/README.md#skills-与多客户端共装)。
-
-MCP 示例为 `zh-CN/cursor/project/mcp.example.json`，审查凭据与用途后才安装到项目 `.cursor/mcp.json`。Skills 从共享中文源单独选择，不复制适配目录或新增同名副本。完整命令见[安装说明](docs/installation.md)。
+共享项目核心由 Codex 原生读取，Claude Code 通过 `@AGENTS.md` 导入；项目通用行为在共享源中维护，settings、permissions、MCP 和 Skill 发现机制保持产品差异。Claude Code 提示词见[中文模板](claude/project/PROMPTS.md)，完整规则、配置及账户 Skill 指引见 [Claude 说明](claude/README.md)。
 
 ## 文件清单
 
@@ -163,17 +183,13 @@ zh-CN/
     project/CLAUDE.md.template
     project/settings.example.json
     project/mcp.example.json
-  cursor/
-    README.md
-    global/RULES.md.template
-    project/rules/*.mdc.template
-    project/mcp.example.json
     project/PROMPTS.md
   docs/
     installation.md
     layout-migration.md
     compatibility.md
     release-checklist.md
+    personalized-custom-instructions.md
 ```
 
 英文根目录是权威基线；共享项目核、中文翻译和平台适配分别维护。源文件是未激活模板，安装时映射到客户端原生路径并去掉模板后缀。目录迁移、移除适配 Skills 镜像及个人安装边界见[布局迁移说明](docs/layout-migration.md)。
@@ -184,10 +200,9 @@ zh-CN/
 
 - Codex 示例使用 `workspace-write`、实时 Web 搜索、Memories、完整 shell 环境继承，并通过 `ignore_default_excludes = false` 保留对名称含 `KEY`、`SECRET`、`TOKEN` 的默认过滤；应结合目标环境手动合并。
 - Codex 外部 MCP server 默认禁用，直到凭据、数据流和使用场景被明确审查。
-- Cursor 适配包只发布单一 Context7 的 `project/mcp.example.json`，不直接发布活动 `.cursor/mcp.json`。
 - 不使用 `@latest` 作为 npm MCP 包版本。
 - Claude Code 项目设置默认禁止直接读取工作目录及其任意子目录中的常见密钥路径，并对匹配的 Bash 和 Windows PowerShell commit、push、tag、publish、delete 以及会丢弃未提交工作的 Git 命令前缀（`reset --hard`、`clean`、`checkout --`、`restore`）要求确认；这些权限模式属于防护措施，不能替代针对所有包装命令和复杂命令的完整安全边界。
-- Codex/Cursor Context7 示例统一使用不带版本后缀的包名；[兼容性文档](docs/compatibility.md)保留历史已测试版本，实际解析版本仍需单独进行客户端运行核验。
+- Codex Context7 示例统一使用不带版本后缀的包名；[兼容性文档](docs/compatibility.md)保留历史已测试版本，实际解析版本仍需单独进行客户端运行核验。
 
 ## 验证
 
@@ -199,7 +214,7 @@ pwsh ./scripts/validate.ps1
 pwsh ./scripts/test-validator.ps1
 ```
 
-Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+ 及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。三十一项负向回归在既有 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置用例之外，新增覆盖 Codex Schema/运行基线一致的配置契约、Cursor 仅一条常驻规则的加载策略、跨平台推理与长期指引治理，GSD 当前/归档来源归属、明确交付编排请求边界、Claude 共享导入安装保护及已废弃的 Cursor 项目 Skill 引用。
+Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+ 及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。二十八项负向回归覆盖 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置，以及 Codex Schema/运行基线一致的配置契约、跨平台推理与长期指引治理、GSD 当前/归档来源归属、明确交付编排请求边界、Claude 共享导入安装保护、Claude 提示词调用语法和已退役的 Cursor 源目录。
 
 公开发布前还必须执行联网动态门禁：
 
@@ -216,7 +231,7 @@ pwsh ./scripts/validate-release.ps1
 同步时至少检查：
 
 - `zh-CN/skills/rd-*` 与根目录 `skills/rd-*` 数量一致；
-- 不重新引入 Claude/Cursor 适配 Skill 镜像；安装及打包直接读取两棵语言源；
+- 不重新引入平台 Skill 镜像；安装及打包直接读取两棵语言源；
 - JSON/TOML 可解析；
 - 不引入真实 secrets、私有 relay URL 或旧仓库名；
 - 不重新引入编码开发、代码评审、测试执行或部署执行类 Skill；

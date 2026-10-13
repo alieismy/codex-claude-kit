@@ -1,6 +1,6 @@
 # User Prompt Templates
 
-> Designed for the Codex Three-Layer Delivery document workflow. Replace `{placeholders}` with actual content, then paste into Codex CLI or Codex App.
+> Designed for the Codex & Claude Kit document workflow. Replace `{placeholders}` with actual content, then paste into Codex CLI or Codex App.
 >
 > Skills are matched through the `$rd-*` prefix. This template set intentionally excludes coding, code review, testing, deployment execution, and release operations.
 

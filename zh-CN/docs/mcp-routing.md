@@ -2,9 +2,9 @@
 
 MCP 服务器应为具体证据或工作流需求启用，不应作为宽泛默认值。
 
-Cursor 的 `mcp.example.json` 有意只提供单一 Context7 起步配置，不是下列全部路由的清单。只有存在已验证用途时才加入其它 server，独立配置其凭据，并在目标客户端确认状态。
+Codex 配置和 Claude 项目 `mcp.example.json` 是按需审阅的起步示例，不是下列全部路由的清单。只有存在已验证用途时才加入其它 server，独立配置其凭据，并在目标客户端确认状态。Claude settings 与 MCP 的存储位置不同，安装入口见[安装说明](installation.md)。
 
-当任务需要来源收集、文献调研、标准或政策核验、开源或 AI 工具评估、仓库证据、系统配置调查、公共事实核实、成本假设或技术成熟度证据时，使用 `$rd-research` 作为 Skill 层封装。
+当任务需要来源收集、文献调研、标准或政策核验、开源或 AI 工具评估、仓库证据、系统配置调查、公共事实核实、成本假设或技术成熟度证据时，在 Codex 使用 `$rd-research`、Claude Code 本地 Skills 使用 `/rd-research`、账户同步 Skills 使用 `/anthropic-skills:rd-research` 作为 Skill 层封装。
 
 ## 路由表
 

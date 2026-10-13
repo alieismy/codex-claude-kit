@@ -2,9 +2,9 @@
 
 MCP servers should be enabled for specific evidence or workflow needs, not as a broad default.
 
-The Cursor `mcp.example.json` is intentionally a one-server Context7 starter, not an inventory of every route below. Add another server only for a verified use case, configure its credentials independently, and confirm its status in the target client.
+Codex configuration and Claude project `mcp.example.json` are opt-in starter examples, not inventories of every route below. Add another server only for a verified use case, configure its credentials independently, and confirm its status in the target client. Claude settings and MCP use different carriers; see [installation](installation.md).
 
-Use `$rd-research` as the Skill-level wrapper when a task needs source collection, literature review, standards or policy checks, open-source or AI-tool evaluation, repository evidence, system-configuration investigation, public-fact verification, cost assumptions, or technical-maturity evidence.
+Use `$rd-research` in Codex or `/rd-research` for local Claude Code Skills and `/anthropic-skills:rd-research` for account-synced Skills as the Skill-level wrapper when a task needs source collection, literature review, standards or policy checks, open-source or AI-tool evaluation, repository evidence, system-configuration investigation, public-fact verification, cost assumptions, or technical-maturity evidence.
 
 ## Routing Table
 
