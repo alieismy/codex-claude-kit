@@ -4,7 +4,7 @@ Contributions are welcome when they improve the kit without weakening its core c
 
 ## Contribution Types
 
-- maintainer-rule improvements for the root `AGENTS.md`, or distributable-rule improvements for `codex/global/AGENTS.md.template` and `rules/project/AGENTS.md.template`;
+- maintainer-rule improvements for the root `AGENTS.md`, or distributable-rule improvements for `codex/global/AGENTS.md.template` and `codex/project/AGENTS.md.template`;
 - skill improvements under `skills/rd-*`;
 - Claude Code adapter and prompt updates under `claude/`;
 - Claude web/desktop guidance and ChatGPT web custom-instruction updates within their documented product scopes;

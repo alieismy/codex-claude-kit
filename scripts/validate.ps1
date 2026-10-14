@@ -150,7 +150,7 @@ $skillRoots = @(
 )
 
 # Native carriers belong to installation targets, never the distributable source tree.
-$distributionSourceRoots = @("rules", "codex", "claude", "zh-CN/rules", "zh-CN/codex", "zh-CN/claude")
+$distributionSourceRoots = @("codex", "claude", "zh-CN/codex", "zh-CN/claude")
 foreach ($relativeRoot in $distributionSourceRoots) {
     $sourcePath = Join-Path $root $relativeRoot
     if (-not (Test-Path -LiteralPath $sourcePath -PathType Container)) {
@@ -170,10 +170,16 @@ foreach ($relativeRoot in @("cursor", "zh-CN/cursor")) {
         Add-Failure "Retired Cursor adapter must not occur in distribution sources: $relativeRoot"
     }
 }
+foreach ($prefix in @("", "zh-CN/")) {
+    $retiredCore = Join-Path $root "${prefix}rules/project/AGENTS.md.template"
+    if (Test-Path -LiteralPath $retiredCore) {
+        Add-Failure "Retired shared-rule source must not duplicate the Codex project template: $retiredCore"
+    }
+}
 $requiredDistributionFiles = @(
-    "rules/project/AGENTS.md.template", "codex/global/AGENTS.md.template", "codex/project/config.example.toml",
-    "claude/global/CLAUDE.md.template", "claude/global/settings.example.json", "claude/project/CLAUDE.md.template",
-    "claude/project/settings.example.json", "claude/project/mcp.example.json", "claude/project/PROMPTS.md"
+    "codex/project/AGENTS.md.template", "codex/global/AGENTS.md.template", "codex/examples/config.project.example.toml",
+    "claude/global/CLAUDE.md.template", "claude/examples/settings.example.json", "claude/project/CLAUDE.md.template",
+    "claude/examples/settings.project.example.json", "claude/examples/mcp.example.json", "claude/examples/PROMPTS.md"
 )
 foreach ($relativeFile in $requiredDistributionFiles) {
     foreach ($prefix in @("", "zh-CN/")) {
@@ -252,7 +258,7 @@ else {
     foreach ($relativeConfig in @(
         "codex/examples/config.example.toml", "codex/examples/config.full-access.example.toml",
         "zh-CN/codex/examples/config.example.toml", "zh-CN/codex/examples/config.full-access.example.toml",
-        "codex/project/config.example.toml", "zh-CN/codex/project/config.example.toml"
+        "codex/examples/config.project.example.toml", "zh-CN/codex/examples/config.project.example.toml"
     )) {
         if (-not $codexReleaseValidatorText.Contains('"' + $relativeConfig + '"')) {
             Add-Failure "Codex release inventory is missing public config: $relativeConfig"
@@ -631,7 +637,7 @@ $valueFirstExecutionBaselines = @(
     @{
         Paths = @(
             "codex/global/AGENTS.md.template",
-            "rules/project/AGENTS.md.template",
+            "codex/project/AGENTS.md.template",
             "claude/global/CLAUDE.md.template"
         )
         Markers = @(
@@ -642,7 +648,7 @@ $valueFirstExecutionBaselines = @(
     @{
         Paths = @(
             "zh-CN/codex/global/AGENTS.md.template",
-            "zh-CN/rules/project/AGENTS.md.template",
+            "zh-CN/codex/project/AGENTS.md.template",
             "zh-CN/claude/global/CLAUDE.md.template"
         )
         Markers = @(
@@ -672,7 +678,7 @@ $evidenceContractBaselines = @(
     @{
         Paths = @(
             "codex/global/AGENTS.md.template",
-            "rules/project/AGENTS.md.template",
+            "codex/project/AGENTS.md.template",
             "claude/global/CLAUDE.md.template"
         )
         Markers = @("documentation claim", "source implementation", "static configuration", "final generated or effective configuration", "runtime state", "production acceptance")
@@ -681,7 +687,7 @@ $evidenceContractBaselines = @(
     @{
         Paths = @(
             "zh-CN/codex/global/AGENTS.md.template",
-            "zh-CN/rules/project/AGENTS.md.template",
+            "zh-CN/codex/project/AGENTS.md.template",
             "zh-CN/claude/global/CLAUDE.md.template"
         )
         Markers = @("文档声明", "源码实现", "静态配置", "最终生成或实际生效配置", "运行状态", "生产验收")
@@ -720,7 +726,7 @@ else {
         "not a distributable project template",
         "The English root is the canonical baseline",
         "codex/global/AGENTS.md.template",
-        "rules/project/AGENTS.md.template",
+        "codex/project/AGENTS.md.template",
         ".tmp/local/",
         "pwsh ./scripts/validate.ps1",
         "pwsh ./scripts/test-validator.ps1",
@@ -743,7 +749,7 @@ else {
 $contextReuseBaselines = @(
     @{
         Paths = @(
-            "rules/project/AGENTS.md.template"
+            "codex/project/AGENTS.md.template"
         )
         Markers = @(
             "authoritative source, revision, and applicability",
@@ -756,7 +762,7 @@ $contextReuseBaselines = @(
     },
     @{
         Paths = @(
-            "zh-CN/rules/project/AGENTS.md.template"
+            "zh-CN/codex/project/AGENTS.md.template"
         )
         Markers = @(
             "权威来源、修订标识和适用范围",
@@ -788,8 +794,8 @@ foreach ($baseline in $contextReuseBaselines) {
 $greenfieldPromptBaselines = @(
     @{
         Paths = @(
-            "PROMPTS.md",
-            "claude/project/PROMPTS.md"
+            "codex/examples/PROMPTS.md",
+            "claude/examples/PROMPTS.md"
         )
         Markers = @(
             "Greenfield Open-Source Landscape and Solution Gate",
@@ -802,8 +808,8 @@ $greenfieldPromptBaselines = @(
     },
     @{
         Paths = @(
-            "zh-CN/PROMPTS.md",
-            "zh-CN/claude/project/PROMPTS.md"
+            "zh-CN/codex/examples/PROMPTS.md",
+            "zh-CN/claude/examples/PROMPTS.md"
         )
         Markers = @(
             "绿地开源格局研究与方案门禁",
@@ -835,8 +841,8 @@ foreach ($baseline in $greenfieldPromptBaselines) {
 $adversarialClarificationPromptBaselines = @(
     @{
         Paths = @(
-            "PROMPTS.md",
-            "claude/project/PROMPTS.md"
+            "codex/examples/PROMPTS.md",
+            "claude/examples/PROMPTS.md"
         )
         Markers = @(
             "High-Impact Bidirectional Argument and Critical Clarification",
@@ -848,8 +854,8 @@ $adversarialClarificationPromptBaselines = @(
     },
     @{
         Paths = @(
-            "zh-CN/PROMPTS.md",
-            "zh-CN/claude/project/PROMPTS.md"
+            "zh-CN/codex/examples/PROMPTS.md",
+            "zh-CN/claude/examples/PROMPTS.md"
         )
         Markers = @(
             "高影响决策的双向论证与关键澄清",
@@ -878,8 +884,8 @@ foreach ($baseline in $adversarialClarificationPromptBaselines) {
 }
 
 $claudePromptPaths = @(
-    (Join-Path $root "claude/project/PROMPTS.md"),
-    (Join-Path $root "zh-CN/claude/project/PROMPTS.md")
+    (Join-Path $root "claude/examples/PROMPTS.md"),
+    (Join-Path $root "zh-CN/claude/examples/PROMPTS.md")
 )
 foreach ($path in $claudePromptPaths) {
     if ((Test-Path -LiteralPath $path) -and (Get-Content -LiteralPath $path -Raw).Contains('$rd-')) {
@@ -889,28 +895,28 @@ foreach ($path in $claudePromptPaths) {
 
 $promptPlatformBaselines = @(
     @{
-        Path = Join-Path $root "PROMPTS.md"
+        Path = Join-Path $root "codex/examples/PROMPTS.md"
         Markers = @(
             'paste into Codex CLI or Codex App.',
             'Skills are matched through the `$rd-*` prefix.'
         )
     },
     @{
-        Path = Join-Path $root "zh-CN/PROMPTS.md"
+        Path = Join-Path $root "zh-CN/codex/examples/PROMPTS.md"
         Markers = @(
             '可直接粘贴到 Codex CLI 或 Codex App。',
             'Skill 通过 `$rd-*` 前缀匹配。'
         )
     },
     @{
-        Path = Join-Path $root "claude/project/PROMPTS.md"
+        Path = Join-Path $root "claude/examples/PROMPTS.md"
         Markers = @(
             'paste into Claude Code.',
             'Skills are matched through the `/rd-*` prefix.'
         )
     },
     @{
-        Path = Join-Path $root "zh-CN/claude/project/PROMPTS.md"
+        Path = Join-Path $root "zh-CN/claude/examples/PROMPTS.md"
         Markers = @(
             '可直接粘贴到 Claude Code。',
             'Skill 通过 `/rd-*` 前缀匹配。'
@@ -933,17 +939,13 @@ foreach ($baseline in $promptPlatformBaselines) {
 }
 
 $claudeSettingsPaths = @(
-    (Join-Path $root "claude/project/settings.example.json"),
-    (Join-Path $root "zh-CN/claude/project/settings.example.json")
+    (Join-Path $root "claude/examples/settings.project.example.json"),
+    (Join-Path $root "zh-CN/claude/examples/settings.project.example.json")
 )
 $requiredClaudeDenyPermissions = @(
     "Read(.env)",
-    "Read(.env.local)",
-    "Read(.env.development)",
-    "Read(.env.test)",
-    "Read(.env.staging)",
-    "Read(.env.production)",
-    "Read(.env.*.local)",
+    "Read(.env.*)",
+    "Read(!.env.example)",
     "Read(secrets/**)"
 )
 $requiredClaudeAskPermissions = @(
@@ -1000,6 +1002,12 @@ foreach ($path in $claudeSettingsPaths) {
             Add-Failure "Claude settings is missing required deny permission '$permission': $path"
         }
     }
+    $environmentPatternIndex = [array]::IndexOf($denyPermissions, "Read(.env.*)")
+    $exampleExceptionIndex = [array]::IndexOf($denyPermissions, "Read(!.env.example)")
+    if ($environmentPatternIndex -ge 0 -and $exampleExceptionIndex -ge 0 -and
+        $exampleExceptionIndex -le $environmentPatternIndex) {
+        Add-Failure "Claude settings must place the .env.example exception after the .env.* deny pattern: $path"
+    }
     $askPermissions = @($claudeSettings.permissions.ask)
     foreach ($permission in $requiredClaudeAskPermissions) {
         if ($askPermissions -cnotcontains $permission) {
@@ -1009,7 +1017,7 @@ foreach ($path in $claudeSettingsPaths) {
 }
 
 # These settings and MCP examples contain no translated prose; bilingual payloads must stay identical.
-foreach ($relativeFile in @("claude/global/settings.example.json", "claude/project/settings.example.json", "claude/project/mcp.example.json")) {
+foreach ($relativeFile in @("claude/examples/settings.example.json", "claude/examples/settings.project.example.json", "claude/examples/mcp.example.json")) {
     $englishPath = Join-Path $root $relativeFile
     $chinesePath = Join-Path $root "zh-CN/$relativeFile"
     if ((Test-Path -LiteralPath $englishPath) -and (Test-Path -LiteralPath $chinesePath)) {
@@ -1020,22 +1028,39 @@ foreach ($relativeFile in @("claude/global/settings.example.json", "claude/proje
     }
 }
 foreach ($prefix in @("", "zh-CN/")) {
-    $globalSettingsPath = Join-Path $root "${prefix}claude/global/settings.example.json"
+    $globalSettingsPath = Join-Path $root "${prefix}claude/examples/settings.example.json"
     try {
         $globalSettings = Get-Content -LiteralPath $globalSettingsPath -Raw | ConvertFrom-Json -ErrorAction Stop
         if ($globalSettings.attribution.commit -cne "" -or $globalSettings.attribution.pr -cne "" -or
             $globalSettings.attribution.sessionUrl -cne $false -or $globalSettings.enableAllProjectMcpServers -cne $false) {
             Add-Failure "Claude global settings must preserve attribution and explicit project-MCP opt-in: $globalSettingsPath"
         }
+        if ($globalSettings.model -cne "opus" -or
+            $globalSettings.modelSettings.'claude-opus-5-5'.effortLevel -cne "xhigh" -or
+            $globalSettings.PSObject.Properties.Name -contains "effortLevel") {
+            Add-Failure "Claude global settings must use opus with model-specific Opus 5.5 xhigh effort: $globalSettingsPath"
+        }
+        foreach ($permission in @(
+            "Read(~/.ssh/**)", "Read(~/.git-credentials)", "Read(~/.codex/auth.json)",
+            "Read(~/.claude/.credentials.json)", "Read(~/.npmrc)"
+        )) {
+            if (@($globalSettings.permissions.deny) -cnotcontains $permission) {
+                Add-Failure "Claude global settings is missing credential deny permission '$permission': $globalSettingsPath"
+            }
+        }
     }
     catch { Add-Failure "Invalid Claude global settings example: $globalSettingsPath" }
-    $mcpPath = Join-Path $root "${prefix}claude/project/mcp.example.json"
+    $mcpPath = Join-Path $root "${prefix}claude/examples/mcp.example.json"
     try {
         $mcp = Get-Content -LiteralPath $mcpPath -Raw | ConvertFrom-Json -ErrorAction Stop
         $servers = @($mcp.mcpServers.PSObject.Properties)
-        if ($servers.Count -ne 1 -or $servers[0].Name -cne "openaiDeveloperDocs" -or
-            $servers[0].Value.type -cne "http" -or $servers[0].Value.url -cne "https://developers.openai.com/mcp") {
-            Add-Failure "Claude MCP example must contain only the official HTTP documentation server: $mcpPath"
+        if ($servers.Count -ne 2 -or $servers.Name -cnotcontains "deepwiki" -or $servers.Name -cnotcontains "tavily" -or
+            $mcp.mcpServers.deepwiki.type -cne "http" -or
+            $mcp.mcpServers.deepwiki.url -cne "https://mcp.deepwiki.com/mcp" -or
+            $mcp.mcpServers.tavily.type -cne "http" -or
+            $mcp.mcpServers.tavily.url -cne "https://mcp.tavily.com/mcp" -or
+            $mcp.mcpServers.tavily.headers.Authorization -cne 'Bearer ${TAVILY_API_KEY}') {
+            Add-Failure "Claude MCP example must use DeepWiki and Tavily HTTP with environment-based authentication: $mcpPath"
         }
     }
     catch { Add-Failure "Invalid Claude MCP example: $mcpPath" }

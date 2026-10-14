@@ -1,6 +1,23 @@
 # Compatibility
 
-The npm registry latest versions were rechecked on 2026-10-13; the installed Codex CLI and release schema baseline are `0.162.1`, and the installed Claude Code CLI is `2.1.296`. The earlier Claude Code `2.1.287` observation retains its 2026-10-02 date; registry latest does not establish runtime testing. Other installed versions and runtime observations retain their original dates: Cursor version 2026-09-11, Cursor Rules/Skills/FAQ documentation 2026-09-16, detailed Claude Code documentation 2026-09-04, and the bounded Context7 stdio probe 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
+The installed Codex CLI and release schema baseline were rechecked as `0.162.1`, and the installed Claude Code CLI as `2.1.299`, on 2026-10-14 (UTC). All nine npm registry latest versions below were rechecked on the same date for v4.0.0: Claude Code is `2.1.299` and Context7 is `4.4.1`; the other seven entries are unchanged from 2026-10-13. Installed versions, registry versions, and runtime evidence are separate. Earlier observations retain their own dates, including Claude Code `2.1.287` on 2026-10-02, Cursor version on 2026-09-11, Cursor documentation on 2026-09-16, and the bounded Context7 stdio probe on 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
+
+## 2026-10-14 configuration and layout refresh
+
+Global/project source directories now contain rule templates; software settings, MCP examples, and platform prompts live under each platform's `examples/`. The single shared project core is `codex/project/AGENTS.md.template`, which Claude imports after installation as root `AGENTS.md`. Native destinations and inactive `.template` source names remain explicit. See [migration](layout-migration.md), [Codex examples](../codex/examples/README.md), and [Claude examples](../claude/examples/README.md).
+
+The [sanitized evidence record](evidence/config-layout-refresh-2026-10-14.json) separates the following checks:
+
+- All six public Codex examples pass the pinned and current live schemas and isolated strict loading with CLI `0.162.1`. The user examples now request `gpt-6-astra`/`xhigh`, plan reasoning `high`, and `gpt-6.1-sol`/`high` subagents with concurrency two. Loading does not establish account access, backend model identity, or successful delegation.
+- With only DeepWiki and Tavily enabled in an isolated copy, native Codex `mcpServerStatus/list` returned all three configured DeepWiki tools and the two allowed Tavily tools. Claude `mcp list` first reported both servers as pending approval; after a fixture-only opt-in through `enabledMcpjsonServers`, both connected. The distributed Claude setting remains `enableAllProjectMcpServers=false`.
+- Separate direct HTTP MCP probes completed initialization, tool discovery, and one public call per service: DeepWiki `read_wiki_structure` for `openai/codex`, and Tavily `tavily_search` for public Codex documentation. The existing Tavily credential was supplied only through the probe process environment. These are service calls, not model-driven tool calls through both clients.
+- DeepWiki's live tool list returned `ask_wiki_question`, while the [official page](https://docs.devin.ai/work-with-devin/deepwiki-mcp) described `ask_question` when checked. The Codex allowlist uses the observed live name. This is a dated service observation; recheck discovery after service changes.
+- One Claude Code `2.1.299` headless request using the candidate user/project settings reported `claude-opus-5-5`. Its `Read` calls successfully read the synthetic `.env.example` and rejected `.env.preview`; the denied fixture marker was not returned. This checks the ordered exception in this fixture, not shell-command bypasses or all credential paths. The request included model-specific `xhigh`, but the returned events did not prove the effective effort.
+- The English/Chinese project-only PowerShell and Bash installation blocks were extracted verbatim, with only the target placeholder changed. All four installed the three expected files with source-matching SHA-256 values; all four repeated installs refused without changing the targets. These fresh synthetic-project checks do not cover existing-core, override, empty-core, or symlink branches, or client discovery.
+
+The referenced Claude settings schema accepts the candidates but does not declare `modelSettings`; `claude doctor` also failed to distinguish the candidate from an invalid-effort control. Neither is treated as proof of that field. Its configuration contract is based on the current [model documentation](https://code.claude.com/docs/en/model-config); permission syntax follows the [permission documentation](https://code.claude.com/docs/en/permissions).
+
+Personal Codex and Claude settings remained unchanged by hash comparison. Canonical Skills, global instruction bodies, and web custom-instruction bodies were not changed. These checks do not establish Desktop/web behavior, account Skill uploads, general permission enforcement, model quality, or business/production acceptance. No registry refresh or release publication is implied.
 
 ## 2026-10-13 current support scope
 
@@ -26,18 +43,18 @@ The same record's `installationRecipes` extracts the Cursor/Claude project Power
 
 The same record retains exact payload comparison of nine ZIPs per language (24 runtime payload files each) with the canonical source and pre-migration baseline. Each language's 62 source files remains unchanged; `evals/` and `agents/` are excluded by the packaging contract. This establishes package payload equality, not upload or server-side replacement.
 
-## Current source map (2026-10-13)
+## Current source map (2026-10-14)
 
 | Current surface | English source | Chinese source |
 |---|---|---|
 | Codex global rules | `codex/global/AGENTS.md.template` | `zh-CN/codex/global/AGENTS.md.template` |
 | Codex user configuration | `codex/examples/config{,.full-access}.example.toml` | same layout under `zh-CN/codex/examples/` |
-| Codex project configuration | `codex/project/config.example.toml` | `zh-CN/codex/project/config.example.toml` |
-| Codex prompts | `PROMPTS.md` | `zh-CN/PROMPTS.md` |
-| Shared project rules | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` |
+| Codex project configuration | `codex/examples/config.project.example.toml` | `zh-CN/codex/examples/config.project.example.toml` |
+| Codex prompts | `codex/examples/PROMPTS.md` (root `PROMPTS.md` is an index) | `zh-CN/codex/examples/PROMPTS.md` |
+| Shared project rules | `codex/project/AGENTS.md.template` | `zh-CN/codex/project/AGENTS.md.template` |
 | Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | same layout under `zh-CN/claude/` |
-| Claude settings/MCP | `claude/global/settings.example.json`; `claude/project/{settings,mcp}.example.json` | same layout under `zh-CN/claude/` |
-| Claude Code prompts | `claude/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` |
+| Claude settings/MCP | `claude/examples/settings{,.project}.example.json`; `claude/examples/mcp.example.json` | same layout under `zh-CN/claude/` |
+| Claude Code prompts | `claude/examples/PROMPTS.md` | `zh-CN/claude/examples/PROMPTS.md` |
 | ChatGPT web instructions | `docs/personalized-custom-instructions.md` | `zh-CN/docs/personalized-custom-instructions.md` |
 | Claude account instructions | `docs/claude-personalized-instructions.md` | Shared English-only profile; no Chinese instruction-body mirror |
 | Skills | `skills/rd-*` | `zh-CN/skills/rd-*` |
@@ -50,7 +67,7 @@ The 2026-10-05 [configuration and Skill follow-up](config-skill-tuning.md) used 
 
 | Component | Tested version | Registry latest checked | Notes |
 |---|---:|---:|---|
-| `@openai/codex` npm package | `0.147.0` | `0.162.1` | Registry latest and installed CLI `0.162.1` were rechecked on 2026-10-12. The tagged `0.162.1` schema was fetched for this release baseline; the release gate compares it with the current live schema and checks every maintained public user/project example. The broader tested baseline remains `0.147.0`. Do not hardcode this into the repository name or AGENTS rules. |
+| `@openai/codex` npm package | `0.147.0` | `0.162.1` | Registry latest and installed CLI `0.162.1` were rechecked on 2026-10-14. The tracked schema remains the tagged `0.162.1` snapshot; the release gate compares it with the current live schema and checks every maintained public user/project example. The broader tested baseline remains `0.147.0`; the dated checks above have narrower scopes. Do not hardcode this into the repository name or AGENTS rules. |
 
 The repository vendors the Codex `0.162.1` configuration schema as an offline snapshot with provenance and SHA-256 metadata under `schemas/`. `scripts/validate.ps1` uses the snapshot deterministically; the release-only `scripts/validate-release.ps1` compares it with the current official schema, checks the installed CLI version, validates all six maintained user/project examples against the live copy, and strict-loads each example from an isolated temporary `CODEX_HOME`.
 
@@ -97,7 +114,7 @@ The release follow-up [installation guard probe](evidence/claude-installation-gu
 
 | Component | Tested/pinned version | Registry latest checked | Notes |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm package | Not pinned by this repository | `2.1.296` | Registry latest and installed CLI `2.1.296` were rechecked on 2026-10-12. The earlier `2.1.287` observation was on 2026-10-02. The settings schema, adapter structure, and `claude doctor` were last re-checked with `2.1.260` on 2026-09-04. Dangerous-command permission behavior was not exercised; settings validation is not proof that every wrapper or compound command will be intercepted. |
+| `@anthropic-ai/claude-code` npm package | Not pinned by this repository | `2.1.299` | Registry latest and installed CLI `2.1.299` were rechecked on 2026-10-14. The bounded model, file-permission, MCP, schema, and doctor observations above retain their separate evidence limits. Earlier `2.1.287` and `2.1.260` observations retain their original dates. Dangerous-command permission behavior was not exercised; settings validation is not proof that every wrapper or compound command will be intercepted. |
 
 The [memory documentation](https://code.claude.com/docs/en/memory#agents-md), checked on 2026-10-01, states that Claude Code reads `AGENTS.md` directly from v2.1.277 only when no `CLAUDE.md` is present, and that an `@AGENTS.md` import in `CLAUDE.md` is never read twice. The project adapter therefore uses the import. This is documentation evidence; loading was not verified on the maintainer's installed CLI.
 
@@ -154,8 +171,8 @@ Before retirement, this repository did not ship an active Cursor `.cursor/mcp.js
 
 | MCP server | Package | Tested version | Registry latest checked | Default in public config |
 |---|---|---:|---:|---|
-| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.3.0` | Codex example disabled |
-| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Codex example disabled |
+| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.4.1` | Codex example disabled |
+| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Optional local alternative; primary examples use HTTP |
 | Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | Omitted from public minimal examples |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | Omitted from public minimal examples |
 | Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex example disabled |

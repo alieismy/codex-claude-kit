@@ -7,6 +7,6 @@
 共享项目规则通过上方的 `AGENTS.md` 导入。项目通用规则只在 `AGENTS.md` 中维护，使 Codex、Claude Code 和其他代理读取同一来源；本文件只保留 Claude Code 专有指引。
 
 - 优先使用上传到 Claude 账户并同步到 Claude Code 的 RD Skills（`anthropic-skills:rd-*`）；需要时用 `/anthropic-skills:rd-*` 显式调用。明确选择本地 `.claude/skills/` 安装时使用 `/rd-*`。每个环境只保留一个来源，不要修改 `~/.claude/skills/synced/` 下的账户副本，同步会覆盖它们。Claude 可根据描述自动选择 Skills。`rd-delivery` 遵循 `AGENTS.md` 中按请求内容判定的规则。
-- `.claude/settings.json` 禁止读取常见密钥文件，并在 commit、push、tag、publish、delete 以及会丢弃未提交工作的 Git 命令前要求确认。这些规则是防护措施，不是完整安全边界；关键禁止项应优先使用 settings、permissions 或 hooks，而不是只依赖文字提醒。
+- 如果已安装本仓库的项目 settings 示例并保留其中的权限规则，`.claude/settings.json` 会禁止读取常见密钥文件，并在 commit、push、tag、publish、delete 以及会丢弃未提交工作的 Git 命令前要求确认。依赖这些防护措施前，先核对目标会话中实际生效的设置。它们不是完整安全边界；关键禁止项应优先使用 settings、permissions 或 hooks，而不是只依赖文字提醒。
 - 配置和 hooks 应使用 Claude Code 原生载体；采用 Codex 示例中的适用行为前，先转换为对应原生格式。
 - 已批准且稳定的 Claude Code 专有约定写在本文件；项目通用约定写入 `AGENTS.md`。

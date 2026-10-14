@@ -1,11 +1,11 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 # 公开版 Codex 配置示例。
 # 可选配方与验证：../../docs/codex-configuration-guidance.md（仓库相对路径）。
-# 更广测试基线：codex-cli 0.147.0；已于 2026-10-10 使用 0.162.1 复核 Schema 和 strict-load。
+# 版本化验证证据：../../docs/compatibility.md。
 # 使用时请手动合并到 $CODEX_HOME/config.toml（默认路径为 ~/.codex/config.toml），不要盲目覆盖已有配置。
 
-# 选择你的 Codex 账号可用的模型。
-# model = "gpt-5.6-sol"
+# 面向复杂研究与设计工作的推荐组合；使用前确认账号可用这两个模型。
+model = "gpt-6-astra"
 model_provider = "openai"
 
 approval_policy = "on-request"
@@ -17,11 +17,10 @@ project_doc_max_bytes = 65536
 tool_output_token_limit = 10000
 
 hide_agent_reasoning = true
-model_reasoning_effort = "medium"
+model_reasoning_effort = "xhigh"
 plan_mode_reasoning_effort = "high"
 model_reasoning_summary = "none"
 model_verbosity = "high"
-# 对复杂任务，可通过 codex --profile high 叠加 $CODEX_HOME/high.config.toml。
 # 省略 service_tier 时仍使用标准处理。
 # 仅当当前模型明确支持对应层级时，才通过 Fast 界面/命令或显式服务层级设置启用。
 
@@ -51,10 +50,10 @@ default_wait_timeout_ms = 60000
 max_wait_timeout_ms = 120000
 
 [agents]
-max_concurrent_threads_per_session = 5
-default_subagent_reasoning_effort = "medium"
-# 仅当所有子代理都应默认使用 GPT-5.6 Sol 时，才启用以下配置。
-# default_subagent_model = "gpt-5.6-sol"
+enabled = true
+max_concurrent_threads_per_session = 2
+default_subagent_model = "gpt-6.1-sol"
+default_subagent_reasoning_effort = "high"
 
 [agents.default]
 description = "General-purpose helper."
@@ -64,8 +63,7 @@ description = "Drafts or edits scoped document content and configuration files."
 
 [agents.explorer]
 # “只读”是任务指导；角色描述本身不强制实施沙箱权限。
-# 权限从父任务继承。经过审查的 config_file 可以设置角色默认值，
-# 但父任务的 CLI 运行时覆盖仍可能优先于这些默认值。
+# 子代理继承父任务当前轮次的权限；角色文件不构成独立的只读权限边界。
 description = "Read-only exploration: searches, reads, maps documents, sources, and references."
 
 [agents.awaiter]
@@ -78,10 +76,24 @@ description = "Reviews documents, designs, standards, or evidence against qualit
 enabled = false
 
 # --- MCP Servers ---
-# 公开默认值：所有外部 MCP 服务器在凭据和数据流影响审查前均禁用。
-# 在 Codex App 中优先使用 Context7/Tavily App，避免与独立 MCP 重复。
-# 版本策略：npm MCP 包不固定版本。
-# Context7 4.0.2 是历史已测试基线；启用前核对实际解析版本及 Node.js 要求。
+# 推荐组合：DeepWiki 用于公共仓库研究，Tavily 用于网页检索和正文提取。
+# 审查数据流并完成认证配置后，再明确启用。
+# 已有 App、连接器或插件提供相同服务时，复用已有入口，避免重复注册。
+
+[mcp_servers.deepwiki]
+url = "https://mcp.deepwiki.com/mcp"
+enabled = false
+enabled_tools = ["read_wiki_structure", "read_wiki_contents", "ask_wiki_question"]
+
+[mcp_servers.tavily]
+url = "https://mcp.tavily.com/mcp"
+bearer_token_env_var = "TAVILY_API_KEY"
+enabled = false
+tool_timeout_sec = 120
+enabled_tools = ["tavily_search", "tavily_extract"]
+
+# 可选专用服务的选择与安装见本目录 README.md。
+# npm MCP 包仍不固定版本；启用前核对实际解析版本及 Node.js 要求。
 
 [mcp_servers.context7]
 command = "npx"
@@ -89,13 +101,6 @@ args = ["-y", "@upstash/context7-mcp"]
 enabled = false
 tool_timeout_sec = 60
 env_vars = ["CONTEXT7_API_KEY"]
-
-[mcp_servers.tavily]
-command = "npx"
-args = ["-y", "tavily-mcp"]
-enabled = false
-tool_timeout_sec = 30
-env_vars = ["TAVILY_API_KEY"]
 
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
@@ -106,11 +111,6 @@ enabled_tools = ["search_openai_docs", "fetch_openai_doc", "get_openapi_spec"]
 url = "https://learn.microsoft.com/api/mcp"
 enabled = false
 enabled_tools = ["microsoft_docs_search", "microsoft_docs_fetch", "microsoft_code_sample_search"]
-
-[mcp_servers.deepwiki]
-url = "https://mcp.deepwiki.com/mcp"
-enabled = false
-enabled_tools = ["read_wiki_structure", "read_wiki_contents", "ask_question"]
 
 [mcp_servers.playwright]
 command = "npx"

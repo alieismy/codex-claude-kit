@@ -2,9 +2,25 @@
 
 codex-claude-kit separates shared rules and Skills from Codex and Claude platform templates. Simplified Chinese surfaces live under `zh-CN/`; the shared English-only Claude account-instruction profile remains in `docs/`. The source paths below are not installation paths: remove `.template` when installing rules into a client's native location.
 
-## Former and current paths
+## Current rule and example layout
 
-| Former source | Current source | Installation target |
+Global/project directories contain only rule templates; configuration, MCP, and prompts live in each platform's `examples/` directory. The single shared project core moves back to the Codex project source directory. Once installed, Claude still imports the target project's root core through `@AGENTS.md`. Template suffixes continue to isolate distributable instructions from source-maintainer instructions.
+
+| Previous source | Current source | Native destination or purpose |
+|---|---|---|
+| `rules/project/AGENTS.md.template` | `codex/project/AGENTS.md.template` | `{project}/AGENTS.md`, the single core shared by both clients |
+| `codex/project/config.example.toml` | `codex/examples/config.project.example.toml` | `{project}/.codex/config.toml` |
+| `claude/global/settings.example.json` | `claude/examples/settings.example.json` | `~/.claude/settings.json` |
+| `claude/project/settings.example.json` | `claude/examples/settings.project.example.json` | `{project}/.claude/settings.json` |
+| `claude/project/mcp.example.json` | `claude/examples/mcp.example.json` | `{project}/.mcp.json` |
+| Codex task bodies formerly in `PROMPTS.md` | `codex/examples/PROMPTS.md` | Codex task prompts; root file remains an entry index |
+| `claude/project/PROMPTS.md` | `claude/examples/PROMPTS.md` | Claude Code task prompts |
+
+Apply the same moves to corresponding `zh-CN/` paths. Native installation destinations retain their scopes; source relocation does not update an existing installation. The tables below record earlier migration steps: resolve their former destinations through the current table above.
+
+## Earlier source migrations (historical)
+
+| Earlier source | Destination at that stage | Installation target |
 |---|---|---|
 | `codex/project/AGENTS.md` | `rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
 | `zh-CN/codex/project/AGENTS.md` | `zh-CN/rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
@@ -17,7 +33,7 @@ codex-claude-kit separates shared rules and Skills from Codex and Claude platfor
 | `zh-CN/claude/project/.claude/skills/rd-*` | `zh-CN/skills/rd-*` | selected local root or account upload |
 | `cursor/zh-CN/.cursor/skills/rd-*` | `zh-CN/skills/rd-*` | selected local root |
 
-The Codex and Claude global/project moves also apply to their `zh-CN/` mirrors. The shared project core is platform-neutral; the Claude project template remains a thin `@AGENTS.md` adapter. Existing Codex user-configuration examples retain their published paths. New selected entry points are `codex/project/config.example.toml`, `claude/global/settings.example.json`, and `claude/project/mcp.example.json`, with Chinese translations.
+The Codex and Claude global/project moves also apply to their `zh-CN/` mirrors. The shared project core is platform-neutral; the Claude project template remains a thin `@AGENTS.md` adapter. Existing Codex user-configuration examples retain their published paths. At that historical stage, new selected entry points were `codex/project/config.example.toml`, `claude/global/settings.example.json`, and `claude/project/mcp.example.json`, with Chinese translations.
 
 ## Cursor retirement and name migration
 
