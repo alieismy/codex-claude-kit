@@ -10,14 +10,14 @@ codex-claude-kit 提供配置、规则、指令、提示词与 Skills 模板，�
 
 | 载体 | 源 | 原生安装目标 |
 |---|---|---|
-| 共享项目规则 | `rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
+| 共享项目规则 | `codex/project/AGENTS.md.template` | `{project}/AGENTS.md` |
 | Codex 全局规则 | `codex/global/AGENTS.md.template` | `{CODEX_HOME}/AGENTS.md` （默认 `~/.codex`） |
 | Codex 用户配置 | `codex/examples/config.example.toml` | `{CODEX_HOME}/config.toml` |
-| Codex 项目配置 | `codex/project/config.example.toml` | `{project}/.codex/config.toml` （受信任项目） |
+| Codex 项目配置 | `codex/examples/config.project.example.toml` | `{project}/.codex/config.toml` （受信任项目） |
 | Claude 全局/项目规则 | `claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
-| Claude 用户/项目 settings | `claude/{global,project}/settings.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
-| Claude 项目 MCP | `claude/project/mcp.example.json` | `{project}/.mcp.json` |
-| Claude Code 提示词 | `claude/project/PROMPTS.md` | 选用任务启动提示词；不是常驻规则 |
+| Claude 用户/项目 settings | `claude/examples/{settings,settings.project}.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
+| Claude 项目 MCP | `claude/examples/mcp.example.json` | `{project}/.mcp.json` |
+| Claude Code 提示词 | `claude/examples/PROMPTS.md` | 选用任务启动提示词；不是常驻规则 |
 | Claude 账户指令 | [Claude 账户指令指南](../../docs/claude-personalized-instructions.md) | Claude 网页版／桌面版账户自定义指令 |
 | ChatGPT 网页版专用指令 | `docs/personalized-custom-instructions.md` | ChatGPT 网页版自定义指令 |
 | 本地共享 Skills | `skills/rd-*` | 所选用户/项目 Skill 根 |
@@ -41,7 +41,7 @@ fi
 
 ```bash
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp zh-CN/codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -155,7 +155,7 @@ Codex 与 Claude Code 没有共同的已文档化项目 Skill 发现根。Codex 
 
 ### 项目配置示例
 
-审阅 `zh-CN/codex/project/config.example.toml` 后，按需合并为目标项目 `.codex/config.toml`；该最小示例采用 `on-request`、`workspace-write` 和禁用沙箱网络。项目须经 Codex 信任后才读取项目配置。它不替代用户 `config.toml`，也不授权安装或部署。
+审阅 `zh-CN/codex/examples/config.project.example.toml` 后，按需合并为目标项目 `.codex/config.toml`；该最小示例采用 `on-request`、`workspace-write` 和禁用沙箱网络。项目须经 Codex 信任后才读取项目配置。它不替代用户 `config.toml`，也不授权安装或部署。
 
 ### 用户配置示例
 
@@ -171,7 +171,7 @@ fi
 
 如果 `$CODEX_HOME/config.toml` 已存在（默认路径为 `~/.codex/config.toml`），先检查实际内容，再只合并需要的片段；不得盲目覆盖正常工作的个人配置。
 
-标准示例有意设置 `web_search = "live"`、启用 `features.memories`、完整继承父 shell 环境，并设置 `ignore_default_excludes = false`，使 Codex 仍过滤名称中含 `KEY`、`SECRET` 或 `TOKEN` 的环境变量。这些选择与维护者已评审的运行基线一致，但不是适用于所有账户、工作区和威胁模型的通用安全或隐私默认值。
+标准示例推荐 `gpt-6-astra`（`xhigh`）主模型、`high` 计划推理、`gpt-6.1-sol`（`high`）子代理，最多并发两个子代理；使用前确认目标账户可用性。[示例指南](../codex/examples/README.md)区分完整基础配置、项目覆盖和可选 profile。标准示例有意设置 `web_search = "live"`、启用 `features.memories`、完整继承父 shell 环境，并设置 `ignore_default_excludes = false`，使 Codex 仍过滤名称中含 `KEY`、`SECRET` 或 `TOKEN` 的环境变量。这些选择与维护者已评审的运行基线一致，但不是适用于所有账户、工作区和威胁模型的通用安全或隐私默认值。
 
 高权限配置档需要显式选择：
 
@@ -179,7 +179,7 @@ fi
 zh-CN/codex/examples/config.full-access.example.toml
 ```
 
-不要在不可信仓库中使用 `full access`（完全访问权限）。
+将该覆盖片段安装为 `$CODEX_HOME/full-access.config.toml` 后，用 `codex --profile full-access` 显式选择；它依赖已审阅的基础配置，项目配置和 CLI 参数仍可能覆盖它。完整步骤见[示例指南](../codex/examples/README.md)。不要在不可信仓库中使用 `full access`（完全访问权限）。
 
 ## Claude Code 适配包
 
@@ -211,7 +211,7 @@ if [ -s /path/to/your-project/AGENTS.override.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp zh-CN/codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
@@ -219,7 +219,7 @@ if [ ! -s /path/to/your-project/AGENTS.md ]; then
 fi
 cp zh-CN/claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
 mkdir -p /path/to/your-project/.claude
-cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/settings.json
+cp zh-CN/claude/examples/settings.project.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -227,19 +227,27 @@ cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/sett
 
 如果目标项目已有 `CLAUDE.md` 或 `.claude/`，请手动合并。
 
-用户 settings 可从 `zh-CN/claude/global/settings.example.json` 合并到 `~/.claude/settings.json`；项目 MCP 可从 `zh-CN/claude/project/mcp.example.json` 合并到项目根 `.mcp.json`。规则安装不会自动启用这两项。用户/local MCP 应通过 CLI 管理 `~/.claude.json`；`enableAllProjectMcpServers=false` 不能证明 headless 会话连接被阻止。
+用户 settings 可从 `zh-CN/claude/examples/settings.example.json` 合并到 `~/.claude/settings.json`；项目 MCP 可从 `zh-CN/claude/examples/mcp.example.json` 合并到项目根 `.mcp.json`。规则安装不会自动启用这两项。用户/local MCP 应通过 CLI 管理 `~/.claude.json`；`enableAllProjectMcpServers=false` 不能证明 headless 会话连接被阻止。
 
-## 环境变量
+<a id="environment-variables"></a>
 
-复制环境变量示例：
+## 环境变量与 MCP 认证
 
-```bash
-cp .env.example .env
+先选择 [DeepWiki／Tavily 与可选服务](mcp-routing.md)。DeepWiki 的公共端点无需认证；Tavily 采用官方 OAuth 或环境变量引用的 Authorization header。用户／项目 settings、MCP 定义和进程环境属于不同配置载体，分别审阅和合并。
+
+`.env.example` 是变量清单。可复制为不提交的 `.env`，供明确支持 dotenv 的工具读取，但复制、填写并不证明 Codex、Claude Code 或任意 MCP 会自动加载它。Tavily 本地 npm 服务的[当前入口](https://github.com/tavily-ai/tavily-mcp/blob/main/src/index.ts)调用 `dotenv.config()`，其工作目录与实际版本仍需核实；这一行为不能推广到远程 HTTP MCP 或所有客户端。远程 Tavily 示例从**客户端进程环境**读取 `TAVILY_API_KEY`，无需本地 npm 服务。
+
+使用获准的凭据管理器或操作系统私密输入机制，将变量提供给启动 Codex／Claude Code 的进程；不要把真实 key 写进共享 JSON、TOML、URL 或命令历史。只检查变量是否存在，例如：
+
+```powershell
+if ([string]::IsNullOrWhiteSpace($env:TAVILY_API_KEY)) {
+    throw 'TAVILY_API_KEY is not available to this process.'
+}
 ```
 
-只填写你实际启用的 MCP 服务器所需 API key。不要提交 `.env`。
+此检查不回显值，只验证当前 PowerShell 进程；不能证明已经运行的桌面客户端或服务收到变量。持久化环境变量变更后，应重新启动受影响的 shell 和客户端；桌面应用从自身父进程继承环境，终端中的变量不自动注入已有应用。选择 OAuth 时按官方客户端流程认证，无需用 API key 替代 OAuth。
 
-Windows 用户级环境变量也可用 `setx` 设置，但设置后需要重启 shell、Codex CLI、Codex App 或 Claude Code。
+完成凭据和数据流审查后，Codex 只对选定 MCP 将 `enabled` 改为 `true`；Claude 只合并选定 `mcpServers` 条目并按原生流程批准。先检查服务／工具列表，再运行一次有边界的只读调用；分别报告解析、认证、连接和实际工具调用结果。服务列表不能证明 Tavily 认证有效，环境变量存在也不能证明连接成功。详见[Codex 示例](../codex/examples/README.md)、[Claude 示例](../claude/examples/README.md)及 [Tavily 官方说明](https://docs.tavily.com/documentation/mcp)。
 
 英文根目录仍是权威基线；`zh-CN/` 是简体中文翻译包。目标文件已存在时，应手动合并，避免覆盖本地项目规则。
 
@@ -260,14 +268,14 @@ Windows 用户级环境变量也可用 `setx` 设置，但设置后需要重启 
     }
     $core = Join-Path $target 'AGENTS.md'
     if (-not (Test-Path -LiteralPath $core)) {
-        Copy-Item -LiteralPath 'zh-CN/rules/project/AGENTS.md.template' -Destination $core -ErrorAction Stop
+        Copy-Item -LiteralPath 'zh-CN/codex/project/AGENTS.md.template' -Destination $core -ErrorAction Stop
     }
     if (-not (Test-Path -LiteralPath $core) -or (Get-Item -LiteralPath $core).Length -eq 0) {
         throw 'Stop: the shared AGENTS.md import target must be non-empty.'
     }
     Copy-Item -LiteralPath 'zh-CN/claude/project/CLAUDE.md.template' -Destination (Join-Path $target 'CLAUDE.md') -ErrorAction Stop
     New-Item -ItemType Directory -Path (Join-Path $target '.claude') -ErrorAction Stop | Out-Null
-    Copy-Item -LiteralPath 'zh-CN/claude/project/settings.example.json' -Destination (Join-Path $target '.claude/settings.json') -ErrorAction Stop
+    Copy-Item -LiteralPath 'zh-CN/claude/examples/settings.project.example.json' -Destination (Join-Path $target '.claude/settings.json') -ErrorAction Stop
 }
 ```
 

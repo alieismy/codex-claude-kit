@@ -37,8 +37,8 @@ CONFIGS = (
     Path("codex/examples/config.full-access.example.toml"),
     Path("zh-CN/codex/examples/config.example.toml"),
     Path("zh-CN/codex/examples/config.full-access.example.toml"),
-    Path("codex/project/config.example.toml"),
-    Path("zh-CN/codex/project/config.example.toml"),
+    Path("codex/examples/config.project.example.toml"),
+    Path("zh-CN/codex/examples/config.project.example.toml"),
 )
 STANDARD_CONFIGS = (
     Path("codex/examples/config.example.toml"),
@@ -191,10 +191,25 @@ def main() -> int:
             )
 
     expected_contract = (
+        (("model",), "gpt-6-astra"),
+        (("model_reasoning_effort",), "xhigh"),
+        (("plan_mode_reasoning_effort",), "high"),
+        (("agents", "enabled"), True),
+        (("agents", "max_concurrent_threads_per_session"), 2),
+        (("agents", "default_subagent_model"), "gpt-6.1-sol"),
+        (("agents", "default_subagent_reasoning_effort"), "high"),
         (("web_search",), "live"),
         (("shell_environment_policy", "inherit"), "all"),
         (("shell_environment_policy", "ignore_default_excludes"), False),
         (("features", "memories"), True),
+        (("mcp_servers", "deepwiki", "url"), "https://mcp.deepwiki.com/mcp"),
+        (("mcp_servers", "deepwiki", "enabled"), False),
+        (("mcp_servers", "deepwiki", "enabled_tools"), ["read_wiki_structure", "read_wiki_contents", "ask_wiki_question"]),
+        (("mcp_servers", "tavily", "url"), "https://mcp.tavily.com/mcp"),
+        (("mcp_servers", "tavily", "bearer_token_env_var"), "TAVILY_API_KEY"),
+        (("mcp_servers", "tavily", "enabled"), False),
+        (("mcp_servers", "tavily", "tool_timeout_sec"), 120),
+        (("mcp_servers", "tavily", "enabled_tools"), ["tavily_search", "tavily_extract"]),
     )
     for relative_path in STANDARD_CONFIGS:
         document = documents.get(relative_path)

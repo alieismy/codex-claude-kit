@@ -8,14 +8,14 @@ Choose rules, settings/MCP, and Skills independently. Source templates are inact
 
 | Surface | Source | Native destination |
 |---|---|---|
-| Shared project rules | `rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
+| Shared project rules | `codex/project/AGENTS.md.template` | `{project}/AGENTS.md` |
 | Codex global rules | `codex/global/AGENTS.md.template` | `{CODEX_HOME}/AGENTS.md` (default `~/.codex`) |
 | Codex user configuration | `codex/examples/config.example.toml` | `{CODEX_HOME}/config.toml` |
-| Codex project configuration | `codex/project/config.example.toml` | `{project}/.codex/config.toml` (trusted project) |
+| Codex project configuration | `codex/examples/config.project.example.toml` | `{project}/.codex/config.toml` (trusted project) |
 | Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
-| Claude user/project settings | `claude/{global,project}/settings.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
-| Claude project MCP | `claude/project/mcp.example.json` | `{project}/.mcp.json` |
-| Claude Code prompts | `claude/project/PROMPTS.md` | Selected task-starting prompts; not always-loaded rules |
+| Claude user/project settings | `claude/examples/{settings,settings.project}.example.json` | `~/.claude/settings.json`; `{project}/.claude/settings.json` |
+| Claude project MCP | `claude/examples/mcp.example.json` | `{project}/.mcp.json` |
+| Claude Code prompts | `claude/examples/PROMPTS.md` | Selected task-starting prompts; not always-loaded rules |
 | Claude account instructions | `docs/claude-personalized-instructions.md` | Claude web/desktop account instructions |
 | ChatGPT web instructions | `docs/personalized-custom-instructions.md` | ChatGPT web custom instructions |
 | Local shared Skills | `skills/rd-*` | chosen user/project Skill root |
@@ -39,7 +39,7 @@ Install project rules:
 
 ```bash
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -149,7 +149,7 @@ The first arrangement matches the Claude adapter's account-Skill preference and 
 
 ### Project configuration example
 
-Review `codex/project/config.example.toml` and optionally merge it into the target project `.codex/config.toml`. This minimal example uses `on-request`, `workspace-write`, and disabled sandbox network access. Codex loads project config only for trusted projects. It does not replace user `config.toml` or authorize installation/deployment.
+Review `codex/examples/config.project.example.toml` and optionally merge it into the target project `.codex/config.toml`. This minimal example uses `on-request`, `workspace-write`, and disabled sandbox network access. Codex loads project config only for trusted projects. It does not replace user `config.toml` or authorize installation/deployment.
 
 ### User configuration example
 
@@ -165,7 +165,7 @@ fi
 
 If `$CODEX_HOME/config.toml` already exists (default: `~/.codex/config.toml`), inspect it and merge only the relevant sections. Do not replace a working personal configuration blindly.
 
-The standard example deliberately sets `web_search = "live"`, enables `features.memories`, inherits the full parent shell environment, and sets `ignore_default_excludes = false` so Codex still filters environment-variable names containing `KEY`, `SECRET`, or `TOKEN`. These choices align with the maintainer's reviewed operating baseline but are not universal security or privacy defaults; evaluate them for the target account, workspace, and threat model.
+The standard example recommends a `gpt-6-astra` main model (`xhigh`), `high` plan reasoning, and `gpt-6.1-sol` subagents (`high`) with at most two concurrent subagents. Confirm account access before use. The [examples guide](../codex/examples/README.md) distinguishes the complete base, project override, and optional profile. The standard example deliberately sets `web_search = "live"`, enables `features.memories`, inherits the full parent shell environment, and sets `ignore_default_excludes = false` so Codex still filters environment-variable names containing `KEY`, `SECRET`, or `TOKEN`. These choices align with the maintainer's reviewed operating baseline but are not universal security or privacy defaults; evaluate them for the target account, workspace, and threat model.
 
 The full-access profile is opt-in:
 
@@ -173,19 +173,25 @@ The full-access profile is opt-in:
 codex/examples/config.full-access.example.toml
 ```
 
-Do not use full access for untrusted repositories.
+Install this override as `$CODEX_HOME/full-access.config.toml`, then select it with `codex --profile full-access`. It relies on the reviewed base; project configuration and CLI overrides can still take precedence. See the [examples guide](../codex/examples/README.md) for the complete procedure. Do not use full access for untrusted repositories.
 
 ## Environment Variables
 
-Copy the environment example:
+Select [DeepWiki/Tavily and any optional services](mcp-routing.md) first. The public DeepWiki endpoint requires no authentication; Tavily uses official OAuth or an environment-referenced Authorization header. User/project settings, MCP definitions, and the process environment are separate carriers to review and merge.
 
-```bash
-cp .env.example .env
+`.env.example` inventories variable names. It may be copied to an uncommitted `.env` for a tool that explicitly supports dotenv, but copying and filling it does not prove that Codex, Claude Code, or an arbitrary MCP loads it automatically. The Tavily local npm server's [current entry point](https://github.com/tavily-ai/tavily-mcp/blob/main/src/index.ts) calls `dotenv.config()`; its working directory and actual installed version still matter. This behavior does not establish dotenv loading for remote HTTP MCP or every client. The remote Tavily examples read `TAVILY_API_KEY` from the **client process environment** and need no local npm server.
+
+Use an approved credential manager or private operating-system input mechanism to supply the variable to the process launching Codex/Claude Code. Keep actual keys out of shared JSON, TOML, URLs, and command history. Check presence without displaying the value:
+
+```powershell
+if ([string]::IsNullOrWhiteSpace($env:TAVILY_API_KEY)) {
+    throw 'TAVILY_API_KEY is not available to this process.'
+}
 ```
 
-Fill only the API keys for MCP servers you enable. Never commit `.env`.
+This checks only the current PowerShell process; it does not prove an already-running desktop client or server received the variable. Restart affected shells and clients after persistent environment changes. Desktop applications inherit their own parent process's environment; a terminal-only variable does not enter an existing application automatically. When choosing OAuth, follow the official client authentication flow instead of substituting an API key.
 
-On Windows, user-level environment variables can also be set with `setx`, but restart your shell and any affected client—Codex CLI, Codex app, or Claude Code—after changing them.
+After reviewing credentials and data flow, set `enabled = true` only for selected Codex MCP entries. For Claude, merge only selected `mcpServers` definitions and follow the native approval flow. Inspect the server/tool list, then run one bounded read operation. Report parsing, authentication, connection, and actual tool-call results separately: listing does not prove Tavily authentication, and variable presence does not prove connectivity. See the [Codex examples](../codex/examples/README.md), [Claude examples](../claude/examples/README.md), and [Tavily documentation](https://docs.tavily.com/documentation/mcp).
 
 ## Simplified Chinese Pack
 
@@ -204,7 +210,7 @@ if [ ! -s "$codex_home/AGENTS.override.md" ] && [ ! -e "$codex_home/AGENTS.md" ]
   cp zh-CN/codex/global/AGENTS.md.template "$codex_home/AGENTS.md"
 fi
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp zh-CN/codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -243,7 +249,7 @@ if [ -e ~/.claude/CLAUDE.md ] || [ -L ~/.claude/CLAUDE.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp zh-CN/codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
@@ -253,7 +259,7 @@ mkdir -p ~/.claude
 cp zh-CN/claude/global/CLAUDE.md.template ~/.claude/CLAUDE.md
 cp zh-CN/claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
 mkdir -p /path/to/your-project/.claude
-cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/settings.json
+cp zh-CN/claude/examples/settings.project.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -289,7 +295,7 @@ if [ -s /path/to/your-project/AGENTS.override.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
@@ -297,7 +303,7 @@ if [ ! -s /path/to/your-project/AGENTS.md ]; then
 fi
 cp claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
 mkdir -p /path/to/your-project/.claude
-cp claude/project/settings.example.json /path/to/your-project/.claude/settings.json
+cp claude/examples/settings.project.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -305,7 +311,7 @@ If a non-empty `AGENTS.override.md` exists, the recipe stops before installing t
 
 If the target workspace already has `CLAUDE.md` or `.claude/`, merge manually. Claude Code reads `AGENTS.md` directly only when no `CLAUDE.md` exists (v2.1.277 or later); the explicit import works on earlier versions as well and does not load `AGENTS.md` twice. Run `/memory` or `/context` in a new session to confirm that both files loaded.
 
-Codex and Claude Code project rules have one shared source: change `rules/project/AGENTS.md.template` for project-wide behavior and `claude/project/CLAUDE.md.template` only for Claude Code-specific guidance. User settings can be merged from `claude/global/settings.example.json`; project MCP can be merged from `claude/project/mcp.example.json` into `.mcp.json`. Neither is enabled by the rules recipe.
+Codex and Claude Code project rules have one shared source: change `codex/project/AGENTS.md.template` for project-wide behavior and `claude/project/CLAUDE.md.template` only for Claude Code-specific guidance. User settings can be merged from `claude/examples/settings.example.json`; project MCP can be merged from `claude/examples/mcp.example.json` into `.mcp.json`. Neither is enabled by the rules recipe.
 
 ### Windows PowerShell project installation
 
@@ -324,14 +330,14 @@ Run from this repository root with an existing target project directory. This pr
     }
     $core = Join-Path $target 'AGENTS.md'
     if (-not (Test-Path -LiteralPath $core)) {
-        Copy-Item -LiteralPath 'rules/project/AGENTS.md.template' -Destination $core -ErrorAction Stop
+        Copy-Item -LiteralPath 'codex/project/AGENTS.md.template' -Destination $core -ErrorAction Stop
     }
     if (-not (Test-Path -LiteralPath $core) -or (Get-Item -LiteralPath $core).Length -eq 0) {
         throw 'Stop: the shared AGENTS.md import target must be non-empty.'
     }
     Copy-Item -LiteralPath 'claude/project/CLAUDE.md.template' -Destination (Join-Path $target 'CLAUDE.md') -ErrorAction Stop
     New-Item -ItemType Directory -Path (Join-Path $target '.claude') -ErrorAction Stop | Out-Null
-    Copy-Item -LiteralPath 'claude/project/settings.example.json' -Destination (Join-Path $target '.claude/settings.json') -ErrorAction Stop
+    Copy-Item -LiteralPath 'claude/examples/settings.project.example.json' -Destination (Join-Path $target '.claude/settings.json') -ErrorAction Stop
 }
 ```
 

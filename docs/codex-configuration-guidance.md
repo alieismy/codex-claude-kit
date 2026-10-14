@@ -1,6 +1,14 @@
 # Codex configuration guidance
 
-Use the [public configuration example](../codex/examples/config.example.toml) as a reviewed starting point, then merge only the choices that fit your account, workload, and environment. This guide provides optional recipes; it does not change the example's effective defaults or introduce another source of global rules. Source review and validation limits are recorded in the [dated compatibility entry](compatibility.md#codex-configuration-guidance-2026-10-11).
+Use the [public configuration example](../codex/examples/config.example.toml) as a reviewed starting point, then merge only the choices that fit your account, workload, and environment. This guide explains the current base and optional recipes; applying a recipe is a separate choice, and the guide does not introduce another source of global rules. Source review and validation limits are recorded in the [dated compatibility entries](compatibility.md).
+
+## Main model, subagents, and configuration entry points
+
+The base explicitly recommends `gpt-6-astra` with `xhigh` main reasoning and `high` plan reasoning. Subagents default to `gpt-6.1-sol` with `high` reasoning and a concurrency limit of two subagents, excluding the parent. These are starting choices for research, design, and professional documents, not a measured universal optimum. Confirm [model access](https://learn.chatgpt.com/docs/models) and inspect the selection in a fresh session.
+
+`[agents].default_subagent_model` supplies the default; existing role definitions can override it. Setting a default model does not require a role file. Subagents inherit the parent's permissions; role files should not be presented as independent permission isolation. See [official subagent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents).
+
+The [examples guide](../codex/examples/README.md) distinguishes the complete user configuration, minimal project override, and optional full-access profile; global/project directories contain rule templates only. For a complex task that warrants more plan reasoning, set `plan_mode_reasoning_effort = "xhigh"` in task options or a separate profile when supported by the selected model. No unshipped `high.config.toml` is required. Check capability, quota, and actual benefit in the target account.
 
 ## Instruction and permission boundaries
 
@@ -98,4 +106,4 @@ Expected: `MXC_OK` and exit code `0`. This does not test every filesystem denial
 4. Compare the complete diff, parsed values, encoding, and unaffected settings. Inspect `codex features list` and relevant client diagnostics. Test the specific behavior before claiming runtime success; report memory quality, billing, sandbox isolation, and Desktop behavior separately.
 5. If another writer changes the file, preserve the new state and reconcile the difference. Restore a whole backup only after checking that it will not discard later changes; otherwise revert only the reviewed keys. Stop selecting a trial profile to stop applying its overrides. Changing models back does not undo memories already generated; inspect those through the supported memory controls rather than deleting the whole store automatically.
 
-These Markdown recipes are not installed profiles and are outside the four-file inventory of `scripts/validate-codex-configs.py`. If future work ships standalone TOML files, add them to the maintained schema, mirror, and loading checks. Keep personal experiments out of shared defaults until their intended scope and evidence support adoption.
+These Markdown recipes are not installed profiles and are outside the maintained standalone TOML inventory of `scripts/validate-codex-configs.py`. If future work ships standalone TOML files, add them to the maintained schema, mirror, and loading checks. Keep personal experiments out of shared defaults until their intended scope and evidence support adoption.

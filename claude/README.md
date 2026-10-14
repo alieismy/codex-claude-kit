@@ -2,7 +2,7 @@
 
 Claude Code is the primary Claude entry point in Codex & Claude Kit. This adapter maps the shared document-delivery model to native rules, selected settings/MCP examples, prompts, and a deliberate Skill source. Claude web/desktop instructions and applicable Skills are also maintained. Codex retains the most extensive configuration examples; platform capabilities are not identical.
 
-Use the [Claude Code prompt templates](project/PROMPTS.md) for local or account-synced Skill calls. For Claude web/desktop personalization, see the separate [Instructions for Claude profile](../docs/claude-personalized-instructions.md); its account setting is distinct from local `CLAUDE.md` rules. The [claude.ai upload workflow](#claudeai-skill-upload) covers account Skills. These entry points do not establish complete runtime coverage across Claude products.
+Use the [Claude Code prompt templates](examples/PROMPTS.md) for local or account-synced Skill calls. For Claude web/desktop personalization, see the separate [Instructions for Claude profile](../docs/claude-personalized-instructions.md); its account setting is distinct from local `CLAUDE.md` rules. The [claude.ai upload workflow](#claudeai-skill-upload) covers account Skills. These entry points do not establish complete runtime coverage across Claude products.
 
 This adapter follows Anthropic's Claude Code documentation for [memory](https://code.claude.com/docs/en/memory), [settings](https://code.claude.com/docs/en/settings), [permissions](https://code.claude.com/docs/en/permissions), and [skills](https://code.claude.com/docs/en/skills), re-checked on 2026-09-04; the memory page was re-checked on 2026-10-01 for `AGENTS.md` support.
 
@@ -11,18 +11,19 @@ This adapter follows Anthropic's Claude Code documentation for [memory](https://
 ```text
 claude/
   global/CLAUDE.md.template
-  global/settings.example.json
   project/CLAUDE.md.template       # @AGENTS.md + Claude-specific guidance
-  project/settings.example.json
-  project/mcp.example.json
-  project/PROMPTS.md
+  examples/README.md
+  examples/settings.example.json
+  examples/settings.project.example.json
+  examples/mcp.example.json
+  examples/PROMPTS.md
 ```
 
-The shared project core is `rules/project/AGENTS.md.template`; Skills live only in `skills/`. Source templates are inactive: remove `.template` when installing. Choose rules, settings, MCP, and Skills separately rather than copying an adapter directory. See the [source-to-destination map](../docs/installation.md#source-and-destination-map) and [migration guide](../docs/layout-migration.md).
+The shared project core is `codex/project/AGENTS.md.template`; Skills live only in `skills/`. Source templates are inactive: remove `.template` when installing. Choose rules, settings, MCP, and Skills separately rather than copying an adapter directory. See the [source-to-destination map](../docs/installation.md#source-and-destination-map) and [migration guide](../docs/layout-migration.md).
 
-Project settings retain secret-path Read denials and dangerous-command ask guardrails. Read denial covers built-in Edit from v2.1.208 and Write from v2.1.228, but not NotebookEdit or arbitrary scripts reading files themselves. It does not establish Windows sandbox isolation. The user settings example supplies selected attribution and MCP approval preferences; `enableAllProjectMcpServers=false` does not prove a headless session cannot connect to project MCP. [Official settings](https://code.claude.com/docs/en/settings), [MCP](https://code.claude.com/docs/en/mcp)
+Project settings retain secret-path Read denials and dangerous-command ask guardrails. The ordered `.env.*` match followed by the `!.env.example` exception preserves an example file only within that same permission list; it cannot cancel a deny from another settings source. Read denial covers built-in Edit from v2.1.208 and Write from v2.1.228, but not NotebookEdit or arbitrary scripts reading files themselves. It does not establish Windows sandbox isolation. The user settings example supplies `opus`, per-model `xhigh` reasoning for `claude-opus-5-5`, attribution, user credential-path protection, and MCP approval preferences. Recheck the `modelSettings` key when the model alias changes; `enableAllProjectMcpServers=false` does not prove a headless session cannot connect to project MCP. [Official settings](https://code.claude.com/docs/en/settings), [MCP](https://code.claude.com/docs/en/mcp)
 
-The project MCP example defines the official OpenAI documentation HTTP server at `https://developers.openai.com/mcp`; it becomes project configuration only after deliberate copying/merging into project-root `.mcp.json`. User and local MCP definitions live in `~/.claude.json`, managed with `claude mcp add --scope user` or `--scope local`, not in settings JSON. A static example does not establish a successful runtime connection.
+The project MCP example defines DeepWiki and Tavily HTTP services for public-repository understanding and web search/extraction. Merge it into project-root `.mcp.json` only after configuring authentication, reviewing data flow, and selecting the intended approval scope. Claude MCP has no Codex-style `enabled` field; merge only the desired entry when using one service. User and local MCP definitions live in `~/.claude.json`, managed with `claude mcp add --scope user` or `--scope local`, not in settings JSON. See the [examples guide](examples/README.md) and [MCP routing](../docs/mcp-routing.md). A static example does not establish a successful runtime connection.
 
 ## Installation
 
@@ -56,7 +57,7 @@ if [ -s /path/to/your-project/AGENTS.override.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
@@ -64,7 +65,7 @@ if [ ! -s /path/to/your-project/AGENTS.md ]; then
 fi
 cp claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
 mkdir -p /path/to/your-project/.claude
-cp claude/project/settings.example.json /path/to/your-project/.claude/settings.json
+cp claude/examples/settings.project.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -76,7 +77,7 @@ Bash project installation runs in a subshell; guard failures leave the parent in
 
 ## Shared Project Core
 
-`project/CLAUDE.md.template` is a thin adapter. Its `@AGENTS.md` line imports the shared project core from `rules/project/AGENTS.md.template`; the rest contains only Claude Code-specific guidance. Change project-wide behavior in `rules/project/AGENTS.md.template`, not in the adapter.
+`project/CLAUDE.md.template` is a thin adapter. Its `@AGENTS.md` line imports the shared project core from `codex/project/AGENTS.md.template`; the rest contains only Claude Code-specific guidance. Change project-wide behavior in `codex/project/AGENTS.md.template`, not in the adapter.
 
 Claude Code v2.1.277 and later can read `AGENTS.md` directly, but only when no `CLAUDE.md` is present. Because this adapter ships a `CLAUDE.md`, the explicit import keeps `AGENTS.md` loaded; it also works on earlier versions and never loads the file twice ([memory documentation](https://code.claude.com/docs/en/memory#agents-md), checked 2026-10-01). Use the import rather than a symlink on Windows. Run `/memory` or `/context` in a new session to confirm that both files loaded.
 

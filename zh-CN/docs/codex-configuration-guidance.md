@@ -1,6 +1,14 @@
 # Codex 配置使用指南
 
-以[公开配置示例](../codex/examples/config.example.toml)作为经过评审的起点，再只合并适合账号、任务和环境的选项。本指南提供可选配方，不改变示例的生效默认值，也不新增一套全局规则。来源核查和验证边界见[日期化兼容性记录](compatibility.md#codex-configuration-guidance-2026-10-11)。
+以[公开配置示例](../codex/examples/config.example.toml)作为经过评审的起点，再只合并适合账号、任务和环境的选项。本指南说明当前基础配置与可选配方，是否应用配方需单独选择，不新增一套全局规则。来源核查和验证边界见[日期化兼容性记录](compatibility.md)。
+
+## 主模型、子代理与配置入口
+
+基础示例显式采用 `gpt-6-astra` 主模型和 `xhigh` 推理、`high` 计划推理；子代理默认采用 `gpt-6.1-sol` 和 `high` 推理，最多并发两个子代理。并发数量不包含主代理。它们是针对研究、设计和专业文档的推荐起点，不是经过任务质量比较后得出的普遍最优值。使用前确认[模型权限](https://learn.chatgpt.com/docs/models)，并在新会话核对实际选择。
+
+默认子代理模型由 `[agents].default_subagent_model` 设置，现有角色定义可以覆盖默认选择；仅设置默认模型无需创建角色文件。子代理继承父会话的权限，不应把角色文件当成独立权限隔离。见[官方子代理说明](https://learn.chatgpt.com/docs/agent-configuration/subagents)。
+
+[示例目录说明](../codex/examples/README.md)区分完整用户配置、最小项目覆盖和可选 full-access profile；`global/`、`project/` 只放规则模板。若某个复杂任务需要更高计划推理，可在任务选项或单独 profile 中按当前模型支持设置 `plan_mode_reasoning_effort = "xhigh"`，无需寻找未分发的 `high.config.toml`。模型能力、配额和收益需在实际账户核实。
 
 ## 指令与权限边界
 
@@ -98,4 +106,4 @@ $LASTEXITCODE
 4. 检查完整差异、解析后的值、编码和无关设置。检查 `codex features list` 及相关客户端诊断。先验证目标行为，再声称运行成功；分别报告记忆质量、计费、沙箱隔离和 Desktop 行为。
 5. 如其他写入者修改了文件，保留新状态并核对差异。只有确认不会丢失后续修改时，才整份恢复备份；否则只撤销已评审的键。停止选择试用 profile 即可停止应用其覆盖项。模型改回原值不会撤销已经生成的记忆；通过受支持的记忆控制检查相关内容，不自动删除整个记忆库。
 
-这些 Markdown 配方不是已安装的 profile，也不在 `scripts/validate-codex-configs.py` 的四文件清单中。若后续分发独立 TOML 文件，应将其加入维护中的 Schema、镜像和加载检查。个人试验只有在目标范围和证据足以支持采用时，才进入共享默认值。
+这些 Markdown 配方不是已安装的 profile，也不在 `scripts/validate-codex-configs.py` 维护的独立 TOML 清单中。若后续分发独立 TOML 文件，应将其加入维护中的 Schema、镜像和加载检查。个人试验只有在目标范围和证据足以支持采用时，才进入共享默认值。

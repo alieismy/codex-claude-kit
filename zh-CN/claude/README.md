@@ -2,7 +2,7 @@
 
 Claude Code 是 Codex & Claude Kit 的主要 Claude 入口。本目录将共享文档交付模型映射到 Claude Code 原生规则、选定 settings/MCP 示例、提示词与独立 Skill 来源，同时维护 Claude 网页版／桌面版适用的指令与 Skills。Codex 仍保留最完整的配置示例，各平台能力并不完全相同。
 
-本地或账户同步 Skill 的调用见 [Claude Code 提示词](project/PROMPTS.md)。Claude 网页版／桌面版个性化设置见独立的 [Instructions for Claude（仅英文版）](../../docs/claude-personalized-instructions.md)，其账户设置与本地 `CLAUDE.md` 规则作用域不同；账户 Skills 见 [claude.ai 上传流程](#claudeai-skill-upload)。这些入口不表示所有 Claude 产品均已完成运行验收。
+本地或账户同步 Skill 的调用见 [Claude Code 提示词](examples/PROMPTS.md)。Claude 网页版／桌面版个性化设置见独立的 [Instructions for Claude（仅英文版）](../../docs/claude-personalized-instructions.md)，其账户设置与本地 `CLAUDE.md` 规则作用域不同；账户 Skills 见 [claude.ai 上传流程](#claudeai-skill-upload)。这些入口不表示所有 Claude 产品均已完成运行验收。
 
 参考的 Claude Code 官方载体：
 
@@ -24,18 +24,19 @@ Claude Code 是 Codex & Claude Kit 的主要 Claude 入口。本目录将共享�
 ```text
 zh-CN/claude/
   global/CLAUDE.md.template
-  global/settings.example.json
   project/CLAUDE.md.template       # @AGENTS.md + Claude-specific guidance
-  project/settings.example.json
-  project/mcp.example.json
-  project/PROMPTS.md
+  examples/README.md
+  examples/settings.example.json
+  examples/settings.project.example.json
+  examples/mcp.example.json
+  examples/PROMPTS.md
 ```
 
-共享项目核在 `zh-CN/rules/project/AGENTS.md.template`；Skills 只在 `zh-CN/skills/`。源模板不活动，安装时去掉 `.template` 后缀；按需分别选规则、settings、MCP 和 Skills，不递归复制适配目录。完整[源到目标映射](../docs/installation.md#source-and-destination-map)与[迁移说明](../docs/layout-migration.md)。
+共享项目核在 `zh-CN/codex/project/AGENTS.md.template`；Skills 只在 `zh-CN/skills/`。源模板不活动，安装时去掉 `.template` 后缀；按需分别选规则、settings、MCP 和 Skills，不递归复制适配目录。完整[源到目标映射](../docs/installation.md#source-and-destination-map)与[迁移说明](../docs/layout-migration.md)。
 
-项目 settings 保留常见密钥路径 Read deny 和危险命令 ask 护栏；Read 拒绝规则自 v2.1.208 覆盖内置 Edit、自 v2.1.228 覆盖 Write，但不覆盖 NotebookEdit，也不能阻止任意脚本自行读取文件。Windows 上不应据此宣称完整沙箱隔离。用户 settings 示例仅提供选定的 attribution 和 MCP 审批偏好；`enableAllProjectMcpServers=false` 不能证明 headless 会话不会连接项目 MCP。[官方 settings](https://code.claude.com/docs/en/settings)、[MCP](https://code.claude.com/docs/en/mcp)
+项目 settings 保留常见密钥路径 Read deny 和危险命令 ask 护栏；先匹配 `.env.*`、再以 `!.env.example` 排除示例文件，只在同一权限列表按顺序生效，不能撤销其他设置来源的 deny。Read 拒绝规则自 v2.1.208 覆盖内置 Edit、自 v2.1.228 覆盖 Write，但不覆盖 NotebookEdit，也不能阻止任意脚本自行读取文件。Windows 上不应据此宣称完整沙箱隔离。用户 settings 示例提供 `opus`、针对 `claude-opus-5-5` 的 `xhigh` 推理强度、attribution、用户凭据路径保护和 MCP 审批偏好；模型别名变化时需要核对对应的 `modelSettings` 键。`enableAllProjectMcpServers=false` 不能证明 headless 会话不会连接项目 MCP。[官方 settings](https://code.claude.com/docs/en/settings)、[MCP](https://code.claude.com/docs/en/mcp)
 
-项目 MCP 示例是 OpenAI 官方文档 HTTP 服务 `https://developers.openai.com/mcp`；合并/复制到项目根 `.mcp.json` 后才作为项目配置使用。用户和 local MCP 定义在 `~/.claude.json`，通过 `claude mcp add --scope user` 或 `--scope local` 管理，不能复制到 settings JSON 充当服务器定义。示例静态存在不证明运行连接成功。
+项目 MCP 示例采用 DeepWiki 与 Tavily HTTP 服务：前者用于公开仓库理解，后者用于网页搜索与正文提取。合并到项目根 `.mcp.json` 并配置认证、审查数据流和批准后，才用于项目。Claude MCP 没有 Codex 的 `enabled` 字段；需要只用一个服务时，先只合并对应条目。用户和 local MCP 定义在 `~/.claude.json`，通过 `claude mcp add --scope user` 或 `--scope local` 管理，不能复制到 settings JSON 充当服务器定义。详见[示例指南](examples/README.md)和 [MCP 路由](../docs/mcp-routing.md)。示例静态存在不证明运行连接成功。
 
 ## 安装
 
@@ -69,7 +70,7 @@ if [ -s /path/to/your-project/AGENTS.override.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp zh-CN/codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
@@ -77,7 +78,7 @@ if [ ! -s /path/to/your-project/AGENTS.md ]; then
 fi
 cp zh-CN/claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
 mkdir -p /path/to/your-project/.claude
-cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/settings.json
+cp zh-CN/claude/examples/settings.project.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
@@ -89,7 +90,7 @@ Bash 项目安装在子 shell 中运行，guard 失败不会退出父交互式 s
 
 ## 共享项目核心
 
-`project/CLAUDE.md.template` 是薄适配文件：其中的 `@AGENTS.md` 行导入来自 `zh-CN/rules/project/AGENTS.md.template` 的共享项目核心，其余内容只保留 Claude Code 专有指引。项目通用行为应修改 `zh-CN/rules/project/AGENTS.md.template`，不要改适配文件。
+`project/CLAUDE.md.template` 是薄适配文件：其中的 `@AGENTS.md` 行导入来自 `zh-CN/codex/project/AGENTS.md.template` 的共享项目核心，其余内容只保留 Claude Code 专有指引。项目通用行为应修改 `zh-CN/codex/project/AGENTS.md.template`，不要改适配文件。
 
 Claude Code v2.1.277 及以上版本可直接读取 `AGENTS.md`，但仅限不存在 `CLAUDE.md` 的情况。本适配包含 `CLAUDE.md`，因此通过显式导入保持 `AGENTS.md` 被加载；该方式同样适用于更早版本，且不会重复加载（[memory 文档](https://code.claude.com/docs/en/memory#agents-md)，2026-10-01 核查）。在 Windows 上应使用导入而不是软链接。可在新会话中运行 `/memory` 或 `/context` 确认两个文件均已加载。
 

@@ -4,6 +4,16 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
+## 4.0.0 - 2026-10-14
+
+- **Breaking source-layout change:** keep only rules in Codex/Claude global and project directories; restore the single shared project core to `codex/project/AGENTS.md.template`. Move project configuration, Claude settings/MCP, and platform prompts into their respective `examples/` directories. Root prompt files become entry indexes; native installation destinations and `.template` isolation remain explicit.
+- Recommend `gpt-6-astra` with `xhigh` reasoning, `high` plan reasoning, and `gpt-6.1-sol` subagents with `high` reasoning and a concurrency limit of two. Retain the workspace-write base and the separate full-access profile; clarify profile installation and model-access requirements.
+- Add Claude user model/effort configuration and credential-path protection, broaden project environment-file matching with the documented `.env.example` exception, and preserve native permission and MCP approval boundaries.
+- Recommend DeepWiki and Tavily HTTP MCP services in both clients; document authentication, process-environment loading, optional specialist services, and client-specific configuration carriers. Update bilingual installation, routing, migration, and configuration guidance together with affected validation contracts; extend the validator regression inventory to 31 cases.
+- Record bounded verification on Codex `0.162.1` and Claude Code `2.1.299`: six Codex strict loads, native MCP discovery/connections, direct public MCP calls, and a synthetic Claude environment-file permission check. Use DeepWiki's observed `ask_wiki_question` tool name and retain the documentation discrepancy and unverified model-effort limits in compatibility evidence.
+- Recheck all nine npm registry entries for release. Claude Code is `2.1.299` and Context7 is `4.4.1`; the other listed registry versions are unchanged. Preserve historical tested versions and do not infer a Context7 runtime upgrade from registry metadata.
+- Keep retired rule trees in native-instruction scanning when present, and extend the retired-source regression to reject restored English and Chinese `rules/project/AGENTS.md` files.
+
 ## 3.0.0 - 2026-10-13
 
 - Adopt **Codex & Claude Kit** (`codex-claude-kit`) as the project name. Describe configurations, global/project rules, custom instructions, prompts, and Skills as separately selectable assets for professional work. Retain the three-layer rule/Skill model and the existing RD responsibilities.

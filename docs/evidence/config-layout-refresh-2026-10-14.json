@@ -1,0 +1,345 @@
+{
+  "recordedOn": "2026-10-14",
+  "timeBasis": "UTC",
+  "baselineCommit": "85b4a3182f5d61bb1814e2af76604b416833239e",
+  "changeState": "Uncommitted configuration/layout refresh; sourceHashes identify the candidates.",
+  "platform": "Windows",
+  "versions": {
+    "codexCli": "0.162.1",
+    "codexSchema": "0.162.1",
+    "claudeCode": "2.1.299"
+  },
+  "sourceHashes": {
+    "codex/examples/config.example.toml": "a36a6a517b278452d6ede65fd7cb0ce43da534c4682ee81634d67dd51b45f551",
+    "codex/examples/config.full-access.example.toml": "7b25a51f8f7f0ea97e3fb521fc4bd5e5e76a5e9a4b0f28d6f2a8261ed67ce861",
+    "codex/examples/config.project.example.toml": "467216757d9e2a23da7bdb58d51c2bd25925acb4f39691b5d18ab914edc6db32",
+    "codex/project/AGENTS.md.template": "049f87c7c8a7fa886f75f0ec96b87923ad0cab71fc4b1b23de91941c31819f2a",
+    "claude/project/CLAUDE.md.template": "c3fa3faea626a3d3e6521997627f95862ae4b18bc48bb9ff85b5a35e6869a98f",
+    "claude/examples/settings.example.json": "787db302b9b2620c6aad224aca8790b0bffc406ffb291cb0f924ff2faeeeb3bc",
+    "claude/examples/settings.project.example.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6",
+    "claude/examples/mcp.example.json": "67423098e368da06aab04fb6407d29c16ce3879d9bed7e85f3769c7516f90594",
+    "zh-CN/codex/examples/config.example.toml": "dc77d40a7b9654cea5937a2f7a1ab89d7cb31be4909e59075069100f7726186d",
+    "zh-CN/codex/examples/config.full-access.example.toml": "b1842d783c5c9e4a8fda37fcc3df65e04d911526e122a95b1dade4391b1d1c86",
+    "zh-CN/codex/examples/config.project.example.toml": "85e91024479bcac8ef0e39b7ae45e58ea72329a2c00723a73973259c78fbdeb3",
+    "zh-CN/codex/project/AGENTS.md.template": "84a274cbddf9e2419186cc6993b16c758ff80f609e5a33e8037c165ac8d818b3",
+    "zh-CN/claude/project/CLAUDE.md.template": "7254189cab557851ae60d8b02bede47e853330ab3ddb7f00610cfa770273ba9e",
+    "zh-CN/claude/examples/settings.example.json": "787db302b9b2620c6aad224aca8790b0bffc406ffb291cb0f924ff2faeeeb3bc",
+    "zh-CN/claude/examples/settings.project.example.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6",
+    "zh-CN/claude/examples/mcp.example.json": "67423098e368da06aab04fb6407d29c16ce3879d9bed7e85f3769c7516f90594"
+  },
+  "codexConfigurationGate": {
+    "command": "pwsh ./scripts/validate-release.ps1",
+    "exitCode": 0,
+    "currentOfficialSchemaMatchesTracked": true,
+    "schemaValidatedExamples": 6,
+    "isolatedStrictLoads": 6,
+    "scope": "Configuration schema and startup; no model request or delegation."
+  },
+  "directMcp": {
+    "sequence": [
+      "initialize",
+      "notifications/initialized",
+      "tools/list",
+      "tools/call"
+    ],
+    "authentication": "Existing Tavily credential forwarded through the probe process environment; no credential retained.",
+    "callArguments": {
+      "deepwiki": {
+        "repoName": "openai/codex"
+      },
+      "tavily": {
+        "query": "site:developers.openai.com/codex config.toml",
+        "max_results": 5,
+        "search_depth": "basic"
+      }
+    },
+    "results": [
+      {
+        "server": "deepwiki",
+        "endpoint": "https://mcp.deepwiki.com/mcp",
+        "transport": "direct MCP HTTP probe",
+        "protocol": "2025-03-26",
+        "tools": [
+          "ask_wiki_question",
+          "read_wiki_contents",
+          "read_wiki_structure"
+        ],
+        "call": "read_wiki_structure",
+        "call_is_error": false,
+        "content_blocks": 1,
+        "status": "passed"
+      },
+      {
+        "server": "tavily",
+        "endpoint": "https://mcp.tavily.com/mcp",
+        "transport": "direct MCP HTTP probe",
+        "protocol": "2025-03-26",
+        "tools": [
+          "tavily_crawl",
+          "tavily_extract",
+          "tavily_map",
+          "tavily_research",
+          "tavily_search"
+        ],
+        "call": "tavily_search",
+        "call_is_error": false,
+        "content_blocks": 1,
+        "status": "passed"
+      }
+    ],
+    "deepwikiDocumentationDifference": {
+      "officialPage": "https://docs.devin.ai/work-with-devin/deepwiki-mcp",
+      "documentedName": "ask_question",
+      "observedLiveName": "ask_wiki_question",
+      "candidateUses": "observedLiveName"
+    }
+  },
+  "nativeMcp": {
+    "fixture": "Separate task-local CODEX_HOME, CLAUDE_CONFIG_DIR, and Claude project; real user settings not edited.",
+    "codex": {
+      "candidateOverrides": "Enable only deepwiki and tavily in a copy of the public user example.",
+      "command": "codex app-server --strict-config --listen stdio://",
+      "sequence": [
+        "initialize",
+        "initialized",
+        "mcpServerStatus/list"
+      ],
+      "servers": [
+        {
+          "name": "deepwiki",
+          "tool_names": [
+            "ask_wiki_question",
+            "read_wiki_contents",
+            "read_wiki_structure"
+          ],
+          "auth_status": "unsupported"
+        },
+        {
+          "name": "tavily",
+          "tool_names": [
+            "tavily_extract",
+            "tavily_search"
+          ],
+          "auth_status": "bearerToken"
+        }
+      ],
+      "authStatusNote": "DeepWiki unsupported indicates no supported authentication flow, not a failed tool discovery."
+    },
+    "claude": {
+      "command": "claude mcp list",
+      "defaultCandidate": {
+        "deepwiki": {
+          "listed": true,
+          "status": "Pending approval"
+        },
+        "tavily": {
+          "listed": true,
+          "status": "Pending approval"
+        }
+      },
+      "approvedFixtureOverride": {
+        "enabledMcpjsonServers": [
+          "deepwiki",
+          "tavily"
+        ]
+      },
+      "enableAllProjectMcpServers": false,
+      "afterFixtureOptIn": {
+        "deepwiki": {
+          "connected": true,
+          "failed": false
+        },
+        "tavily": {
+          "connected": true,
+          "failed": false
+        }
+      },
+      "exitCodeBeforeAndAfter": [
+        0,
+        0
+      ]
+    }
+  },
+  "claudePermissionSmoke": {
+    "fixture": "Synthetic .env.example and .env.preview; public user settings passed explicitly and project settings copied into the fixture.",
+    "authentication": "Existing authenticated Claude installation; no credential file copied or retained.",
+    "isolationLimits": "Project setting source only, explicit candidate user settings, no MCP or Skills; inherited higher-priority environment/managed context was not independently eliminated.",
+    "commandOptions": [
+      "--print",
+      "--output-format stream-json",
+      "--verbose",
+      "--setting-sources project",
+      "--settings <candidate-user-settings>",
+      "--strict-mcp-config",
+      "--mcp-config <empty-config>",
+      "--tools Read",
+      "--allowedTools Read",
+      "--disable-slash-commands",
+      "--no-session-persistence",
+      "--max-turns 4"
+    ],
+    "promptContract": "Use Read once on each synthetic file; report success/denial; do not change files, delegate, or bypass a denial.",
+    "requestedModel": "opus",
+    "reportedModel": "claude-opus-5-5",
+    "requestedModelEffort": "xhigh",
+    "effectiveEffortVerified": false,
+    "exitCode": 0,
+    "resultSubtype": "success",
+    "reads": [
+      {
+        "file": ".env.example",
+        "tool": "Read",
+        "isError": false,
+        "permissionDenied": false,
+        "publicMarkerReturned": true,
+        "deniedMarkerReturned": false
+      },
+      {
+        "file": ".env.preview",
+        "tool": "Read",
+        "isError": true,
+        "permissionDenied": true,
+        "publicMarkerReturned": false,
+        "deniedMarkerReturned": false
+      }
+    ]
+  },
+  "nonValidatingDiagnostics": {
+    "claudeSettingsSchema": "Candidates accepted, but the referenced schema does not declare modelSettings and cannot validate that field.",
+    "claudeDoctor": "Candidate and invalid numeric-effort control both exited zero; not accepted as field-validation evidence."
+  },
+  "installationRecipes": {
+    "scope": "Bilingual current Claude project-only installation recipes; exact fenced bodies with only target placeholders replaced.",
+    "checks": [
+      {
+        "language": "en",
+        "shell": "powershell",
+        "document": "docs/installation.md",
+        "fencedBlockIndexZeroBased": 13,
+        "sourceBlockSha256": "169f9feef9a17fee5e48f41bafd115ff754f470969006daf40866162bba1c14a",
+        "personalDirectoryWrites": false,
+        "status": "passed",
+        "target": "en-powershell",
+        "generatedScript": "en-project-install.ps1",
+        "firstExitCode": 0,
+        "outputFiles": {
+          ".claude/settings.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6",
+          "AGENTS.md": "049f87c7c8a7fa886f75f0ec96b87923ad0cab71fc4b1b23de91941c31819f2a",
+          "CLAUDE.md": "c3fa3faea626a3d3e6521997627f95862ae4b18bc48bb9ff85b5a35e6869a98f"
+        },
+        "expectedSources": {
+          "AGENTS.md": "codex/project/AGENTS.md.template",
+          "CLAUDE.md": "claude/project/CLAUDE.md.template",
+          ".claude/settings.json": "claude/examples/settings.project.example.json"
+        },
+        "sourceHashMatch": true,
+        "repeatExitCode": 1,
+        "repeatRefused": true,
+        "repeatPreservedTarget": true
+      },
+      {
+        "language": "en",
+        "shell": "bash",
+        "document": "docs/installation.md",
+        "fencedBlockIndexZeroBased": 12,
+        "sourceBlockSha256": "3e6f5bb7dda9b5a52e9c3dc8b64510094e168cdfdf9b39e51a5a613b734402bb",
+        "personalDirectoryWrites": false,
+        "status": "passed",
+        "target": "en-bash",
+        "generatedScript": "en-project-install.sh",
+        "firstExitCode": 0,
+        "outputFiles": {
+          ".claude/settings.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6",
+          "AGENTS.md": "049f87c7c8a7fa886f75f0ec96b87923ad0cab71fc4b1b23de91941c31819f2a",
+          "CLAUDE.md": "c3fa3faea626a3d3e6521997627f95862ae4b18bc48bb9ff85b5a35e6869a98f"
+        },
+        "expectedSources": {
+          "AGENTS.md": "codex/project/AGENTS.md.template",
+          "CLAUDE.md": "claude/project/CLAUDE.md.template",
+          ".claude/settings.json": "claude/examples/settings.project.example.json"
+        },
+        "sourceHashMatch": true,
+        "repeatExitCode": 1,
+        "repeatRefused": true,
+        "repeatPreservedTarget": true
+      },
+      {
+        "language": "zh-CN",
+        "shell": "powershell",
+        "document": "zh-CN/docs/installation.md",
+        "fencedBlockIndexZeroBased": 10,
+        "sourceBlockSha256": "b81fc412d5c5c95fa8878519e738a0c6251b54a1a5975f75062537f64321a543",
+        "personalDirectoryWrites": false,
+        "status": "passed",
+        "target": "zh-CN-powershell",
+        "generatedScript": "zh-CN-project-install.ps1",
+        "firstExitCode": 0,
+        "outputFiles": {
+          ".claude/settings.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6",
+          "AGENTS.md": "84a274cbddf9e2419186cc6993b16c758ff80f609e5a33e8037c165ac8d818b3",
+          "CLAUDE.md": "7254189cab557851ae60d8b02bede47e853330ab3ddb7f00610cfa770273ba9e"
+        },
+        "expectedSources": {
+          "AGENTS.md": "zh-CN/codex/project/AGENTS.md.template",
+          "CLAUDE.md": "zh-CN/claude/project/CLAUDE.md.template",
+          ".claude/settings.json": "zh-CN/claude/examples/settings.project.example.json"
+        },
+        "sourceHashMatch": true,
+        "repeatExitCode": 1,
+        "repeatRefused": true,
+        "repeatPreservedTarget": true
+      },
+      {
+        "language": "zh-CN",
+        "shell": "bash",
+        "document": "zh-CN/docs/installation.md",
+        "fencedBlockIndexZeroBased": 8,
+        "sourceBlockSha256": "35641ea553de815bb7357a8f6f64a7389bccd6a6e772533f35066487bef8592a",
+        "personalDirectoryWrites": false,
+        "status": "passed",
+        "target": "zh-CN-bash",
+        "generatedScript": "zh-CN-project-install.sh",
+        "firstExitCode": 0,
+        "outputFiles": {
+          ".claude/settings.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6",
+          "AGENTS.md": "84a274cbddf9e2419186cc6993b16c758ff80f609e5a33e8037c165ac8d818b3",
+          "CLAUDE.md": "7254189cab557851ae60d8b02bede47e853330ab3ddb7f00610cfa770273ba9e"
+        },
+        "expectedSources": {
+          "AGENTS.md": "zh-CN/codex/project/AGENTS.md.template",
+          "CLAUDE.md": "zh-CN/claude/project/CLAUDE.md.template",
+          ".claude/settings.json": "zh-CN/claude/examples/settings.project.example.json"
+        },
+        "sourceHashMatch": true,
+        "repeatExitCode": 1,
+        "repeatRefused": true,
+        "repeatPreservedTarget": true
+      }
+    ],
+    "summary": {
+      "passed": 4,
+      "blocked": 0,
+      "failed": 0
+    },
+    "limits": [
+      "No personal directory, configuration, or Skill installation was changed.",
+      "Fresh empty synthetic project targets only; no existing AGENTS.md, override, empty-core, or symlink scenario was exercised.",
+      "File installation and repeat-overwrite refusal only; no Claude discovery, runtime setting behavior, MCP, account, or business acceptance is established.",
+      "Bash was the already-installed SmartGit-bundled Git Bash; PowerShell used the already-installed native executable."
+    ]
+  },
+  "preservation": {
+    "personalCodexConfigUnchangedBySha256": true,
+    "personalClaudeSettingsUnchangedBySha256": true,
+    "canonicalSkillsChanged": false,
+    "globalRuleBodiesChanged": false,
+    "webInstructionBodiesChanged": false
+  },
+  "limits": [
+    "A single dated run per final runtime fixture; no reliability estimate.",
+    "Direct MCP tool calls and native discovery/connection are separate evidence; no model-driven MCP call was tested through either client.",
+    "No Codex model access, backend identity, delegation, or model-quality evaluation.",
+    "No proof of effective Claude xhigh effort, general shell/credential permission enforcement, or bypass resistance.",
+    "No Desktop/web UI acceptance, Skills upload, registry refresh, release publication, or business/production acceptance."
+  ]
+}

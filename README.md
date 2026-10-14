@@ -34,7 +34,7 @@ It is designed for:
 | Product | Maintained assets | Start here |
 |---|---|---|
 | Codex | Configuration/MCP examples, global and project rules, prompts, and RD Skills | [Configuration](docs/codex-configuration-guidance.md), [installation](docs/installation.md), [prompts](PROMPTS.md) |
-| Claude Code (primary Claude entry point) | Settings/MCP examples, global and project rules, prompts, local and account-synced Skills guidance | [Claude guide](claude/README.md), [prompts](claude/project/PROMPTS.md) |
+| Claude Code (primary Claude entry point) | Settings/MCP examples, global and project rules, prompts, local and account-synced Skills guidance | [Claude guide](claude/README.md), [prompts](claude/examples/PROMPTS.md) |
 | Claude web/desktop | Applicable account instructions, task prompts, and Skill packaging/upload guidance | [Instructions for Claude](docs/claude-personalized-instructions.md), [Skill upload](claude/README.md#claudeai-skill-upload) |
 | ChatGPT web | Dedicated custom-instruction profile and product-scope guidance | [ChatGPT Web Custom Instructions](docs/personalized-custom-instructions.md) |
 
@@ -73,14 +73,14 @@ Layer 3: Document Delivery Skills
   - rd-delivery (explicit orchestration only)
 
 Source mappings (templates are inactive until installed):
-  Shared project core: rules/project/AGENTS.md.template
-  Codex: codex/global/AGENTS.md.template; codex/examples/; codex/project/config.example.toml
-  Claude Code: claude/{global,project}/CLAUDE.md.template; settings and MCP examples
+  Shared project core: codex/project/AGENTS.md.template
+  Codex: codex/{global,project}/AGENTS.md.template; codex/examples/
+  Claude Code: claude/{global,project}/CLAUDE.md.template; claude/examples/
   Shared Skills: skills/ (English); zh-CN/skills/ (Chinese)
-  Simplified Chinese adapters: zh-CN/{rules,codex,claude}/
+  Simplified Chinese adapters: zh-CN/{codex,claude}/
 ```
 
-The source repository's root `AGENTS.md` is a maintainer-specific Layer 2 instruction file. It governs changes to this repository and is intentionally distinct from the distributable `rules/project/AGENTS.md.template` template copied into downstream document-delivery projects.
+The source repository's root `AGENTS.md` is a maintainer-specific Layer 2 instruction file. It governs changes to this repository and is intentionally distinct from the distributable `codex/project/AGENTS.md.template` template copied into downstream document-delivery projects.
 
 ## Quick Start
 
@@ -96,7 +96,7 @@ fi
 
 # Project document-delivery discipline: only when the target does not exist
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -129,6 +129,8 @@ fi
 
 If `$CODEX_HOME/config.toml` already exists (default: `~/.codex/config.toml`), review and merge only the sections you need. The example deliberately uses live web search, enables Memories, inherits the full parent shell environment, and keeps Codex's default `KEY`/`SECRET`/`TOKEN` name filtering enabled with `ignore_default_excludes = false`. These choices match the maintainer's reviewed operating baseline; they are not neutral defaults for every user or threat model.
 
+The example recommends `gpt-6-astra` with `xhigh` reasoning, `high` plan reasoning, and `gpt-6.1-sol` subagents with `high` reasoning and a concurrency limit of two subagents. Confirm account access before use. The [examples guide](codex/examples/README.md) distinguishes the complete base, project override, and optional profile.
+
 See the [Codex configuration guide](docs/codex-configuration-guidance.md) for optional memory-model and eligibility choices, Fast selection, Windows MXC, and verification/recovery steps. These recipes do not change the public defaults.
 
 The high-permission profile is intentionally separate:
@@ -139,13 +141,9 @@ codex/examples/config.full-access.example.toml
 
 Use it only for trusted local workspaces where broad filesystem access is explicitly acceptable.
 
-### 4. Configure optional MCP credentials
+### 4. Select and configure MCP
 
-```bash
-cp .env.example .env
-```
-
-Fill only the keys for MCP servers you actually enable.
+DeepWiki and Tavily are the recommended shared research pair: public-repository understanding and current web search/extraction. The Codex example keeps external MCP servers disabled until deliberately configured; Claude project MCP is installed and approved separately. Follow [MCP routing](docs/mcp-routing.md) and the [environment/credential instructions](docs/installation.md#environment-variables). Copying `.env.example` alone does not establish that a client process loads its values.
 
 ### 5. Use Simplified Chinese templates
 
@@ -187,14 +185,14 @@ For the approved English-only Claude web profile, with exact character counts, a
 
 ## Platform Adapters and Languages
 
-The source tree separates shared rules and Skills from platform-specific carriers:
+The source tree keeps global/project directories for rule templates and platform examples directories for configuration, MCP, and prompts. Root `PROMPTS.md` is an entry index. Shared Skills retain their own canonical language trees:
 
 | Surface | English source | Simplified Chinese source | Native destination |
 |---|---|---|---|
-| Shared project rules | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
+| Shared project rules | `codex/project/AGENTS.md.template` | `zh-CN/codex/project/AGENTS.md.template` | `{project}/AGENTS.md` |
 | Codex global rules | `codex/global/AGENTS.md.template` | `zh-CN/codex/global/AGENTS.md.template` | `{CODEX_HOME}/AGENTS.md` |
 | Claude global/project rules | `claude/{global,project}/CLAUDE.md.template` | `zh-CN/claude/{global,project}/CLAUDE.md.template` | `~/.claude/CLAUDE.md`; `{project}/CLAUDE.md` |
-| Claude Code prompts | `claude/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` | current Claude Code task |
+| Claude Code prompts | `claude/examples/PROMPTS.md` | `zh-CN/claude/examples/PROMPTS.md` | current Claude Code task |
 | Shared RD Skills | `skills/rd-*` | `zh-CN/skills/rd-*` | deliberate user/project root or claude.ai upload |
 
 The shared project core is read natively by Codex and imported by the Claude project adapter with `@AGENTS.md`; change behavior shared by those adapters in the shared source. Native settings, permissions, MCP configuration, and Skill discovery remain product-specific.
@@ -207,7 +205,8 @@ The public examples combine safety boundaries with explicit capability choices; 
 
 - no `danger-full-access` by default;
 - no Windows elevated sandbox by default;
-- no hardcoded personal model name;
+- explicit recommended models, with account access and current alias mappings verified before use;
+- DeepWiki and Tavily as the shared baseline MCP recommendation, with task-specific documentation and browser tools optional;
 - no default third-party relay URL;
 - Codex uses `workspace-write`, live search, Memories, full shell-environment inheritance, and the default sensitive-name exclusions; merge these choices manually for the target environment;
 - Codex MCP servers remain disabled until credentials and use cases are reviewed;
@@ -220,24 +219,25 @@ The public examples combine safety boundaries with explicit capability choices; 
 ```text
 codex-claude-kit/
   AGENTS.md                         # repository-maintainer authority
-  rules/project/AGENTS.md.template   # shared downstream project core
   skills/rd-*/                      # canonical English Skills
   codex/
     global/AGENTS.md.template
-    project/config.example.toml
-    examples/config*.example.toml   # existing configuration profiles
+    project/AGENTS.md.template      # single shared downstream project core
+    examples/README.md
+    examples/config*.example.toml
+    examples/PROMPTS.md
   claude/
     README.md
     global/CLAUDE.md.template
-    global/settings.example.json
     project/CLAUDE.md.template
-    project/settings.example.json
-    project/mcp.example.json
-    project/PROMPTS.md
+    examples/README.md
+    examples/settings.example.json
+    examples/settings.project.example.json
+    examples/mcp.example.json
+    examples/PROMPTS.md
   zh-CN/
     README.md
     PROMPTS.md
-    rules/                          # shared project-rule translation
     skills/                         # Chinese Skills, one source tree
     codex/
     claude/
@@ -297,7 +297,7 @@ The validator checks common release blockers:
 - obvious secret leaks;
 - stale private/internal strings.
 
-The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects twenty-eight regression cases. In addition to Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it covers the Codex schema/runtime-aligned configuration contract, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, Claude shared-import installation guards, Claude prompt invocation syntax, and retired Cursor source roots.
+The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects thirty-one regression cases. In addition to Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it covers the Codex schema/runtime-aligned configuration contract, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, Claude shared-import installation guards, Claude prompt invocation syntax, recommended model/MCP defaults, ordered environment-file exceptions, duplicate former rule sources, and retired Cursor source roots.
 
 Before publishing a release, also run the networked dynamic gate:
 

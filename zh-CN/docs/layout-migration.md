@@ -2,9 +2,25 @@
 
 codex-claude-kit 将共享规则和 Skills 与 Codex、Claude 平台专有模板分开维护，中文载体放入 `zh-CN/`，共用英文版 Claude 账户指令指南（无中文版指令正文）保留在 `docs/`。下表是源路径，不是安装路径；安装规则时去掉 `.template` 后缀，使用客户端原生文件名。
 
-## 旧路径与当前路径
+## 当前规则与示例布局
 
-| 旧源路径 | 当前源路径 | 安装目标 |
+`global/`、`project/` 只存放规则模板；配置、MCP 和提示词统一放在对应平台的 `examples/`。共享项目核心只有一份，源文件移回 Codex 项目目录；Claude 安装后仍通过 `@AGENTS.md` 导入目标项目根目录的核心。`.template` 后缀继续隔离分发规则与本仓库维护指令。
+
+| 上一版源路径 | 当前源路径 | 安装目标或用途 |
+|---|---|---|
+| `rules/project/AGENTS.md.template` | `codex/project/AGENTS.md.template` | `{project}/AGENTS.md`，两端共享唯一核心 |
+| `codex/project/config.example.toml` | `codex/examples/config.project.example.toml` | `{project}/.codex/config.toml` |
+| `claude/global/settings.example.json` | `claude/examples/settings.example.json` | `~/.claude/settings.json` |
+| `claude/project/settings.example.json` | `claude/examples/settings.project.example.json` | `{project}/.claude/settings.json` |
+| `claude/project/mcp.example.json` | `claude/examples/mcp.example.json` | `{project}/.mcp.json` |
+| `PROMPTS.md` 中的 Codex 任务正文 | `codex/examples/PROMPTS.md` | Codex 任务提示词；根文件保留为入口索引 |
+| `claude/project/PROMPTS.md` | `claude/examples/PROMPTS.md` | Claude Code 任务提示词 |
+
+对应 `zh-CN/` 路径执行相同迁移。安装位置保持原生作用域，移动源文件不会改动既有安装。以下表格记录更早的迁移步骤，表内“当时目标”应继续按上表解析为当前源路径。
+
+## 更早的源布局迁移记录（历史）
+
+| 更早的源路径 | 当时目标 | 安装目标 |
 |---|---|---|
 | `codex/project/AGENTS.md` | `rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
 | `zh-CN/codex/project/AGENTS.md` | `zh-CN/rules/project/AGENTS.md.template` | `{project}/AGENTS.md` |
@@ -17,7 +33,7 @@ codex-claude-kit 将共享规则和 Skills 与 Codex、Claude 平台专有模板
 | `zh-CN/claude/project/.claude/skills/rd-*` | `zh-CN/skills/rd-*` | 所选本地根或账号上传 |
 | `cursor/zh-CN/.cursor/skills/rd-*` | `zh-CN/skills/rd-*` | 所选本地根 |
 
-Codex、Claude 全局/项目模板迁移同样适用于其 `zh-CN/` 镜像。共享项目核不依赖平台，Claude 项目模板继续使用 `@AGENTS.md` 薄适配。既有 Codex 用户配置示例路径保留；新增选定入口包括 `codex/project/config.example.toml`、`claude/global/settings.example.json`、`claude/project/mcp.example.json` 及其中文版本。
+Codex、Claude 全局/项目模板迁移同样适用于其 `zh-CN/` 镜像。共享项目核不依赖平台，Claude 项目模板继续使用 `@AGENTS.md` 薄适配。该历史阶段保留 Codex 用户配置示例路径，并新增选定入口： `codex/project/config.example.toml`、`claude/global/settings.example.json`、`claude/project/mcp.example.json` 及其中文版本。
 
 ## Cursor 退役与名称迁移
 

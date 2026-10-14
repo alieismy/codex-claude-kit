@@ -15,8 +15,8 @@ $configPaths = @(
     "codex/examples/config.full-access.example.toml",
     "zh-CN/codex/examples/config.example.toml",
     "zh-CN/codex/examples/config.full-access.example.toml",
-    "codex/project/config.example.toml",
-    "zh-CN/codex/project/config.example.toml"
+    "codex/examples/config.project.example.toml",
+    "zh-CN/codex/examples/config.project.example.toml"
 )
 
 function Get-Sha256 {

@@ -1,0 +1,23 @@
+{
+  "model": "opus",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    }
+  },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "enableAllProjectMcpServers": false,
+  "permissions": {
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(~/.git-credentials)",
+      "Read(~/.codex/auth.json)",
+      "Read(~/.claude/.credentials.json)",
+      "Read(~/.npmrc)"
+    ]
+  }
+}

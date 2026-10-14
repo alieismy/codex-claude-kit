@@ -19,7 +19,7 @@ Codex 和 Claude Code 是主要本地代理入口，同时支持 Claude 网页�
 | 产品 | 维护内容 | 使用入口 |
 |---|---|---|
 | Codex | 配置／MCP 示例、全局与项目规则、提示词和 RD Skills | [配置说明](docs/codex-configuration-guidance.md)、[安装说明](docs/installation.md)、[提示词](PROMPTS.md) |
-| Claude Code（Claude 的主要入口） | settings／MCP 示例、全局与项目规则、提示词、本地与账户同步 Skills 指引 | [Claude 说明](claude/README.md)、[提示词](claude/project/PROMPTS.md) |
+| Claude Code（Claude 的主要入口） | settings／MCP 示例、全局与项目规则、提示词、本地与账户同步 Skills 指引 | [Claude 说明](claude/README.md)、[提示词](claude/examples/PROMPTS.md) |
 | Claude 网页版／桌面版 | 适用的账户指令、任务提示词和 Skills 打包／上传指引 | [Instructions for Claude（仅英文版）](../docs/claude-personalized-instructions.md)、[Skill 上传](claude/README.md#claudeai-skill-upload) |
 | ChatGPT 网页版 | 专用自定义指令及产品适用范围说明 | [ChatGPT 网页版自定义指令](docs/personalized-custom-instructions.md) |
 
@@ -28,7 +28,7 @@ Codex 和 Claude Code 是主要本地代理入口，同时支持 Claude 网页�
 ## 使用边界
 
 - 英文根目录保持发布基线和结构基线。
-- 仓库根 `AGENTS.md` 只治理本源码仓库的维护工作，与供下游项目复制的 `rules/project/AGENTS.md.template` 模板保持不同责任。
+- 仓库根 `AGENTS.md` 只治理本源码仓库的维护工作，与供下游项目复制的 `codex/project/AGENTS.md.template` 模板保持不同责任。
 - `zh-CN/` 提供共享规则、Codex、Claude Code、Skills 和文档的中文入口。
 - Cursor 支持已退役；日期化发布说明与证据保留历史范围，见[布局迁移说明](docs/layout-migration.md)。
 - RD Skills 继续聚焦决策与文档工作；编码、测试执行、部署和发布执行由客户端原生能力或适用专业工作流承担。
@@ -44,7 +44,7 @@ Layer 1: 全局指令
   zh-CN/claude/global/CLAUDE.md.template
 
 Layer 2: 项目文档交付纪律
-  zh-CN/rules/project/AGENTS.md.template（共享项目核心）
+  zh-CN/codex/project/AGENTS.md.template（共享项目核心）
   zh-CN/claude/project/CLAUDE.md.template（通过 @AGENTS.md 导入共享核心的 Claude Code 薄适配）
 
 Layer 3: 文档交付 Skills
@@ -99,7 +99,7 @@ fi
 
 ```bash
 if [ ! -s /path/to/your-project/AGENTS.override.md ] && [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp zh-CN/codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 ```
 
@@ -116,7 +116,7 @@ pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -CheckOnly
 
 如同一层级存在非空 `AGENTS.override.md`，它是当前生效的指令来源；应先备份并有意识地合并，不要创建不会生效的 `AGENTS.md`。如已有 `AGENTS.md`，也应先备份，再只合并需要的章节。不要直接替换现有个人全局指令或项目规则。模板包含角色、语言、推理深度、授权和交付纪律等观点化默认值，应按实际用户、团队与仓库调整；`zh-CN/` 全局模板有意默认使用简体中文。
 
-可选的记忆模型与生成范围、Fast 选择、Windows MXC，以及验证和恢复步骤，见 [Codex 配置使用指南](docs/codex-configuration-guidance.md)。这些配方不改变公共默认值。
+配置示例采用 `gpt-6-astra` 主模型（`xhigh`）、`high` 计划推理、`gpt-6.1-sol` 子代理（`high`），最多并发两个子代理；使用前确认账户可用性。[配置示例目录](codex/examples/README.md)说明完整配置、项目覆盖和可选 profile。可选的记忆模型与生成范围、Fast 选择、Windows MXC，以及验证和恢复步骤，见 [Codex 配置使用指南](docs/codex-configuration-guidance.md)。这些配方不改变公共默认值。
 
 ### Claude Code
 
@@ -148,7 +148,7 @@ if [ -s /path/to/your-project/AGENTS.override.md ]; then
   exit 1
 fi
 if [ ! -e /path/to/your-project/AGENTS.md ]; then
-  cp zh-CN/rules/project/AGENTS.md.template /path/to/your-project/AGENTS.md
+  cp zh-CN/codex/project/AGENTS.md.template /path/to/your-project/AGENTS.md
 fi
 if [ ! -s /path/to/your-project/AGENTS.md ]; then
   printf '%s\n' 'Stop: the shared AGENTS.md import target must be non-empty.' >&2
@@ -156,13 +156,13 @@ if [ ! -s /path/to/your-project/AGENTS.md ]; then
 fi
 cp zh-CN/claude/project/CLAUDE.md.template /path/to/your-project/CLAUDE.md
 mkdir -p /path/to/your-project/.claude
-cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/settings.json
+cp zh-CN/claude/examples/settings.project.example.json /path/to/your-project/.claude/settings.json
 )
 ```
 
 存在非空 `AGENTS.override.md` 时，示例会在安装适配文件前停止。应先有意识地合并这一 Codex 生效来源，再选择对应的 Claude 导入（例如 `@AGENTS.override.md`）后继续；Claude 不会自动发现 override 文件。已有但为空的 `AGENTS.md` 也必须先手动修复。
 
-共享项目核心由 Codex 原生读取，Claude Code 通过 `@AGENTS.md` 导入；项目通用行为在共享源中维护，settings、permissions、MCP 和 Skill 发现机制保持产品差异。Claude Code 提示词见[中文模板](claude/project/PROMPTS.md)，完整规则、配置及账户 Skill 指引见 [Claude 说明](claude/README.md)。
+共享项目核心由 Codex 原生读取，Claude Code 通过 `@AGENTS.md` 导入；项目通用行为在共享源中维护，settings、permissions、MCP 和 Skill 发现机制保持产品差异。Claude Code 提示词见[中文模板](claude/examples/PROMPTS.md)，完整规则、配置及账户 Skill 指引见 [Claude 说明](claude/README.md)。
 
 ## 文件清单
 
@@ -170,20 +170,22 @@ cp zh-CN/claude/project/settings.example.json /path/to/your-project/.claude/sett
 zh-CN/
   README.md
   PROMPTS.md
-  rules/project/AGENTS.md.template
   skills/rd-*/SKILL.md
   codex/
     global/AGENTS.md.template
-    project/config.example.toml
+    project/AGENTS.md.template
+    examples/README.md
     examples/config*.example.toml
+    examples/PROMPTS.md
   claude/
     README.md
     global/CLAUDE.md.template
-    global/settings.example.json
     project/CLAUDE.md.template
-    project/settings.example.json
-    project/mcp.example.json
-    project/PROMPTS.md
+    examples/README.md
+    examples/settings.example.json
+    examples/settings.project.example.json
+    examples/mcp.example.json
+    examples/PROMPTS.md
   docs/
     installation.md
     layout-migration.md
@@ -192,12 +194,14 @@ zh-CN/
     personalized-custom-instructions.md
 ```
 
-英文根目录是权威基线；共享项目核、中文翻译和平台适配分别维护。源文件是未激活模板，安装时映射到客户端原生路径并去掉模板后缀。目录迁移、移除适配 Skills 镜像及个人安装边界见[布局迁移说明](docs/layout-migration.md)。
+英文根目录是权威基线；共享项目核、中文翻译和平台适配分别维护。源文件是未激活模板，安装时映射到客户端原生路径并去掉模板后缀。`global/`、`project/` 仅放规则，配置与提示词集中于各平台 `examples/`；根 `PROMPTS.md` 仅作索引。目录迁移、移除适配 Skills 镜像及个人安装边界见[布局迁移说明](docs/layout-migration.md)。
 
 ## 已评审的公共默认值
 
 公共示例同时包含安全边界和明确的能力选择；它们经过评审且具有倾向性，并非适合所有用户或威胁模型的无条件保守默认值：
 
+- Codex 推荐 `gpt-6-astra` 主模型与 `gpt-6.1-sol` 子代理；Claude 用户示例推荐 `opus` 与按模型设置的推理强度。模型可用性和别名映射需要在目标账户核实。
+- DeepWiki 与 Tavily 是两端的基础 MCP 推荐；认证、数据流、批准和客户端验证见 [MCP 路由](docs/mcp-routing.md)。
 - Codex 示例使用 `workspace-write`、实时 Web 搜索、Memories、完整 shell 环境继承，并通过 `ignore_default_excludes = false` 保留对名称含 `KEY`、`SECRET`、`TOKEN` 的默认过滤；应结合目标环境手动合并。
 - Codex 外部 MCP server 默认禁用，直到凭据、数据流和使用场景被明确审查。
 - 不使用 `@latest` 作为 npm MCP 包版本。
@@ -214,7 +218,7 @@ pwsh ./scripts/validate.ps1
 pwsh ./scripts/test-validator.ps1
 ```
 
-Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+ 及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。二十八项负向回归覆盖 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置，以及 Codex Schema/运行基线一致的配置契约、跨平台推理与长期指引治理、GSD 当前/归档来源归属、明确交付编排请求边界、Claude 共享导入安装保护、Claude 提示词调用语法和已退役的 Cursor 源目录。
+Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+ 及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。三十一项负向回归覆盖 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置，以及 Codex Schema/运行基线一致的配置契约、跨平台推理与长期指引治理、GSD 当前/归档来源归属、明确交付编排请求边界、Claude 共享导入安装保护、Claude 提示词调用语法、推荐模型／MCP 默认值、按顺序生效的环境文件例外、旧规则源重复和已退役的 Cursor 源目录。
 
 公开发布前还必须执行联网动态门禁：
 

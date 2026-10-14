@@ -249,7 +249,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "rules/project/AGENTS.md.template"
+        $path = Join-Path $caseRoot "codex/project/AGENTS.md.template"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace("final generated or effective configuration, ", "")
         $mutated = [regex]::Replace(
@@ -439,12 +439,12 @@ try {
 
         $valueFirstMutations = @(
             @{
-                Path = "rules/project/AGENTS.md.template"
+                Path = "codex/project/AGENTS.md.template"
                 Marker = "Validate the shortest path to the requested outcome"
                 Replacement = "Inspect supporting work before the requested outcome"
             },
             @{
-                Path = "zh-CN/rules/project/AGENTS.md.template"
+                Path = "zh-CN/codex/project/AGENTS.md.template"
                 Marker = "已复现缺陷"
                 Replacement = "可能存在的问题"
             }
@@ -509,7 +509,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "rules/project/AGENTS.md.template"
+        $path = Join-Path $caseRoot "codex/project/AGENTS.md.template"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace("context compaction", "context reduction")
         $mutated = $mutated.Replace("first meaningful checkpoint", "initial update")
@@ -531,7 +531,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "PROMPTS.md"
+        $path = Join-Path $caseRoot "codex/examples/PROMPTS.md"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace("GitHub is a candidate source, not the sole authority.", "GitHub provides the source list.")
         $mutated = $mutated.Replace("Implementation is outside the RD Skills' delivery boundary", "Implementation follows later")
@@ -552,7 +552,7 @@ try {
     ) -Mutate {
         param($caseRoot)
 
-        $path = Join-Path $caseRoot "PROMPTS.md"
+        $path = Join-Path $caseRoot "codex/examples/PROMPTS.md"
         $content = Get-Content -LiteralPath $path -Raw
         $mutated = $content.Replace("This is an optional preamble, not a standalone Skill.", "This is a standalone mandatory workflow.")
         $mutated = $mutated.Replace("Do not manufacture symmetry", "Present both sides symmetrically")
@@ -587,22 +587,22 @@ try {
 
         $promptMutations = @(
             @{
-                Path = "PROMPTS.md"
+                Path = "codex/examples/PROMPTS.md"
                 Current = "paste into Codex CLI or Codex App."
                 Invalid = "paste into Codex CLI, Codex App, or Claude Code."
             },
             @{
-                Path = "zh-CN/PROMPTS.md"
+                Path = "zh-CN/codex/examples/PROMPTS.md"
                 Current = "可直接粘贴到 Codex CLI 或 Codex App。"
                 Invalid = "可直接粘贴到 Codex CLI、Codex App 或 Claude Code。"
             },
             @{
-                Path = "claude/project/PROMPTS.md"
+                Path = "claude/examples/PROMPTS.md"
                 Current = "paste into Claude Code."
                 Invalid = "paste into Codex CLI, Codex App, or Claude Code."
             },
             @{
-                Path = "zh-CN/claude/project/PROMPTS.md"
+                Path = "zh-CN/claude/examples/PROMPTS.md"
                 Current = "可直接粘贴到 Claude Code。"
                 Invalid = "可直接粘贴到 Codex CLI、Codex App 或 Claude Code。"
             }
@@ -617,11 +617,11 @@ try {
             Set-LfText -Path $path -Content $mutated
         }
 
-        $claudePromptPath = Join-Path $caseRoot "claude/project/PROMPTS.md"
+        $claudePromptPath = Join-Path $caseRoot "claude/examples/PROMPTS.md"
         $claudePrompt = Get-Content -LiteralPath $claudePromptPath -Raw
         Set-LfText -Path $claudePromptPath -Content ($claudePrompt + "`n" + '$rd-research' + "`n")
 
-        $claudeSettingsPath = Join-Path $caseRoot "claude/project/settings.example.json"
+        $claudeSettingsPath = Join-Path $caseRoot "claude/examples/settings.project.example.json"
         $claudeSettings = Get-Content -LiteralPath $claudeSettingsPath -Raw
         if (-not $claudeSettings.StartsWith("{`n")) {
             throw "Fixture requires LF-delimited Claude settings JSON."
@@ -786,8 +786,8 @@ try {
     Invoke-NegativeCase -Name "inert-distribution-sources" -ExpectedPattern "Native discovery carrier must not occur in distribution sources" -Mutate {
         param($caseRoot)
 
-        $nativeCore = Join-Path $caseRoot "rules/project/AGENTS.md"
-        Copy-Item -LiteralPath (Join-Path $caseRoot "rules/project/AGENTS.md.template") -Destination $nativeCore
+        $nativeCore = Join-Path $caseRoot "codex/project/AGENTS.md"
+        Copy-Item -LiteralPath (Join-Path $caseRoot "codex/project/AGENTS.md.template") -Destination $nativeCore
         $nativeSkillRoot = Join-Path $caseRoot "claude/project/.claude/skills/rd-research"
         New-Item -ItemType Directory -Path $nativeSkillRoot -Force | Out-Null
         Copy-Item -LiteralPath (Join-Path $caseRoot "skills/rd-research/SKILL.md") -Destination (Join-Path $nativeSkillRoot "SKILL.md")
@@ -808,38 +808,113 @@ try {
 
     Invoke-NegativeCase -Name "codex-project-config-inventory" -ExpectedPattern @(
         "project Codex example must contain only the reviewed approval and workspace sandbox overrides",
-        "Codex release inventory is missing public config: codex/project/config.example.toml",
-        "Codex configuration validation failed:.*codex/project/config.example.toml"
+        "Codex release inventory is missing public config: codex/examples/config.project.example.toml",
+        "Codex configuration validation failed:.*codex/examples/config.project.example.toml"
     ) -Mutate {
         param($caseRoot)
 
-        foreach ($relativePath in @("codex/project/config.example.toml", "zh-CN/codex/project/config.example.toml")) {
+        foreach ($relativePath in @("codex/examples/config.project.example.toml", "zh-CN/codex/examples/config.project.example.toml")) {
             $path = Join-Path $caseRoot $relativePath
             $text = Get-Content -LiteralPath $path -Raw
             Set-LfText -Path $path -Content ($text + "`nunknown_project_option = true`n")
         }
         $releasePath = Join-Path $caseRoot "scripts/validate-release.ps1"
         $releaseText = Get-Content -LiteralPath $releasePath -Raw
-        $mutated = $releaseText.Replace('    "codex/project/config.example.toml",' + "`n", "")
+        $mutated = $releaseText.Replace('    "codex/examples/config.project.example.toml",' + "`n", "")
         if ($mutated -eq $releaseText) { throw "Fixture could not remove the project release inventory entry." }
         Set-LfText -Path $releasePath -Content $mutated
     }
 
     Invoke-NegativeCase -Name "claude-global-settings-and-mcp" -ExpectedPattern @(
         "Claude global settings must preserve attribution and explicit project-MCP opt-in",
-        "Claude MCP example must contain only the official HTTP documentation server",
+        "Claude global settings must use opus with model-specific Opus 5.5 xhigh effort",
+        "Claude global settings is missing credential deny permission 'Read\(~/.ssh/\*\*\)'",
+        "Claude MCP example must use DeepWiki and Tavily HTTP with environment-based authentication",
         "Language-neutral platform examples differ across translations"
     ) -Mutate {
         param($caseRoot)
 
-        $settingsPath = Join-Path $caseRoot "claude/global/settings.example.json"
+        $settingsPath = Join-Path $caseRoot "claude/examples/settings.example.json"
         $settings = Get-Content -LiteralPath $settingsPath -Raw | ConvertFrom-Json
         $settings.enableAllProjectMcpServers = $true
+        $settings.modelSettings.'claude-opus-5-5'.effortLevel = "high"
+        $settings.permissions.deny = @($settings.permissions.deny | Where-Object { $_ -cne "Read(~/.ssh/**)" })
         Set-LfText -Path $settingsPath -Content (($settings | ConvertTo-Json -Depth 10) + "`n")
-        $mcpPath = Join-Path $caseRoot "claude/project/mcp.example.json"
+        $mcpPath = Join-Path $caseRoot "claude/examples/mcp.example.json"
         $mcp = Get-Content -LiteralPath $mcpPath -Raw | ConvertFrom-Json
-        $mcp.mcpServers.openaiDeveloperDocs.url = "https://example.invalid/mcp"
+        $mcp.mcpServers.deepwiki.url = "https://example.invalid/mcp"
+        $mcp.mcpServers.tavily.headers.Authorization = "Bearer example-key"
         Set-LfText -Path $mcpPath -Content (($mcp | ConvertTo-Json -Depth 10) + "`n")
+    }
+
+    Invoke-NegativeCase -Name "recommended-codex-models-and-mcp" -ExpectedPattern @(
+        "required contract model must be 'gpt-6-astra'",
+        "required contract model_reasoning_effort must be 'xhigh'",
+        "required contract plan_mode_reasoning_effort must be 'high'",
+        "required contract agents.enabled must be True",
+        "required contract agents.max_concurrent_threads_per_session must be 2",
+        "required contract agents.default_subagent_model must be 'gpt-6.1-sol'",
+        "required contract agents.default_subagent_reasoning_effort must be 'high'",
+        "required contract mcp_servers.deepwiki.url must be",
+        "required contract mcp_servers.deepwiki.enabled_tools must be",
+        "required contract mcp_servers.tavily.bearer_token_env_var must be 'TAVILY_API_KEY'",
+        "required contract mcp_servers.tavily.tool_timeout_sec must be 120",
+        "required contract mcp_servers.tavily.enabled_tools must be"
+    ) -Mutate {
+        param($caseRoot)
+
+        $replacements = [ordered]@{
+            'model = "gpt-6-astra"' = 'model = "gpt-6.1-sol"'
+            'model_reasoning_effort = "xhigh"' = 'model_reasoning_effort = "medium"'
+            'plan_mode_reasoning_effort = "high"' = 'plan_mode_reasoning_effort = "medium"'
+            "[agents]`nenabled = true" = "[agents]`nenabled = false"
+            'max_concurrent_threads_per_session = 2' = 'max_concurrent_threads_per_session = 3'
+            'default_subagent_model = "gpt-6.1-sol"' = 'default_subagent_model = "gpt-6-astra"'
+            'default_subagent_reasoning_effort = "high"' = 'default_subagent_reasoning_effort = "medium"'
+            'https://mcp.deepwiki.com/mcp' = 'https://example.invalid/mcp'
+            'enabled_tools = ["read_wiki_structure", "read_wiki_contents", "ask_wiki_question"]' = 'enabled_tools = ["read_wiki_structure", "read_wiki_contents", "ask_question"]'
+            'bearer_token_env_var = "TAVILY_API_KEY"' = 'bearer_token_env_var = "OTHER_API_KEY"'
+            'tool_timeout_sec = 120' = 'tool_timeout_sec = 90'
+            'enabled_tools = ["tavily_search", "tavily_extract"]' = 'enabled_tools = ["tavily_search"]'
+        }
+        foreach ($prefix in @("", "zh-CN/")) {
+            $path = Join-Path $caseRoot "${prefix}codex/examples/config.example.toml"
+            $content = Get-Content -LiteralPath $path -Raw
+            foreach ($entry in $replacements.GetEnumerator()) {
+                $mutated = $content.Replace($entry.Key, $entry.Value)
+                if ($mutated -eq $content) { throw "Fixture could not mutate Codex contract '$($entry.Key)'." }
+                $content = $mutated
+            }
+            Set-LfText -Path $path -Content $content
+        }
+    }
+
+    Invoke-NegativeCase -Name "claude-environment-example-order" -ExpectedPattern "Claude settings must place the .env.example exception after the .env.\* deny pattern" -Mutate {
+        param($caseRoot)
+
+        foreach ($prefix in @("", "zh-CN/")) {
+            $path = Join-Path $caseRoot "${prefix}claude/examples/settings.project.example.json"
+            $settings = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
+            $settings.permissions.deny = @("Read(!.env.example)", "Read(.env.*)", "Read(.env)", "Read(secrets/**)")
+            Set-LfText -Path $path -Content (($settings | ConvertTo-Json -Depth 10) + "`n")
+        }
+    }
+
+    Invoke-NegativeCase -Name "retired-shared-project-source" -ExpectedPattern @(
+        "Retired shared-rule source must not duplicate the Codex project template",
+        "Native discovery carrier.*retired-shared-project-source[\\/]rules[\\/]project[\\/]AGENTS\.md",
+        "Native discovery carrier.*[\\/]zh-CN[\\/]rules[\\/]project[\\/]AGENTS\.md"
+    ) -Mutate {
+        param($caseRoot)
+
+        $retiredDirectory = Join-Path $caseRoot "rules/project"
+        New-Item -ItemType Directory -Path $retiredDirectory -Force | Out-Null
+        Copy-Item -LiteralPath (Join-Path $caseRoot "codex/project/AGENTS.md.template") -Destination (Join-Path $retiredDirectory "AGENTS.md.template")
+        foreach ($prefix in @("", "zh-CN/")) {
+            $nativeDirectory = Join-Path $caseRoot "${prefix}rules/project"
+            New-Item -ItemType Directory -Path $nativeDirectory -Force | Out-Null
+            Set-LfText -Path (Join-Path $nativeDirectory "AGENTS.md") -Content "# Restored native rule source`n"
+        }
     }
 
     Invoke-NegativeCase -Name "retired-cursor-adapter" -ExpectedPattern @(
@@ -855,7 +930,7 @@ try {
         }
     }
 
-    Write-Host "Validator negative tests passed (28/28)." -ForegroundColor Green
+    Write-Host "Validator negative tests passed (31/31)." -ForegroundColor Green
 }
 finally {
     $resolvedRunRoot = [System.IO.Path]::GetFullPath($runRoot)

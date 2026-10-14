@@ -1,6 +1,23 @@
 # 兼容性
 
-npm registry 最新版本已于 2026-10-13 重新核查；本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.296`。早先 Claude Code `2.1.287` 的观察日期仍为 2026-10-02，当前 registry 版本不代表已通过运行测试。其它已安装版本和运行测试保留各自原有日期：Cursor 版本为 2026-09-11，Cursor Rules、Skills 和 FAQ 文档为 2026-09-16，Claude Code 详细文档检查为 2026-09-04，Context7 有边界 stdio 探针为 2026-08-14。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+
+## 2026-10-14 配置与布局调整
+
+全局／项目源目录现在只放规则模板，软件配置、MCP 示例和平台提示词统一位于各平台 `examples/`。唯一共享项目核心为 `codex/project/AGENTS.md.template`，安装为根 `AGENTS.md` 后由 Claude 导入；原生目标路径与不自动加载的 `.template` 源名称继续明确区分。见[布局迁移](layout-migration.md)、[Codex 示例](../codex/examples/README.md)和 [Claude 示例](../claude/examples/README.md)。
+
+[脱敏证据记录](../../docs/evidence/config-layout-refresh-2026-10-14.json)分别记录以下检查：
+
+- 六份公开 Codex 示例均通过固定和实时 Schema 校验，并使用 CLI `0.162.1` 在隔离环境中严格加载。用户示例现请求 `gpt-6-astra`／`xhigh`、计划推理 `high`，子代理为 `gpt-6.1-sol`／`high`、并发上限为二。配置加载不能证明账户模型权限、后端模型身份或委派成功。
+- 在隔离副本中仅启用 DeepWiki 和 Tavily 后，原生 Codex `mcpServerStatus/list` 返回配置的三项 DeepWiki 工具和允许的两项 Tavily 工具。Claude `mcp list` 初次报告两项均待批准；仅在测试配置中通过 `enabledMcpjsonServers` 选择启用后，两项均连接成功。分发的 Claude 设置仍为 `enableAllProjectMcpServers=false`。
+- 独立的直接 HTTP MCP 探针完成初始化、工具发现及每个服务的一次公开资料调用：DeepWiki 对 `openai/codex` 执行 `read_wiki_structure`，Tavily 用 `tavily_search` 搜索公开 Codex 文档。既有 Tavily 凭据仅经探针进程环境传入。这是服务调用证据，不是两个客户端均已完成模型驱动工具调用的证据。
+- DeepWiki 实时工具列表返回 `ask_wiki_question`，而核查时的[官方页面](https://docs.devin.ai/work-with-devin/deepwiki-mcp)描述 `ask_question`。Codex 允许列表采用实测名称；该观察有日期边界，服务变更后应重新发现工具。
+- 一次使用候选用户／项目设置的 Claude Code `2.1.299` headless 请求报告模型为 `claude-opus-5-5`。其 `Read` 调用成功读取虚构 `.env.example`，拒绝读取 `.env.preview`，未返回被拒文件的标记。这只验证该 fixture 的有序例外，不验证 shell 命令绕过或全部凭据路径。请求包含模型级 `xhigh`，但返回事件没有证明最终生效的推理强度。
+- 原样提取中英文项目专用 PowerShell 和 Bash 安装块，仅替换目标占位路径。四组均生成预期的三份文件，SHA-256 与源文件一致；四次重复安装均拒绝且目标不变。这些空白虚构项目检查不覆盖已有共享核心、override、空核心或符号链接分支，也不验证客户端发现行为。
+
+引用的 Claude settings Schema 接受候选配置，但未定义 `modelSettings`；`claude doctor` 也未能区分候选值与无效推理强度对照，因此两者均不作为该字段的有效性证明。该配置契约依据当前[模型文档](https://code.claude.com/docs/en/model-config)，权限语法依据[权限文档](https://code.claude.com/docs/en/permissions)。
+
+哈希比较确认个人 Codex、Claude 配置未改变。Canonical Skills、全局指令正文和网页端自定义指令正文未修改。上述检查不证明桌面／网页端行为、账户 Skill 上传、通用权限执行、模型质量或业务／生产验收，也不代表重新核查 registry 或发布版本。
 
 ## 2026-10-13 当前支持范围
 
@@ -26,18 +43,18 @@ npm registry 最新版本已于 2026-10-13 重新核查；本机 Codex CLI 与�
 
 同一记录还保留双语各 9 个 ZIP（各 24 个运行载荷文件）与 canonical 源及迁移前基线的精确载荷比对；两语源各 62 个文件保持不变，`evals/` 和 `agents/` 按打包契约排除。这证明打包载荷一致，不证明已经上传或服务端替换。
 
-## 当前源映射（2026-10-13）
+## 当前源映射（2026-10-14）
 
 | 当前载体 | 英文源路径 | 中文源路径 |
 |---|---|---|
 | Codex 全局规则 | `codex/global/AGENTS.md.template` | `zh-CN/codex/global/AGENTS.md.template` |
 | Codex 用户配置 | `codex/examples/config{,.full-access}.example.toml` | 同一布局位于 `zh-CN/codex/examples/` |
-| Codex 项目配置 | `codex/project/config.example.toml` | `zh-CN/codex/project/config.example.toml` |
-| Codex 提示词 | `PROMPTS.md` | `zh-CN/PROMPTS.md` |
-| 共享项目规则 | `rules/project/AGENTS.md.template` | `zh-CN/rules/project/AGENTS.md.template` |
+| Codex 项目配置 | `codex/examples/config.project.example.toml` | `zh-CN/codex/examples/config.project.example.toml` |
+| Codex 提示词 | `codex/examples/PROMPTS.md`（根 `PROMPTS.md` 是索引） | `zh-CN/codex/examples/PROMPTS.md` |
+| 共享项目规则 | `codex/project/AGENTS.md.template` | `zh-CN/codex/project/AGENTS.md.template` |
 | Claude 全局/项目规则 | `claude/{global,project}/CLAUDE.md.template` | 同一布局位于 `zh-CN/claude/` |
-| Claude settings/MCP | `claude/global/settings.example.json`；`claude/project/{settings,mcp}.example.json` | 同一布局位于 `zh-CN/claude/` |
-| Claude Code 提示词 | `claude/project/PROMPTS.md` | `zh-CN/claude/project/PROMPTS.md` |
+| Claude settings/MCP | `claude/examples/settings{,.project}.example.json`；`claude/examples/mcp.example.json` | 同一布局位于 `zh-CN/claude/` |
+| Claude Code 提示词 | `claude/examples/PROMPTS.md` | `zh-CN/claude/examples/PROMPTS.md` |
 | ChatGPT 网页版专用指令 | `docs/personalized-custom-instructions.md` | `zh-CN/docs/personalized-custom-instructions.md` |
 | Claude 账户指令 | `docs/claude-personalized-instructions.md` | 共用英文版，无中文版指令正文 |
 | Skills | `skills/rd-*` | `zh-CN/skills/rd-*` |
@@ -50,7 +67,7 @@ npm registry 最新版本已于 2026-10-13 重新核查；本机 Codex CLI 与�
 
 | 组件 | 已测试版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@openai/codex` npm 包 | `0.147.0` | `0.162.1` | registry 与本机 CLI `0.162.1` 已于 2026-10-12 重新核查。已为本次发布基线获取 tag 固定的 `0.162.1` Schema；发布门禁会将其与实时 Schema 比较并检查全部维护的用户/项目示例。更广的测试基线仍为 `0.147.0`。不要把该版本写进仓库名或 AGENTS 规则。 |
+| `@openai/codex` npm 包 | `0.147.0` | `0.162.1` | registry 与本机 CLI `0.162.1` 已于 2026-10-14 重新核查。仓库继续使用 tag 固定的 `0.162.1` Schema 快照；发布门禁会将其与实时 Schema 比较并检查全部维护的用户/项目示例。更广的测试基线仍为 `0.147.0`，上方日期化检查各有更窄范围。不要把该版本写进仓库名或 AGENTS 规则。 |
 
 仓库在 `schemas/` 下保存带来源和 SHA-256 元数据的 Codex `0.162.1` 配置 Schema 离线快照。`scripts/validate.ps1` 确定性使用该快照；仅发布前执行的 `scripts/validate-release.ps1` 会将其与当前官方 Schema 比较，核对已安装 CLI 版本，使用实时副本验证全部六份用户/项目示例，并从隔离的临时 `CODEX_HOME` 严格加载每份示例。
 
@@ -97,7 +114,7 @@ npm registry 最新版本已于 2026-10-13 重新核查；本机 Codex CLI 与�
 
 | 组件 | 已测试 / 已固定版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.296` | registry 与本机 CLI `2.1.296` 已于 2026-10-12 重新核查；早先 `2.1.287` 的观察日期为 2026-10-02；settings Schema、适配器结构和 `claude doctor` 最近一次使用 `2.1.260` 重新核查的日期仍为 2026-09-04。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
+| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.299` | registry 与本机 CLI `2.1.299` 已于 2026-10-14 重新核查。上方模型、文件权限、MCP、Schema 和 doctor 的有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
 
 2026-10-01 核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md` 时直接读取 `AGENTS.md`；`CLAUDE.md` 中的 `@AGENTS.md` 导入不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
 
@@ -159,8 +176,8 @@ Cursor Rules、Skills 和 FAQ 官方文档已于 2026-09-16 重新核查；2026-
 
 | MCP 服务器 | 包名 | 已测试版本 | registry 最新核查版本 | 公开配置默认值 |
 |---|---|---:|---:|---|
-| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.3.0` | Codex 示例禁用 |
-| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Codex 示例禁用 |
+| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.4.1` | Codex 示例禁用 |
+| Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | 可选本地替代方式；主要示例使用 HTTP |
 | Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | 公共最小示例省略 |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | 公共最小示例省略 |
 | Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex 示例禁用 |
