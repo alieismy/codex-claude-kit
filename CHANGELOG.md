@@ -12,6 +12,7 @@ This project uses GitHub releases for versioning. Directory names should not con
 - Recommend DeepWiki and Tavily HTTP MCP services in both clients; document authentication, process-environment loading, optional specialist services, and client-specific configuration carriers. Update bilingual installation, routing, migration, and configuration guidance together with affected validation contracts; extend the validator regression inventory to 31 cases.
 - Record bounded verification on Codex `0.162.1` and Claude Code `2.1.299`: six Codex strict loads, native MCP discovery/connections, direct public MCP calls, and a synthetic Claude environment-file permission check. Use DeepWiki's observed `ask_wiki_question` tool name and retain the documentation discrepancy and unverified model-effort limits in compatibility evidence.
 - Recheck all nine npm registry entries for release. Claude Code is `2.1.299` and Context7 is `4.4.1`; the other listed registry versions are unchanged. Preserve historical tested versions and do not infer a Context7 runtime upgrade from registry metadata.
+- Keep retired rule trees in native-instruction scanning when present, and extend the retired-source regression to reject restored English and Chinese `rules/project/AGENTS.md` files.
 
 ## 3.0.0 - 2026-10-13
 

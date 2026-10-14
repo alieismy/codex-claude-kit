@@ -900,12 +900,21 @@ try {
         }
     }
 
-    Invoke-NegativeCase -Name "retired-shared-project-source" -ExpectedPattern "Retired shared-rule source must not duplicate the Codex project template" -Mutate {
+    Invoke-NegativeCase -Name "retired-shared-project-source" -ExpectedPattern @(
+        "Retired shared-rule source must not duplicate the Codex project template",
+        "Native discovery carrier.*retired-shared-project-source[\\/]rules[\\/]project[\\/]AGENTS\.md",
+        "Native discovery carrier.*[\\/]zh-CN[\\/]rules[\\/]project[\\/]AGENTS\.md"
+    ) -Mutate {
         param($caseRoot)
 
         $retiredDirectory = Join-Path $caseRoot "rules/project"
         New-Item -ItemType Directory -Path $retiredDirectory -Force | Out-Null
         Copy-Item -LiteralPath (Join-Path $caseRoot "codex/project/AGENTS.md.template") -Destination (Join-Path $retiredDirectory "AGENTS.md.template")
+        foreach ($prefix in @("", "zh-CN/")) {
+            $nativeDirectory = Join-Path $caseRoot "${prefix}rules/project"
+            New-Item -ItemType Directory -Path $nativeDirectory -Force | Out-Null
+            Set-LfText -Path (Join-Path $nativeDirectory "AGENTS.md") -Content "# Restored native rule source`n"
+        }
     }
 
     Invoke-NegativeCase -Name "retired-cursor-adapter" -ExpectedPattern @(

@@ -151,10 +151,13 @@ $skillRoots = @(
 
 # Native carriers belong to installation targets, never the distributable source tree.
 $distributionSourceRoots = @("codex", "claude", "zh-CN/codex", "zh-CN/claude")
-foreach ($relativeRoot in $distributionSourceRoots) {
+# Scan retired rule trees too if restored; they are not required source directories.
+foreach ($relativeRoot in ($distributionSourceRoots + @("rules", "zh-CN/rules"))) {
     $sourcePath = Join-Path $root $relativeRoot
     if (-not (Test-Path -LiteralPath $sourcePath -PathType Container)) {
-        Add-Failure "Missing distribution source directory: $relativeRoot"
+        if ($relativeRoot -in $distributionSourceRoots) {
+            Add-Failure "Missing distribution source directory: $relativeRoot"
+        }
         continue
     }
     foreach ($item in Get-ChildItem -LiteralPath $sourcePath -Recurse -Force) {
