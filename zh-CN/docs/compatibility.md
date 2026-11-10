@@ -1,6 +1,6 @@
 # 兼容性
 
-2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`；本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.167.0`，详见下方两个 2026-11-10 小节；其余条目保留 2026-10-14 的值。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`；本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.167.0`，详见下方两个 2026-11-10 小节。同日 v4.0.1 发布预检重新查询下表全部九项 npm registry 最新版本，并发现本机 Claude Code CLI 已为 `2.1.322`：Context7 为 `4.6.0`，Sequential Thinking 为 `2.0.0`，Playwright MCP 为 `0.0.85`，Chrome DevTools MCP 为 `1.12.0`，其余五项不变。registry 元数据不能证明 MCP 运行时已升级，`2.1.321` 的观察也未在 `2.1.322` 上重复。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
 
 ## 2026-11-10 Claude Code 护栏复核
 
@@ -133,7 +133,7 @@
 
 | 组件 | 已测试 / 已固定版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.322` | registry 最新版本 `2.1.322` 与本机 CLI `2.1.321` 已于 2026-11-10 重新核查；护栏、文件工具与子代理推理强度观察见 2026-11-10 一节。2026-10-14 `2.1.299` 的模型、文件权限、MCP、Schema 和 doctor 有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
+| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.322` | registry 最新版本 `2.1.322` 与本机 CLI `2.1.321` 已于 2026-11-10 重新核查，v4.0.1 发布预检时本机 CLI 为 `2.1.322`；护栏、文件工具与子代理推理强度观察见 2026-11-10 一节。2026-10-14 `2.1.299` 的模型、文件权限、MCP、Schema 和 doctor 有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
 
 2026-10-01 核查并于 2026-11-10 再次核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md` 时直接读取 `AGENTS.md`；`CLAUDE.md` 中的 `@AGENTS.md` 导入不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
 
@@ -195,12 +195,12 @@ Cursor Rules、Skills 和 FAQ 官方文档已于 2026-09-16 重新核查；2026-
 
 | MCP 服务器 | 包名 | 已测试版本 | registry 最新核查版本 | 公开配置默认值 |
 |---|---|---:|---:|---|
-| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.4.1` | Codex 示例禁用 |
+| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.6.0` | Codex 示例禁用 |
 | Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | 可选本地替代方式；主要示例使用 HTTP |
-| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | 公共最小示例省略 |
+| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `2.0.0` | 公共最小示例省略 |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | 公共最小示例省略 |
-| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex 示例禁用 |
-| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex 示例禁用 |
+| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.85` | Codex 示例禁用 |
+| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.12.0` | Codex 示例禁用 |
 | Augment Context Engine | `ace-tool-rs` | `0.1.16` | `0.1.16` | 公共最小示例省略 |
 
 2026-10-12 的 v2.0.0 发布预检重新查询了 Codex、Claude Code 和上述七个 MCP 包的 registry 条目，并核对本机 CLI。八个 registry 值与先前记录一致；Sequential Thinking 的 `latest` 标签通过 registry `/latest` 与显式指定官方 registry 的 `npm view ... dist-tags` 均返回 `1.0.0`，先前快照记录的 `2026.8.31` 保留为历史。这里报告当前标签，不推断版本变化原因或升级顺序；该 server 仍未加入公共最小示例，也没有新增 MCP 运行验收。

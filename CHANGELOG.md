@@ -4,7 +4,7 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
-## Unreleased
+## 4.0.1 - 2026-11-10
 
 - Correct the bilingual Claude guide's file-tool statement for project `Read` denials. A synthetic Claude Code `2.1.321` probe observed Read, Write, and Edit refusals on a denied `.env`, while NotebookEdit failed only on its read-before-write requirement. Remove the undocumented `v2.1.208` and `v2.1.228` starting versions and recommend `2.1.321` or later before relying on the guardrails.
 - Refresh the Claude Code compatibility record: installed CLI `2.1.321`, registry latest `2.1.322`, changelog review from `2.1.300` through `2.1.322`, and the current `modelSettings` documentation. The published settings schema still omits `modelSettings`.
@@ -14,6 +14,7 @@ This project uses GitHub releases for versioning. Directory names should not con
 - Fix fresh Windows clones failing the CRLF gate: `.gitattributes` now pins `*.txt` and `NOTICE` to LF, matching the validator's `*.txt` scan. Run the bilingual Bash Skill-install recipes in a subshell so a refused overwrite stops the block instead of closing the interactive shell. Restore the Simplified Chinese installation guide's section order, its `Skills` heading, and two untranslated sentences on `AGENTS.md` loading and the shared rule source.
 - Harden the validation scripts: the release gate drains strict-load output while waiting, both gates accept `python3` when `python` is unavailable, and the repository validator scans text files in one pass that prunes `.git` and `.tmp/local`. Temporary directories use the `codex-claude-kit` name from a single variable, and the negative-test runner counts passed cases instead of hard-coding the total. A new CRLF negative case raises the suite to 32.
 - Update the LICENSE copyright holder to `codex-claude-kit contributors` and remove an unreferenced third-party README from `.tmp/`.
+- Recheck all nine npm registry entries for the release: Context7 is `4.6.0`, Sequential Thinking `2.0.0`, Playwright MCP `0.0.85`, and Chrome DevTools MCP `1.12.0`, and the installed Claude Code CLI is now `2.1.322`. Public MCP invocations remain unpinned; no new MCP runtime acceptance is claimed.
 
 ## 4.0.0 - 2026-10-14
 

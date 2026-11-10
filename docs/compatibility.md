@@ -1,6 +1,6 @@
 # Compatibility
 
-On 2026-11-10 (UTC), the installed Claude Code CLI was rechecked as `2.1.321` and its npm registry latest as `2.1.322`, and the installed Codex CLI, its npm registry latest, and the release schema baseline were all `0.167.0`; see the 2026-11-10 sections below. The other entries keep their 2026-10-14 values. The installed Codex CLI and release schema baseline were rechecked as `0.162.1`, and the installed Claude Code CLI as `2.1.299`, on 2026-10-14 (UTC). All nine npm registry latest versions below were rechecked on the same date for v4.0.0: Claude Code is `2.1.299` and Context7 is `4.4.1`; the other seven entries are unchanged from 2026-10-13. Installed versions, registry versions, and runtime evidence are separate. Earlier observations retain their own dates, including Claude Code `2.1.287` on 2026-10-02, Cursor version on 2026-09-11, Cursor documentation on 2026-09-16, and the bounded Context7 stdio probe on 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
+On 2026-11-10 (UTC), the installed Claude Code CLI was rechecked as `2.1.321` and its npm registry latest as `2.1.322`, and the installed Codex CLI, its npm registry latest, and the release schema baseline were all `0.167.0`; see the 2026-11-10 sections below. The v4.0.1 release preflight on the same date re-queried all nine npm registry entries below and found the installed Claude Code CLI at `2.1.322`: Context7 is `4.6.0`, Sequential Thinking `2.0.0`, Playwright MCP `0.0.85`, and Chrome DevTools MCP `1.12.0`; the other five registry values are unchanged. Registry metadata does not establish an MCP runtime upgrade, and the `2.1.321` observations were not repeated on `2.1.322`. The installed Codex CLI and release schema baseline were rechecked as `0.162.1`, and the installed Claude Code CLI as `2.1.299`, on 2026-10-14 (UTC). All nine npm registry latest versions below were rechecked on the same date for v4.0.0: Claude Code is `2.1.299` and Context7 is `4.4.1`; the other seven entries are unchanged from 2026-10-13. Installed versions, registry versions, and runtime evidence are separate. Earlier observations retain their own dates, including Claude Code `2.1.287` on 2026-10-02, Cursor version on 2026-09-11, Cursor documentation on 2026-09-16, and the bounded Context7 stdio probe on 2026-08-14. Recheck registry versions and decision-relevant tool/API surfaces before each release.
 
 ## 2026-11-10 Claude Code guardrail refresh
 
@@ -133,7 +133,7 @@ The release follow-up [installation guard probe](evidence/claude-installation-gu
 
 | Component | Tested/pinned version | Registry latest checked | Notes |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm package | Not pinned by this repository | `2.1.322` | Registry latest `2.1.322` and installed CLI `2.1.321` were rechecked on 2026-11-10; the guardrail, file-tool, and subagent-effort observations are in the 2026-11-10 section. The 2026-10-14 `2.1.299` model, file-permission, MCP, schema, and doctor observations retain their separate evidence limits. Earlier `2.1.287` and `2.1.260` observations retain their original dates. Dangerous-command permission behavior was not exercised; settings validation is not proof that every wrapper or compound command will be intercepted. |
+| `@anthropic-ai/claude-code` npm package | Not pinned by this repository | `2.1.322` | Registry latest `2.1.322` and installed CLI `2.1.321` were rechecked on 2026-11-10, and the installed CLI was `2.1.322` at the v4.0.1 release preflight; the guardrail, file-tool, and subagent-effort observations are in the 2026-11-10 section. The 2026-10-14 `2.1.299` model, file-permission, MCP, schema, and doctor observations retain their separate evidence limits. Earlier `2.1.287` and `2.1.260` observations retain their original dates. Dangerous-command permission behavior was not exercised; settings validation is not proof that every wrapper or compound command will be intercepted. |
 
 The [memory documentation](https://code.claude.com/docs/en/memory#agents-md), checked on 2026-10-01 and rechecked on 2026-11-10, states that Claude Code reads `AGENTS.md` directly from v2.1.277 only when no `CLAUDE.md` is present, and that an `@AGENTS.md` import in `CLAUDE.md` is never read twice. The project adapter therefore uses the import. This is documentation evidence; loading was not verified on the maintainer's installed CLI.
 
@@ -190,12 +190,12 @@ Before retirement, this repository did not ship an active Cursor `.cursor/mcp.js
 
 | MCP server | Package | Tested version | Registry latest checked | Default in public config |
 |---|---|---:|---:|---|
-| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.4.1` | Codex example disabled |
+| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.6.0` | Codex example disabled |
 | Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | Optional local alternative; primary examples use HTTP |
-| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | Omitted from public minimal examples |
+| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `2.0.0` | Omitted from public minimal examples |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | Omitted from public minimal examples |
-| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex example disabled |
-| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex example disabled |
+| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.85` | Codex example disabled |
+| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.12.0` | Codex example disabled |
 | Augment Context Engine | `ace-tool-rs` | `0.1.16` | `0.1.16` | Omitted from public minimal examples |
 
 The 2026-10-12 v2.0.0 release preflight re-queried the Codex, Claude Code, and seven MCP package registry entries and checked the installed CLIs. Eight registry values matched the preceding record; Sequential Thinking returned a `latest` tag of `1.0.0` through both the registry `/latest` endpoint and `npm view ... dist-tags` with the official registry specified. The previous snapshot recorded `2026.8.31`. This reports the current tag without inferring why it changed or an upgrade order; the server remains omitted from public minimal examples, and no new MCP runtime acceptance is established.
