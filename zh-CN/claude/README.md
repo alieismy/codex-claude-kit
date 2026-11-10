@@ -12,7 +12,7 @@ Claude Code 是 Codex & Claude Kit 的主要 Claude 入口。本目录将共享�
 
 官方文档：
 
-已于 2026-09-04 重新核查；memory 页面已于 2026-10-01 针对 `AGENTS.md` 支持再次核查：
+已于 2026-09-04 重新核查；memory 页面已于 2026-10-01 针对 `AGENTS.md` 支持再次核查；以下四个页面及 [settings 参考](https://code.claude.com/docs/en/settings-reference)已于 2026-11-10（UTC）针对下文的权限、`modelSettings` 与 `AGENTS.md` 导入说明再次核查：
 
 - https://code.claude.com/docs/en/memory
 - https://code.claude.com/docs/en/settings
@@ -34,7 +34,7 @@ zh-CN/claude/
 
 共享项目核在 `zh-CN/codex/project/AGENTS.md.template`；Skills 只在 `zh-CN/skills/`。源模板不活动，安装时去掉 `.template` 后缀；按需分别选规则、settings、MCP 和 Skills，不递归复制适配目录。完整[源到目标映射](../docs/installation.md#source-and-destination-map)与[迁移说明](../docs/layout-migration.md)。
 
-项目 settings 保留常见密钥路径 Read deny 和危险命令 ask 护栏；先匹配 `.env.*`、再以 `!.env.example` 排除示例文件，只在同一权限列表按顺序生效，不能撤销其他设置来源的 deny。Read 拒绝规则自 v2.1.208 覆盖内置 Edit、自 v2.1.228 覆盖 Write，但不覆盖 NotebookEdit，也不能阻止任意脚本自行读取文件。Windows 上不应据此宣称完整沙箱隔离。用户 settings 示例提供 `opus`、针对 `claude-opus-5-5` 的 `xhigh` 推理强度、attribution、用户凭据路径保护和 MCP 审批偏好；模型别名变化时需要核对对应的 `modelSettings` 键。`enableAllProjectMcpServers=false` 不能证明 headless 会话不会连接项目 MCP。[官方 settings](https://code.claude.com/docs/en/settings)、[MCP](https://code.claude.com/docs/en/mcp)
+项目 settings 保留常见密钥路径 Read deny 和危险命令 ask 护栏；先匹配 `.env.*`、再以 `!.env.example` 排除示例文件，只在同一权限列表按顺序生效，不能撤销其他设置来源的 deny。在一次合成 Claude Code `2.1.321` 探针中，Read 拒绝规则同样拒绝了对匹配路径的内置 Edit 和 Write；NotebookEdit 未被该规则拒绝，只是因为必须先 Read 而失败。官方文档没有说明这些效果及其起始版本，升级后应重新核查。规则不能阻止脚本自行读取文件，Windows 上也不应据此宣称沙箱隔离。依赖这些护栏前应使用 Claude Code `2.1.321` 或更高版本：`2.1.319` 修复了 Bash deny/ask 规则漏掉含引号命令词的问题，`2.1.321` 修复了 deny 规则漏掉 `cp` 或 `mv` 写入目录的目标文件的问题。详见[兼容性](../docs/compatibility.md)。用户 settings 示例提供 `opus`、针对 `claude-opus-5-5` 的 `xhigh` 推理强度、未自行指定推理强度的子代理使用 `high`、attribution、用户凭据路径保护和 MCP 审批偏好；模型别名变化时需要核对对应的 `modelSettings` 键。`enableAllProjectMcpServers=false` 不能证明 headless 会话不会连接项目 MCP。[官方 settings](https://code.claude.com/docs/en/settings)、[MCP](https://code.claude.com/docs/en/mcp)
 
 项目 MCP 示例采用 DeepWiki 与 Tavily HTTP 服务：前者用于公开仓库理解，后者用于网页搜索与正文提取。合并到项目根 `.mcp.json` 并配置认证、审查数据流和批准后，才用于项目。Claude MCP 没有 Codex 的 `enabled` 字段；需要只用一个服务时，先只合并对应条目。用户和 local MCP 定义在 `~/.claude.json`，通过 `claude mcp add --scope user` 或 `--scope local` 管理，不能复制到 settings JSON 充当服务器定义。详见[示例指南](examples/README.md)和 [MCP 路由](../docs/mcp-routing.md)。示例静态存在不证明运行连接成功。
 
@@ -92,7 +92,7 @@ Bash 项目安装在子 shell 中运行，guard 失败不会退出父交互式 s
 
 `project/CLAUDE.md.template` 是薄适配文件：其中的 `@AGENTS.md` 行导入来自 `zh-CN/codex/project/AGENTS.md.template` 的共享项目核心，其余内容只保留 Claude Code 专有指引。项目通用行为应修改 `zh-CN/codex/project/AGENTS.md.template`，不要改适配文件。
 
-Claude Code v2.1.277 及以上版本可直接读取 `AGENTS.md`，但仅限不存在 `CLAUDE.md` 的情况。本适配包含 `CLAUDE.md`，因此通过显式导入保持 `AGENTS.md` 被加载；该方式同样适用于更早版本，且不会重复加载（[memory 文档](https://code.claude.com/docs/en/memory#agents-md)，2026-10-01 核查）。在 Windows 上应使用导入而不是软链接。可在新会话中运行 `/memory` 或 `/context` 确认两个文件均已加载。
+Claude Code v2.1.277 及以上版本可直接读取 `AGENTS.md`，但默认仅限不存在 `CLAUDE.md`、`.claude/CLAUDE.md` 或 `CLAUDE.local.md` 的情况；将 **Project instructions** 设为 `claude-md-and-agents-md` 时会同时加载两者。本适配包含 `CLAUDE.md`，因此只要该 `CLAUDE.md` 被加载，显式导入就会保持 `AGENTS.md` 被加载，包括更早版本和无法直接读取 `AGENTS.md` 的会话，且不会重复加载（[memory 文档](https://code.claude.com/docs/en/memory#agents-md)，2026-10-01 核查，2026-11-10 复查）。在 Windows 上应使用导入而不是软链接。可在新会话中运行 `/memory` 或 `/context` 确认两个文件均已加载。
 
 导入只共享文本指令，不能替代 Claude Code 的 settings、permissions、hooks、Skill 发现或其他平台控制；导入内容仍会占用上下文。
 

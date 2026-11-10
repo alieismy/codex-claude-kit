@@ -2,7 +2,7 @@ OpenAI Codex
 Copyright 2025 OpenAI
 
 This directory redistributes the Codex configuration schema from:
-https://github.com/openai/codex/blob/rust-v0.162.1/codex-rs/core/config.schema.json
+https://github.com/openai/codex/blob/rust-v0.167.0/codex-rs/core/config.schema.json
 
 The schema is licensed under the Apache License, Version 2.0. See
 LICENSE-APACHE-2.0.txt in this directory.

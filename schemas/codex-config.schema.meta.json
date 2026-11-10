@@ -1,14 +1,14 @@
 {
   "schema_file": "codex-config.schema.json",
   "product": "OpenAI Codex",
-  "source_version": "0.162.1",
-  "tagged_source_url": "https://raw.githubusercontent.com/openai/codex/rust-v0.162.1/codex-rs/core/config.schema.json",
+  "source_version": "0.167.0",
+  "tagged_source_url": "https://raw.githubusercontent.com/openai/codex/rust-v0.167.0/codex-rs/core/config.schema.json",
   "live_source_url": "https://developers.openai.com/codex/config-schema.json",
-  "retrieved_date": "2026-10-10",
-  "sha256": "7933A70506E753A6E98C16800D2A76770B2AF2B7295491F8F0B8E713E952027E",
-  "byte_length": 236751,
+  "retrieved_date": "2026-11-10",
+  "sha256": "66ED795352D32F2464778ACD2E332B7FAFE644246D540CDCEEC4663C56CFBC16",
+  "byte_length": 260796,
   "license": "Apache-2.0",
-  "license_source_url": "https://github.com/openai/codex/blob/rust-v0.162.1/LICENSE",
+  "license_source_url": "https://github.com/openai/codex/blob/rust-v0.167.0/LICENSE",
   "license_file": "LICENSE-APACHE-2.0.txt",
   "notice_file": "NOTICE"
 }

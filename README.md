@@ -268,7 +268,7 @@ There are no maintained platform Skill payload mirrors. Optional installation an
 
 ## Validation
 
-The Skill YAML/reference and Codex TOML/JSON-Schema gates require Python 3.9+ and the pinned validation dependencies. Install them in an isolated environment, then run the repository checks:
+The Skill YAML/reference and Codex TOML/JSON-Schema gates require Python 3.9+, found as `python` or `python3`, and the pinned validation dependencies. Install them in an isolated environment, then run the repository checks:
 
 ```powershell
 python -m pip install -r requirements-validation.txt
@@ -297,7 +297,7 @@ The validator checks common release blockers:
 - obvious secret leaks;
 - stale private/internal strings.
 
-The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects thirty-one regression cases. In addition to Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it covers the Codex schema/runtime-aligned configuration contract, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, Claude shared-import installation guards, Claude prompt invocation syntax, recommended model/MCP defaults, ordered environment-file exceptions, duplicate former rule sources, and retired Cursor source roots.
+The negative-test runner copies the current repository into verified system-temporary directories and proves that the real validator rejects thirty-two regression cases. In addition to Skill, mirror, evidence, global-rule, context, prompt, temporary-data, and platform-configuration cases, it covers the Codex schema/runtime-aligned configuration contract, cross-platform reasoning and durable-guidance governance, current-versus-archived GSD attribution, the explicit delivery-request boundary, Claude shared-import installation guards, Claude prompt invocation syntax, recommended model/MCP defaults, ordered environment-file exceptions, duplicate former rule sources, retired Cursor source roots, and CRLF line endings.
 
 Before publishing a release, also run the networked dynamic gate:
 

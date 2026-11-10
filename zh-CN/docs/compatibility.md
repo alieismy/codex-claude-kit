@@ -1,6 +1,25 @@
 # 兼容性
 
-2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`；本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.167.0`，详见下方两个 2026-11-10 小节。同日 v4.0.1 发布预检重新查询下表全部九项 npm registry 最新版本，并发现本机 Claude Code CLI 已为 `2.1.322`：Context7 为 `4.6.0`，Sequential Thinking 为 `2.0.0`，Playwright MCP 为 `0.0.85`，Chrome DevTools MCP 为 `1.12.0`，其余五项不变。registry 元数据不能证明 MCP 运行时已升级，`2.1.321` 的观察也未在 `2.1.322` 上重复。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+
+## 2026-11-10 Claude Code 护栏复核
+
+本机 CLI 为 `2.1.321`，npm registry 最新版本为 `2.1.322`。已审阅 [Claude Code changelog](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) 的 `2.1.300` 至 `2.1.322`，没有条目要求修改模板、settings 示例、MCP 示例或 Skill。三项修复影响项目权限护栏：`2.1.319` 修复了 Bash deny 和 ask 规则漏掉含引号命令词的问题，以及创建 worktree 时的沙箱逃逸；`2.1.321` 修复了 deny 规则不作用于 `cp` 或 `mv` 写入目录的目标文件的问题。依赖项目 settings 护栏前应使用 `2.1.321` 或更高版本。
+
+[脱敏证据记录](../../docs/evidence/claude-guardrail-refresh-2026-11-10.json)分别记录以下观察：
+
+- 每个用例运行一次合成 headless 探针：`2.1.321` 上的 `claude-haiku-5-5`，`acceptEdits` 模式，排除用户 settings，以公开项目 settings 示例作为项目设置。`Read(.env)` 拒绝了对 `.env` 的 Read、Write 和 Edit；Write 与 Edit 的错误信息均指明是 Read deny 规则，文件哈希不变。对未受保护文件的对照写入成功；在没有项目 settings 的 fixture 中，同样的 Write 和 Edit 调用修改了 `.env`。对 `secrets/nb.ipynb` 的 NotebookEdit 没有记录权限拒绝，它失败是因为必须先 Read，而该规则拒绝 Read。这不覆盖 shell、解释器或 MCP 访问，也不覆盖其他权限模式或模型，或该行为的起始版本。
+- 当前[权限文档](https://code.claude.com/docs/en/permissions)说明 `Edit` 规则作用于所有内置编辑工具，`Read` deny 规则尽力作用于内置读取工具；文档没有说明 `Read` deny 会拒绝 Edit 或 Write，changelog 中也没有条目支持 Claude 指南此前给出的 `v2.1.208` 与 `v2.1.228` 起始版本。指南现改为报告实测行为及其版本和文档边界。
+- [settings 参考](https://code.claude.com/docs/en/settings-reference)现已记录 `modelSettings`（自 `v2.1.251` 起），以规范模型 ID 为键；别名、带日期后缀、`[1m]` 及可识别的提供商专用写法映射到同一条目。这作为该字段的文档证据，取代 2026-10-14 记录的 Schema 局限。公开 [settings Schema](https://json.schemastore.org/claude-code-settings.json) 仍未声明 `modelSettings`，因此 Schema 校验仍不足以证明该字段。
+- [子代理推理强度记录](../../docs/evidence/claude-subagent-effort-2026-11-10.json)覆盖 `CLAUDE_CODE_SUBAGENT_EFFORT`：`2.1.316` changelog 列出了该变量，但环境变量参考和子代理参考尚未记录。通过 `modelSettings` 将 `claude-haiku-5-5` 设为 `xhigh` 时，未设该变量的 general-purpose 子代理继承 `xhigh`，设为 `high` 后子代理发出 `high`，主会话保持 `xhigh`；fork 子代理仍为 `xhigh`。仅以更新后的公开用户示例作为 settings 时，`claude-opus-5-5` 主会话发出 `xhigh`，general-purpose 子代理发出 `high`。数值取自本地转录中的请求元数据，每种配置一个样本；未测试 Explore、自定义代理和使用其他模型的子代理。
+
+公开用户 settings 示例现已增加 `CLAUDE_CODE_SUBAGENT_EFFORT=high`。模板、项目 settings 与 MCP 示例、Skills 和个人设置均未修改。上述观察不证明桌面／网页端行为、通用权限执行或发布就绪。
+
+## 2026-11-10 Codex Schema 刷新
+
+本机 Codex CLI 与其 npm registry 最新版本均为 `0.167.0`，发布门禁的版本检查因此不再匹配 `0.162.1` 固定值。[tag 固定的 `0.167.0` Schema](https://raw.githubusercontent.com/openai/codex/rust-v0.167.0/codex-rs/core/config.schema.json) 与[官方实时 Schema](https://developers.openai.com/codex/config-schema.json) 逐字节一致（260,796 字节；SHA-256 记录于 `schemas/codex-config.schema.meta.json`），已替换 `0.162.1` 快照。tag 中的 Apache-2.0 许可证与仓库内副本逐字节一致。
+
+与 `0.162.1` 相比，该 Schema 未删除任何属性。公开示例设置的键中只有 `analytics` 有变化，且仅限描述：`enabled = false` 关闭 OpenAI analytics，自定义 OTLP 指标导出器由 `otel.metrics_exporter` 单独控制，未设置时的默认值取决于客户端。示例未配置 OTLP 导出器，因此没有示例值需要修改。六份公开示例均通过固定和实时 Schema 校验，`scripts/validate-release.ps1` 使用 CLI `0.167.0` 从隔离的临时 `CODEX_HOME` 严格加载了每份示例。这只证明 Schema 与配置加载层面的验收，不证明账户模型可用性、MCP 连接或运行行为。
 
 ## 2026-10-14 配置与布局调整
 
@@ -67,9 +86,9 @@
 
 | 组件 | 已测试版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@openai/codex` npm 包 | `0.147.0` | `0.162.1` | registry 与本机 CLI `0.162.1` 已于 2026-10-14 重新核查。仓库继续使用 tag 固定的 `0.162.1` Schema 快照；发布门禁会将其与实时 Schema 比较并检查全部维护的用户/项目示例。更广的测试基线仍为 `0.147.0`，上方日期化检查各有更窄范围。不要把该版本写进仓库名或 AGENTS 规则。 |
+| `@openai/codex` npm 包 | `0.147.0` | `0.167.0` | registry 与本机 CLI `0.167.0` 已于 2026-11-10 重新核查，仓库 Schema 快照已刷新为 tag 固定的 `0.167.0`；发布门禁会将其与实时 Schema 比较并检查全部维护的用户/项目示例。更广的测试基线仍为 `0.147.0`，上方日期化检查各有更窄范围。不要把该版本写进仓库名或 AGENTS 规则。 |
 
-仓库在 `schemas/` 下保存带来源和 SHA-256 元数据的 Codex `0.162.1` 配置 Schema 离线快照。`scripts/validate.ps1` 确定性使用该快照；仅发布前执行的 `scripts/validate-release.ps1` 会将其与当前官方 Schema 比较，核对已安装 CLI 版本，使用实时副本验证全部六份用户/项目示例，并从隔离的临时 `CODEX_HOME` 严格加载每份示例。
+仓库在 `schemas/` 下保存带来源和 SHA-256 元数据的 Codex `0.167.0` 配置 Schema 离线快照。`scripts/validate.ps1` 确定性使用该快照；仅发布前执行的 `scripts/validate-release.ps1` 会将其与当前官方 Schema 比较，核对已安装 CLI 版本，使用实时副本验证全部六份用户/项目示例，并从隔离的临时 `CODEX_HOME` 严格加载每份示例。
 
 独立的 2026-09-20 [双模型评估](dual-model-compatibility.md)使用 CLI `0.155.1`，请求 `gpt-5.6-sol` 与 `gpt-6-astra`，两者均为 high 推理和 high 输出详细程度。基于所提供文本的断言分别为 42/48 和 46/48，四次原生尝试均受阻。报告保留失败与限制，不证明后端模型身份或隐式路由，也不替代上述发布 Schema 或更广测试基线。
 
@@ -114,9 +133,9 @@
 
 | 组件 | 已测试 / 已固定版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.299` | registry 与本机 CLI `2.1.299` 已于 2026-10-14 重新核查。上方模型、文件权限、MCP、Schema 和 doctor 的有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
+| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.322` | registry 最新版本 `2.1.322` 与本机 CLI `2.1.321` 已于 2026-11-10 重新核查，v4.0.1 发布预检时本机 CLI 为 `2.1.322`；护栏、文件工具与子代理推理强度观察见 2026-11-10 一节。2026-10-14 `2.1.299` 的模型、文件权限、MCP、Schema 和 doctor 有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
 
-2026-10-01 核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md` 时直接读取 `AGENTS.md`；`CLAUDE.md` 中的 `@AGENTS.md` 导入不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
+2026-10-01 核查并于 2026-11-10 再次核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：默认情况下，Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md`、`.claude/CLAUDE.md` 或 `CLAUDE.local.md` 时直接读取 `AGENTS.md`；**Project instructions** 设为 `claude-md-and-agents-md` 时会同时加载两者；部分会话无法直接读取 `AGENTS.md`；无论采用哪个设置值，`CLAUDE.md` 中的 `@AGENTS.md` 导入都不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
 
 Claude Code 官方文档核查入口：
 
@@ -176,12 +195,12 @@ Cursor Rules、Skills 和 FAQ 官方文档已于 2026-09-16 重新核查；2026-
 
 | MCP 服务器 | 包名 | 已测试版本 | registry 最新核查版本 | 公开配置默认值 |
 |---|---|---:|---:|---|
-| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.4.1` | Codex 示例禁用 |
+| Context7 | `@upstash/context7-mcp` | `4.0.2` | `4.6.0` | Codex 示例禁用 |
 | Tavily | `tavily-mcp` | `0.2.19` | `0.2.22` | 可选本地替代方式；主要示例使用 HTTP |
-| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `1.0.0` | 公共最小示例省略 |
+| Sequential Thinking | `@modelcontextprotocol/server-sequential-thinking` | `2025.12.18` | `2.0.0` | 公共最小示例省略 |
 | Brave Search | `@brave/brave-search-mcp-server` | `2.0.82` | `2.1.4` | 公共最小示例省略 |
-| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.83` | Codex 示例禁用 |
-| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.10.1` | Codex 示例禁用 |
+| Playwright MCP | `@playwright/mcp` | `0.0.75` | `0.0.85` | Codex 示例禁用 |
+| Chrome DevTools MCP | `chrome-devtools-mcp` | `1.1.1` | `1.12.0` | Codex 示例禁用 |
 | Augment Context Engine | `ace-tool-rs` | `0.1.16` | `0.1.16` | 公共最小示例省略 |
 
 2026-10-12 的 v2.0.0 发布预检重新查询了 Codex、Claude Code 和上述七个 MCP 包的 registry 条目，并核对本机 CLI。八个 registry 值与先前记录一致；Sequential Thinking 的 `latest` 标签通过 registry `/latest` 与显式指定官方 registry 的 `npm view ... dist-tags` 均返回 `1.0.0`，先前快照记录的 `2026.8.31` 保留为历史。这里报告当前标签，不推断版本变化原因或升级顺序；该 server 仍未加入公共最小示例，也没有新增 MCP 运行验收。

@@ -1,0 +1,69 @@
+{
+  "recordedOn": "2026-11-10",
+  "timeBasis": "UTC",
+  "baselineCommit": "82a8b60dd7e123302fc3a639aa668a20a7d42588",
+  "changeState": "Uncommitted change adding CLAUDE_CODE_SUBAGENT_EFFORT=high to the bilingual Claude user settings example.",
+  "platform": "Windows",
+  "versions": {
+    "claudeCodeInstalled": "2.1.321"
+  },
+  "sourceHashes": {
+    "claude/examples/settings.example.json": "414516c5c670c2082ba5107759030a7186c174f49604a8738ec1d2af71e21b39",
+    "zh-CN/claude/examples/settings.example.json": "414516c5c670c2082ba5107759030a7186c174f49604a8738ec1d2af71e21b39"
+  },
+  "contractSources": {
+    "changelog": {
+      "url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
+      "entries": [
+        "2.1.316: Added CLAUDE_CODE_SUBAGENT_EFFORT to set the effort level subagents run at when nothing else names one, instead of inheriting the session's",
+        "2.1.317: Changed subagents and teammates on a different model from the main conversation to use that model's saved effort level or its default, instead of the session's effort level"
+      ]
+    },
+    "subagentReference": {
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "observation": "A subagent definition's effort overrides the session level but not CLAUDE_CODE_EFFORT_LEVEL; a per-call effort parameter applies to non-fork subagents and overrides the definition; without either, a subagent on the main conversation's model runs at the session level. The page does not mention CLAUDE_CODE_SUBAGENT_EFFORT."
+    },
+    "environmentVariableReference": {
+      "url": "https://code.claude.com/docs/en/env-vars",
+      "observation": "CLAUDE_CODE_SUBAGENT_EFFORT is not listed."
+    }
+  },
+  "method": {
+    "fixture": "Temporary Git repository outside this repository with no project settings.",
+    "command": "claude -p --settings <settings file> --setting-sources project,local --tools Agent --session-id <uuid> --output-format json",
+    "prompt": "Start exactly one subagent of the stated type whose prompt asks it to reply with one word, then report the reply.",
+    "effortSource": "The effort recorded with each assistant request in the local session and subagent transcripts.",
+    "samplesPerConfiguration": 1
+  },
+  "results": [
+    {
+      "settings": "modelSettings claude-haiku-5-5 effortLevel xhigh",
+      "model": "claude-haiku-5-5",
+      "subagent": "general-purpose",
+      "mainEffort": "xhigh",
+      "subagentEffort": "xhigh"
+    },
+    {
+      "settings": "modelSettings claude-haiku-5-5 effortLevel xhigh; env CLAUDE_CODE_SUBAGENT_EFFORT high",
+      "model": "claude-haiku-5-5",
+      "subagent": "general-purpose",
+      "mainEffort": "xhigh",
+      "subagentEffort": "high"
+    },
+    {
+      "settings": "modelSettings claude-haiku-5-5 effortLevel xhigh; env CLAUDE_CODE_SUBAGENT_EFFORT high",
+      "model": "claude-haiku-5-5",
+      "subagent": "fork",
+      "mainEffort": "xhigh",
+      "subagentEffort": "xhigh"
+    },
+    {
+      "settings": "Updated public user example claude/examples/settings.example.json only",
+      "model": "claude-opus-5-5",
+      "subagent": "general-purpose",
+      "mainEffort": "xhigh",
+      "subagentEffort": "high"
+    }
+  ],
+  "limits": "One sample per configuration on one CLI version. Explore, Plan, custom agents with or without effort frontmatter, subagents on another model, teammates, and Desktop/web sessions were not tested. Recorded request effort does not measure output quality or cost."
+}

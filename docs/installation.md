@@ -86,6 +86,7 @@ Before installing, record the intended language/source, destination scope (user 
 Global install:
 
 ```bash
+(
 skill_target="$HOME/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in skills/rd-*; do
@@ -96,6 +97,7 @@ for skill_source in skills/rd-*; do
   fi
 done
 cp -R skills/rd-* "$skill_target/"
+)
 ```
 
 On PowerShell, the preferred user-level installation is the verified installer:
@@ -110,6 +112,7 @@ The installer manages only the nine declared `rd-*` directories, verifies a SHA-
 Project-level install:
 
 ```bash
+(
 skill_target="/path/to/your-project/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in skills/rd-*; do
@@ -120,6 +123,7 @@ for skill_source in skills/rd-*; do
   fi
 done
 cp -R skills/rd-* "$skill_target/"
+)
 ```
 
 ### Optional project/team and Claude Code local fallback
@@ -219,6 +223,7 @@ If a non-empty `AGENTS.override.md` exists at either scope, back up and merge th
 Install Chinese shared skills:
 
 ```bash
+(
 skill_target="$HOME/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in zh-CN/skills/rd-*; do
@@ -229,6 +234,7 @@ for skill_source in zh-CN/skills/rd-*; do
   fi
 done
 cp -R zh-CN/skills/rd-* "$skill_target/"
+)
 ```
 
 Install Chinese Claude Code files (the project `CLAUDE.md` imports the shared `AGENTS.md`; keep and merge an existing `AGENTS.md` instead of overwriting it):
@@ -309,7 +315,7 @@ cp claude/examples/settings.project.example.json /path/to/your-project/.claude/s
 
 If a non-empty `AGENTS.override.md` exists, the recipe stops before installing the adapter. Merge that effective Codex source deliberately and select the matching Claude import (for example `@AGENTS.override.md`) before continuing; Claude does not discover override files automatically. An existing empty `AGENTS.md` also requires manual repair.
 
-If the target workspace already has `CLAUDE.md` or `.claude/`, merge manually. Claude Code reads `AGENTS.md` directly only when no `CLAUDE.md` exists (v2.1.277 or later); the explicit import works on earlier versions as well and does not load `AGENTS.md` twice. Run `/memory` or `/context` in a new session to confirm that both files loaded.
+If the target workspace already has `CLAUDE.md` or `.claude/`, merge manually. By default, Claude Code v2.1.277 or later reads `AGENTS.md` directly only when no `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists in the working directory or above it; when **Project instructions** is set to `claude-md-and-agents-md`, Claude Code loads `CLAUDE.md` and `AGENTS.md` files together, directory by directory, so review any other `AGENTS.md` files in the target while merging. The explicit import also works on earlier versions and in sessions that cannot read `AGENTS.md` directly, and does not load `AGENTS.md` twice. Run `/memory` or `/context` in a new session to confirm that both files loaded.
 
 Codex and Claude Code project rules have one shared source: change `codex/project/AGENTS.md.template` for project-wide behavior and `claude/project/CLAUDE.md.template` only for Claude Code-specific guidance. User settings can be merged from `claude/examples/settings.example.json`; project MCP can be merged from `claude/examples/mcp.example.json` into `.mcp.json`. Neither is enabled by the rules recipe.
 

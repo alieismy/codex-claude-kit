@@ -9,7 +9,9 @@ $trimChars = [char[]]@(
     [System.IO.Path]::AltDirectorySeparatorChar
 )
 $systemTempRoot = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath()).TrimEnd($trimChars)
-$runRoot = Join-Path $systemTempRoot ("codex-claude-kit-validator-{0}" -f [guid]::NewGuid().ToString("N"))
+$runRootPrefix = "codex-claude-kit-validator-"
+$runRoot = Join-Path $systemTempRoot ($runRootPrefix + [guid]::NewGuid().ToString("N"))
+$script:passedCaseCount = 0
 $pwshPath = (Get-Command pwsh -ErrorAction Stop).Source
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
@@ -69,6 +71,7 @@ function Invoke-NegativeCase {
         }
     }
 
+    $script:passedCaseCount++
     Write-Host "Negative case passed: $Name" -ForegroundColor Green
 }
 
@@ -930,14 +933,32 @@ try {
         }
     }
 
-    Write-Host "Validator negative tests passed (31/31)." -ForegroundColor Green
+    Invoke-NegativeCase -Name "crlf-line-endings" -ExpectedPattern @(
+        "CRLF line ending found: .*rd-review[\\/]references[\\/]",
+        "CRLF line ending found: .*requirements-validation\.txt"
+    ) -Mutate {
+        param($caseRoot)
+
+        # A nested Markdown reference and a root .txt file prove the single-pass scan still reaches both.
+        $reference = Get-ChildItem -LiteralPath (Join-Path $caseRoot "skills/rd-review/references") -Filter "*.md" -File |
+            Select-Object -First 1
+        if (-not $reference) {
+            throw "Fixture requires an rd-review reference file."
+        }
+        foreach ($path in @($reference.FullName, (Join-Path $caseRoot "requirements-validation.txt"))) {
+            $content = [System.IO.File]::ReadAllText($path).Replace("`r`n", "`n").Replace("`n", "`r`n")
+            [System.IO.File]::WriteAllText($path, $content, $utf8NoBom)
+        }
+    }
+
+    Write-Host "Validator negative tests passed ($script:passedCaseCount/$script:passedCaseCount)." -ForegroundColor Green
 }
 finally {
     $resolvedRunRoot = [System.IO.Path]::GetFullPath($runRoot)
     $expectedPrefix = $systemTempRoot + [System.IO.Path]::DirectorySeparatorChar
     $leaf = Split-Path -Leaf $resolvedRunRoot
     $isWithinTemp = $resolvedRunRoot.StartsWith($expectedPrefix, [System.StringComparison]::OrdinalIgnoreCase)
-    if (-not $isWithinTemp -or -not $leaf.StartsWith("codex-claude-kit-validator-")) {
+    if (-not $isWithinTemp -or -not $leaf.StartsWith($runRootPrefix)) {
         throw "Refusing to remove an unverified temporary path: $resolvedRunRoot"
     }
     if (Test-Path -LiteralPath $resolvedRunRoot) {

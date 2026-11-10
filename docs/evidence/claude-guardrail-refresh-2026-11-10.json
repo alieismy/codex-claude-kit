@@ -1,0 +1,125 @@
+{
+  "recordedOn": "2026-11-10",
+  "timeBasis": "UTC",
+  "baselineCommit": "82a8b60dd7e123302fc3a639aa668a20a7d42588",
+  "changeState": "Uncommitted documentation refresh; no template, settings example, Skill, or personal setting was changed for these checks. The same-day subagent effort record covers the later user settings example change.",
+  "platform": "Windows",
+  "versions": {
+    "claudeCodeInstalled": "2.1.321",
+    "claudeCodeRegistryLatest": "2.1.322"
+  },
+  "changelogReview": {
+    "source": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
+    "range": "2.1.300-2.1.322",
+    "templateOrExampleChangeRequired": false,
+    "guardrailFixes": [
+      {
+        "version": "2.1.319",
+        "entry": "Fixed a case where Bash deny and ask rules missed commands written with quoted words"
+      },
+      {
+        "version": "2.1.319",
+        "entry": "Fixed a sandbox escape when creating a worktree"
+      },
+      {
+        "version": "2.1.321",
+        "entry": "Fixed deny rules and protected-file prompts not applying to the file that a `cp` or `mv` into a directory writes"
+      }
+    ],
+    "recommendedMinimumForProjectGuardrails": "2.1.321"
+  },
+  "readDenyFileToolProbe": {
+    "fixture": "Temporary Git repositories outside this repository with synthetic .env, .env.example, and secrets/nb.ipynb files. Fixture A uses the public project settings example as .claude/settings.json; fixture B has no project settings.",
+    "fixtureSettingsSha256": {
+      "claude/examples/settings.project.example.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6"
+    },
+    "command": "claude -p --model haiku --permission-mode acceptEdits --setting-sources project,local --tools <case tools> --no-session-persistence --output-format stream-json --verbose",
+    "reportedModel": "claude-haiku-5-5",
+    "samplesPerCase": 1,
+    "cases": [
+      {
+        "fixture": "A",
+        "tool": "Read",
+        "target": ".env",
+        "permissionDenialRecorded": true,
+        "targetChanged": false,
+        "toolError": "File is in a directory that is denied by your permission settings."
+      },
+      {
+        "fixture": "A",
+        "tool": "Write",
+        "target": ".env",
+        "permissionDenialRecorded": true,
+        "targetChanged": false,
+        "toolError": "File is covered by a Read deny rule in your permission settings and cannot be written."
+      },
+      {
+        "fixture": "A",
+        "tool": "Edit",
+        "target": ".env",
+        "permissionDenialRecorded": true,
+        "targetChanged": false,
+        "toolError": "File is covered by a Read deny rule in your permission settings and cannot be edited."
+      },
+      {
+        "fixture": "A",
+        "tool": "Write",
+        "target": "notes.txt",
+        "permissionDenialRecorded": false,
+        "targetChanged": true,
+        "role": "Unprotected-path control"
+      },
+      {
+        "fixture": "A",
+        "tool": "NotebookEdit",
+        "target": "secrets/nb.ipynb",
+        "permissionDenialRecorded": false,
+        "targetChanged": false,
+        "toolError": "File has not been read yet. Read it first before writing to it.",
+        "interpretation": "Refused by the read-before-write requirement, not by the deny rule."
+      },
+      {
+        "fixture": "B",
+        "tool": "Write",
+        "target": ".env",
+        "permissionDenialRecorded": false,
+        "targetChanged": true,
+        "role": "No-settings control"
+      },
+      {
+        "fixture": "B",
+        "tool": "Edit",
+        "target": ".env",
+        "permissionDenialRecorded": false,
+        "targetChanged": true,
+        "role": "No-settings control"
+      }
+    ],
+    "limits": "One sample per case on one model and CLI version with built-in file tools only. Shell, interpreter, and MCP access, other permission modes and models, and the version where the behavior began were not tested."
+  },
+  "documentationObservations": {
+    "permissions": {
+      "url": "https://code.claude.com/docs/en/permissions",
+      "observation": "Edit rules apply to all built-in tools that edit files; Read deny rules are applied best-effort to built-in tools that read files. The page does not state that Read deny rules refuse Edit or Write."
+    },
+    "readDenyVersionClaim": "No changelog entry for 2.1.208 or 2.1.228 states that Read deny rules cover Edit or Write; the 2.1.228 entry concerns Write overwriting an unread file.",
+    "modelSettings": {
+      "url": "https://code.claude.com/docs/en/settings-reference",
+      "observation": "Documented from v2.1.251 with per-model effortLevel, maxEffortLevel (v2.1.267), and autoCompactWindow (v2.1.288); entries use the canonical model ID, and alias, date-suffixed, [1m], and recognized provider-specific IDs map to the same entry."
+    },
+    "settingsSchema": {
+      "url": "https://json.schemastore.org/claude-code-settings.json",
+      "observation": "Declares effortLevel and attribution but not modelSettings; the permissions object declares no blockReadsOutsideWorkingDirectories or blockWritesOutsideWorkingDirectories key."
+    },
+    "memory": {
+      "url": "https://code.claude.com/docs/en/memory",
+      "observation": "A CLAUDE.md containing @AGENTS.md can be kept; the import never makes Claude read AGENTS.md twice, whichever Project instructions value is used."
+    }
+  },
+  "notEstablished": [
+    "Effective effort of the public user settings example",
+    "Desktop or web behavior",
+    "General permission enforcement beyond the listed built-in file-tool cases",
+    "Release readiness"
+  ]
+}

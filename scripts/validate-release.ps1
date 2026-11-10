@@ -25,6 +25,27 @@ function Get-Sha256 {
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToUpperInvariant()
 }
 
+# Some platforms ship only python3, while Windows may expose a non-functional python3 alias; probe each candidate.
+function Get-PythonCommand {
+    foreach ($name in @("python", "python3")) {
+        $command = Get-Command $name -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($command) {
+            # Under Stop, a launch failure or native-command error preference must not end the search.
+            try {
+                & $command.Source -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" 2>$null
+                $probeSucceeded = $LASTEXITCODE -eq 0
+            }
+            catch {
+                $probeSucceeded = $false
+            }
+            if ($probeSucceeded) {
+                return $command
+            }
+        }
+    }
+    return $null
+}
+
 function Start-CodexStrictLoad {
     param(
         [string]$CodexPath,
@@ -78,6 +99,9 @@ function Start-CodexStrictLoad {
         throw "Unable to start Codex strict-load process."
     }
 
+    # Drain both pipes while waiting; reading only after exit can deadlock once a full pipe blocks the child.
+    $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+    $stderrTask = $process.StandardError.ReadToEndAsync()
     $process.StandardInput.Close()
     if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
         $process.Kill($true)
@@ -85,8 +109,8 @@ function Start-CodexStrictLoad {
         throw "Codex strict-load timed out after $TimeoutSeconds seconds."
     }
 
-    $stdout = $process.StandardOutput.ReadToEnd().Trim()
-    $stderr = $process.StandardError.ReadToEnd().Trim()
+    $stdout = $stdoutTask.GetAwaiter().GetResult().Trim()
+    $stderr = $stderrTask.GetAwaiter().GetResult().Trim()
     if ($process.ExitCode -ne 0) {
         $diagnostic = (@($stderr, $stdout) | Where-Object { $_ }) -join "`n"
         throw "Codex strict-load exited with code $($process.ExitCode): $diagnostic"
@@ -113,7 +137,10 @@ if ($snapshotHash -cne ([string]$metadata.sha256).ToUpperInvariant()) {
     throw "Tracked schema SHA-256 differs from metadata."
 }
 
-$python = Get-Command python -ErrorAction Stop
+$python = Get-PythonCommand
+if (-not $python) {
+    throw "Python 3.9+ is required as 'python' or 'python3'."
+}
 $codex = Get-Command codex -ErrorAction Stop
 $codexVersionOutput = (& $codex.Source --version 2>&1 | Out-String).Trim()
 if ($LASTEXITCODE -ne 0) {
@@ -128,7 +155,8 @@ $systemTempRoot = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath())
     [System.IO.Path]::DirectorySeparatorChar,
     [System.IO.Path]::AltDirectorySeparatorChar
 )
-$runRoot = Join-Path $systemTempRoot ("codex-three-layer-release-" + [guid]::NewGuid().ToString("N"))
+$runRootPrefix = "codex-claude-kit-release-"
+$runRoot = Join-Path $systemTempRoot ($runRootPrefix + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Path $runRoot | Out-Null
 
 try {
@@ -162,7 +190,7 @@ finally {
     $expectedPrefix = $systemTempRoot + [System.IO.Path]::DirectorySeparatorChar
     $leaf = Split-Path -Leaf $resolvedRunRoot
     $isWithinTemp = $resolvedRunRoot.StartsWith($expectedPrefix, [System.StringComparison]::OrdinalIgnoreCase)
-    if (-not $isWithinTemp -or -not $leaf.StartsWith("codex-three-layer-release-")) {
+    if (-not $isWithinTemp -or -not $leaf.StartsWith($runRootPrefix)) {
         throw "Refusing to remove an unverified temporary path: $resolvedRunRoot"
     }
     if (Test-Path -LiteralPath $resolvedRunRoot) {
