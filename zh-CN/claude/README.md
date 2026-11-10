@@ -92,7 +92,7 @@ Bash 项目安装在子 shell 中运行，guard 失败不会退出父交互式 s
 
 `project/CLAUDE.md.template` 是薄适配文件：其中的 `@AGENTS.md` 行导入来自 `zh-CN/codex/project/AGENTS.md.template` 的共享项目核心，其余内容只保留 Claude Code 专有指引。项目通用行为应修改 `zh-CN/codex/project/AGENTS.md.template`，不要改适配文件。
 
-Claude Code v2.1.277 及以上版本可直接读取 `AGENTS.md`，但默认仅限不存在 `CLAUDE.md` 或 `CLAUDE.local.md` 的情况；将 **Project instructions** 设为 `claude-md-and-agents-md` 时会同时加载两者。本适配包含 `CLAUDE.md`，因此只要该 `CLAUDE.md` 被加载，显式导入就会保持 `AGENTS.md` 被加载，包括更早版本和无法直接读取 `AGENTS.md` 的会话，且不会重复加载（[memory 文档](https://code.claude.com/docs/en/memory#agents-md)，2026-10-01 核查，2026-11-10 复查）。在 Windows 上应使用导入而不是软链接。可在新会话中运行 `/memory` 或 `/context` 确认两个文件均已加载。
+Claude Code v2.1.277 及以上版本可直接读取 `AGENTS.md`，但默认仅限不存在 `CLAUDE.md`、`.claude/CLAUDE.md` 或 `CLAUDE.local.md` 的情况；将 **Project instructions** 设为 `claude-md-and-agents-md` 时会同时加载两者。本适配包含 `CLAUDE.md`，因此只要该 `CLAUDE.md` 被加载，显式导入就会保持 `AGENTS.md` 被加载，包括更早版本和无法直接读取 `AGENTS.md` 的会话，且不会重复加载（[memory 文档](https://code.claude.com/docs/en/memory#agents-md)，2026-10-01 核查，2026-11-10 复查）。在 Windows 上应使用导入而不是软链接。可在新会话中运行 `/memory` 或 `/context` 确认两个文件均已加载。
 
 导入只共享文本指令，不能替代 Claude Code 的 settings、permissions、hooks、Skill 发现或其他平台控制；导入内容仍会占用上下文。
 

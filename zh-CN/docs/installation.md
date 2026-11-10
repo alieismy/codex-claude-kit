@@ -251,7 +251,7 @@ cp zh-CN/claude/examples/settings.project.example.json /path/to/your-project/.cl
 
 存在非空 `AGENTS.override.md` 时，示例会在安装适配文件前停止。应先有意识地合并这一 Codex 生效来源，再选择对应的 Claude 导入（例如 `@AGENTS.override.md`）后继续；Claude 不会自动发现 override 文件。已有但为空的 `AGENTS.md` 也必须先手动修复。
 
-如果目标项目已有 `CLAUDE.md` 或 `.claude/`，请手动合并。默认情况下，Claude Code v2.1.277 及以上版本仅在工作目录及其上级目录均不存在 `CLAUDE.md` 或 `CLAUDE.local.md` 时直接读取 `AGENTS.md`；若 **Project instructions** 设为 `claude-md-and-agents-md`，Claude Code 会逐目录同时加载 `CLAUDE.md` 与 `AGENTS.md`，合并时应一并审查目标中的其他 `AGENTS.md`。显式导入同样适用于更早版本和无法直接读取 `AGENTS.md` 的会话，且不会重复加载 `AGENTS.md`。可在新会话中运行 `/memory` 或 `/context`，确认两个文件均已加载。
+如果目标项目已有 `CLAUDE.md` 或 `.claude/`，请手动合并。默认情况下，Claude Code v2.1.277 及以上版本仅在工作目录及其上级目录均不存在 `CLAUDE.md`、`.claude/CLAUDE.md` 或 `CLAUDE.local.md` 时直接读取 `AGENTS.md`；若 **Project instructions** 设为 `claude-md-and-agents-md`，Claude Code 会逐目录同时加载 `CLAUDE.md` 与 `AGENTS.md`，合并时应一并审查目标中的其他 `AGENTS.md`。显式导入同样适用于更早版本和无法直接读取 `AGENTS.md` 的会话，且不会重复加载 `AGENTS.md`。可在新会话中运行 `/memory` 或 `/context`，确认两个文件均已加载。
 
 Codex 与 Claude Code 的项目规则只有一个共享源：项目通用行为修改 `zh-CN/codex/project/AGENTS.md.template`，只有 Claude Code 专有指引才修改 `zh-CN/claude/project/CLAUDE.md.template`。用户 settings 可从 `zh-CN/claude/examples/settings.example.json` 合并到 `~/.claude/settings.json`；项目 MCP 可从 `zh-CN/claude/examples/mcp.example.json` 合并到项目根 `.mcp.json`。规则安装不会自动启用这两项。用户/local MCP 应通过 CLI 管理 `~/.claude.json`；`enableAllProjectMcpServers=false` 不能证明 headless 会话连接被阻止。
 

@@ -135,7 +135,7 @@
 |---|---:|---:|---|
 | `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.322` | registry 最新版本 `2.1.322` 与本机 CLI `2.1.321` 已于 2026-11-10 重新核查，v4.0.1 发布预检时本机 CLI 为 `2.1.322`；护栏、文件工具与子代理推理强度观察见 2026-11-10 一节。2026-10-14 `2.1.299` 的模型、文件权限、MCP、Schema 和 doctor 有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
 
-2026-10-01 核查并于 2026-11-10 再次核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：默认情况下，Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md` 或 `CLAUDE.local.md` 时直接读取 `AGENTS.md`；**Project instructions** 设为 `claude-md-and-agents-md` 时会同时加载两者；部分会话无法直接读取 `AGENTS.md`；无论采用哪个设置值，`CLAUDE.md` 中的 `@AGENTS.md` 导入都不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
+2026-10-01 核查并于 2026-11-10 再次核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：默认情况下，Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md`、`.claude/CLAUDE.md` 或 `CLAUDE.local.md` 时直接读取 `AGENTS.md`；**Project instructions** 设为 `claude-md-and-agents-md` 时会同时加载两者；部分会话无法直接读取 `AGENTS.md`；无论采用哪个设置值，`CLAUDE.md` 中的 `@AGENTS.md` 导入都不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
 
 Claude Code 官方文档核查入口：
 
