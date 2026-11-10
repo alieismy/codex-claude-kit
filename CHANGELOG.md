@@ -10,6 +10,7 @@ This project uses GitHub releases for versioning. Directory names should not con
 - Refresh the Claude Code compatibility record: installed CLI `2.1.321`, registry latest `2.1.322`, changelog review from `2.1.300` through `2.1.322`, and the current `modelSettings` documentation. The published settings schema still omits `modelSettings`.
 - Add `CLAUDE_CODE_SUBAGENT_EFFORT=high` to the bilingual Claude user settings example, so subagents that name no effort run at `high` while the main Opus 5.5 session stays at `xhigh`; fork subagents keep the session level. Record bounded Haiku and Opus request-effort observations on Claude Code `2.1.321`. Templates, the project settings and MCP examples, and Skills are unchanged.
 - Tell users to merge the Claude user example's existing `env` and `modelSettings` objects key by key, and record the 2026-11-10 memory-documentation recheck in both Claude guides.
+- Refresh the vendored Codex configuration schema from `0.162.1` to `0.167.0`, matching the installed CLI, npm latest, and live schema. No property was removed and no example value changed; all six public examples pass the pinned and live schemas and isolated strict loading with CLI `0.167.0`. Update the schema metadata, notice, attribution, full-access example comments, and bilingual compatibility record. Correct the release-gate example count in `schemas/README.md` from four to six.
 
 ## 4.0.0 - 2026-10-14
 

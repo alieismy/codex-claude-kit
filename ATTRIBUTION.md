@@ -47,7 +47,7 @@ License data was checked through GitHub repository metadata and canonical reposi
 | PyYAML 6.0.3 | https://pyyaml.org/ | MIT | Pinned, non-runtime validation dependency used to parse Skill frontmatter and `agents/openai.yaml` with a real YAML parser. The repository does not vendor PyYAML source. |
 | jsonschema 4.25.1 | https://github.com/python-jsonschema/jsonschema | MIT | Pinned, non-runtime validation dependency used to validate public Codex TOML examples against the tracked JSON Schema. The repository does not vendor jsonschema source. |
 | tomli 2.4.1 | https://github.com/hukkin/tomli | MIT | Pinned fallback TOML parser for Python 3.9-3.10 validation environments. Python 3.11+ uses the standard-library `tomllib`; the repository does not vendor tomli source. |
-| OpenAI Codex config schema 0.162.1 | https://github.com/openai/codex/blob/rust-v0.162.1/codex-rs/core/config.schema.json | Apache-2.0 | Vendored as an offline validation snapshot with source URL, retrieval date, byte length, SHA-256 metadata, applicable notice, and a copy of the Apache-2.0 license under `schemas/`. The release-only gate compares it with the current official schema before publication. |
+| OpenAI Codex config schema 0.167.0 | https://github.com/openai/codex/blob/rust-v0.167.0/codex-rs/core/config.schema.json | Apache-2.0 | Vendored as an offline validation snapshot with source URL, retrieval date, byte length, SHA-256 metadata, applicable notice, and a copy of the Apache-2.0 license under `schemas/`. The release-only gate compares it with the current official schema before publication. |
 
 ## No Upstream Endorsement
 

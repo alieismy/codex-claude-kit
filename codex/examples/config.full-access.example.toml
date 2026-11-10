@@ -1,6 +1,6 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 # Advanced high-permission profile.
-# Broader tested baseline: codex-cli 0.147.0. Schema and strict-load rechecked with 0.162.1 on 2026-10-10.
+# Broader tested baseline: codex-cli 0.147.0. Schema and strict-load rechecked with 0.167.0 on 2026-11-10.
 # Use only for trusted local workspaces after reviewing the risks.
 
 approval_policy = "on-request"

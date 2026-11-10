@@ -1,6 +1,6 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 # 高权限配置示例。
-# 更广测试基线：codex-cli 0.147.0；已于 2026-10-10 使用 0.162.1 复核 Schema 和 strict-load。
+# 更广测试基线：codex-cli 0.147.0；已于 2026-11-10 使用 0.167.0 复核 Schema 和 strict-load。
 # 仅在你完全信任的本地工作区中使用，并先审查风险。
 
 approval_policy = "on-request"
