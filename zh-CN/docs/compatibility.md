@@ -1,6 +1,19 @@
 # 兼容性
 
-2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`，详见下方 2026-11-10 一节；其余条目保留 2026-10-14 的值。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+
+## 2026-11-10 Claude Code 护栏复核
+
+本机 CLI 为 `2.1.321`，npm registry 最新版本为 `2.1.322`。已审阅 [Claude Code changelog](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) 的 `2.1.300` 至 `2.1.322`，没有条目要求修改模板、settings 示例、MCP 示例或 Skill。三项修复影响项目权限护栏：`2.1.319` 修复了 Bash deny 和 ask 规则漏掉含引号命令词的问题，以及创建 worktree 时的沙箱逃逸；`2.1.321` 修复了 deny 规则不作用于 `cp` 或 `mv` 写入目录的目标文件的问题。依赖项目 settings 护栏前应使用 `2.1.321` 或更高版本。
+
+[脱敏证据记录](../../docs/evidence/claude-guardrail-refresh-2026-11-10.json)分别记录以下观察：
+
+- 每个用例运行一次合成 headless 探针：`2.1.321` 上的 `claude-haiku-5-5`，`acceptEdits` 模式，排除用户 settings，以公开项目 settings 示例作为项目设置。`Read(.env)` 拒绝了对 `.env` 的 Read、Write 和 Edit；Write 与 Edit 的错误信息均指明是 Read deny 规则，文件哈希不变。对未受保护文件的对照写入成功；在没有项目 settings 的 fixture 中，同样的 Write 和 Edit 调用修改了 `.env`。对 `secrets/nb.ipynb` 的 NotebookEdit 没有记录权限拒绝，它失败是因为必须先 Read，而该规则拒绝 Read。这不覆盖 shell、解释器或 MCP 访问，也不覆盖其他权限模式或模型，或该行为的起始版本。
+- 当前[权限文档](https://code.claude.com/docs/en/permissions)说明 `Edit` 规则作用于所有内置编辑工具，`Read` deny 规则尽力作用于内置读取工具；文档没有说明 `Read` deny 会拒绝 Edit 或 Write，changelog 中也没有条目支持 Claude 指南此前给出的 `v2.1.208` 与 `v2.1.228` 起始版本。指南现改为报告实测行为及其版本和文档边界。
+- [settings 参考](https://code.claude.com/docs/en/settings-reference)现已记录 `modelSettings`（自 `v2.1.251` 起），以规范模型 ID 为键；别名、带日期后缀、`[1m]` 及可识别的提供商专用写法映射到同一条目。这作为该字段的文档证据，取代 2026-10-14 记录的 Schema 局限。公开 [settings Schema](https://json.schemastore.org/claude-code-settings.json) 仍未声明 `modelSettings`，因此 Schema 校验仍不足以证明该字段。
+- [子代理推理强度记录](../../docs/evidence/claude-subagent-effort-2026-11-10.json)覆盖 `CLAUDE_CODE_SUBAGENT_EFFORT`：`2.1.316` changelog 列出了该变量，但环境变量参考和子代理参考尚未记录。通过 `modelSettings` 将 `claude-haiku-5-5` 设为 `xhigh` 时，未设该变量的 general-purpose 子代理继承 `xhigh`，设为 `high` 后子代理发出 `high`，主会话保持 `xhigh`；fork 子代理仍为 `xhigh`。仅以更新后的公开用户示例作为 settings 时，`claude-opus-5-5` 主会话发出 `xhigh`，general-purpose 子代理发出 `high`。数值取自本地转录中的请求元数据，每种配置一个样本；未测试 Explore、自定义代理和使用其他模型的子代理。
+
+公开用户 settings 示例现已增加 `CLAUDE_CODE_SUBAGENT_EFFORT=high`。模板、项目 settings 与 MCP 示例、Skills 和个人设置均未修改。上述观察不证明桌面／网页端行为、通用权限执行或发布就绪。
 
 ## 2026-10-14 配置与布局调整
 
@@ -114,9 +127,9 @@
 
 | 组件 | 已测试 / 已固定版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.299` | registry 与本机 CLI `2.1.299` 已于 2026-10-14 重新核查。上方模型、文件权限、MCP、Schema 和 doctor 的有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
+| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.322` | registry 最新版本 `2.1.322` 与本机 CLI `2.1.321` 已于 2026-11-10 重新核查；护栏、文件工具与子代理推理强度观察见 2026-11-10 一节。2026-10-14 `2.1.299` 的模型、文件权限、MCP、Schema 和 doctor 有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
 
-2026-10-01 核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md` 时直接读取 `AGENTS.md`；`CLAUDE.md` 中的 `@AGENTS.md` 导入不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
+2026-10-01 核查并于 2026-11-10 再次核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md` 时直接读取 `AGENTS.md`；`CLAUDE.md` 中的 `@AGENTS.md` 导入不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
 
 Claude Code 官方文档核查入口：
 

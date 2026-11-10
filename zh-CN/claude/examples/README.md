@@ -13,7 +13,7 @@
 
 ## 核心设置
 
-用户示例选择 `opus`，并通过 `modelSettings` 为 `claude-opus-5-5` 设置 `xhigh`。使用前确认账号／提供商可用。别名可能升级到新模型，届时应重新核对按模型设置的键。用户级顶层 `effortLevel` 不适用于 Opus 5.5，不能替代该条目。模型选择、推理强度、上下文窗口和实际后端身份是不同观察项。[官方模型配置](https://code.claude.com/docs/en/model-config)
+用户示例选择 `opus`，并通过 `modelSettings` 为 `claude-opus-5-5` 设置 `xhigh`。使用前确认账号／提供商可用。别名可能升级到新模型，届时应重新核对按模型设置的键。[settings 参考](https://code.claude.com/docs/en/settings-reference)自 v2.1.251 起记录 `modelSettings`，以规范模型 ID 为键；别名、带日期后缀和 `[1m]` 的写法映射到同一条目。公开 settings Schema 尚未声明该字段，编辑器的 Schema 警告不能说明其无效。用户级顶层 `effortLevel` 不适用于 Opus 5.5，不能替代该条目。`env.CLAUDE_CODE_SUBAGENT_EFFORT = "high"` 让未自行指定推理强度的子代理以 `high` 运行，主会话保持 `xhigh`。Fork 子代理沿用会话级别。子代理定义中的 `effort`、单次调用的 `effort` 和 `CLAUDE_CODE_EFFORT_LEVEL` 优先于该变量；希望子代理与主会话不同时不要设置 `CLAUDE_CODE_EFFORT_LEVEL`。该变量见于 Claude Code `2.1.316` changelog，尚未列入环境变量参考；有界观察见[兼容性记录](../../docs/compatibility.md)。模型选择、推理强度、上下文窗口和实际后端身份是不同观察项。[官方模型配置](https://code.claude.com/docs/en/model-config)
 
 用户设置保护常见主目录凭据。项目设置保护 `.env`、`.env.*` 与 `secrets/**`；`Read(!.env.example)` 放在同一列表的宽泛 `.env.*` 拒绝规则之后，使公开示例保持可读。否定模式不能抵消另一设置来源的 deny。保留现有 Bash 与 PowerShell ask 规则，覆盖 commit、push、tag、publish、delete 及会丢弃未提交工作的 Git 操作。这些是工具权限防护，不是操作系统隔离，也不能阻止所有包装脚本。[权限语义](https://code.claude.com/docs/en/permissions)
 
@@ -48,7 +48,7 @@ Context7 可用于库／SDK 文档；OpenAI Docs 可在 Claude 中用于 OpenAI 
 
 ## 可选设置，不作为通用默认值
 
-只合并适用于目标环境的片段：
+只合并适用于目标环境的片段。用户示例已定义 `env` 和 `modelSettings`；应在这两个对象内追加新键，不要整体替换，以保留 `CLAUDE_CODE_SUBAGENT_EFFORT` 和按模型设置的推理强度：
 
 | 选择 | 示例 | 作用域与权衡 |
 |---|---|---|

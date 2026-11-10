@@ -5,6 +5,9 @@
       "effortLevel": "xhigh"
     }
   },
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_EFFORT": "high"
+  },
   "attribution": {
     "commit": "",
     "pr": "",

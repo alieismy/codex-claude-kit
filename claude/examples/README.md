@@ -13,7 +13,7 @@ Back up existing files and merge selected keys. JSON does not accept comments. P
 
 ## Core settings
 
-The user example chooses `opus` and sets `xhigh` for `claude-opus-5-5` in `modelSettings`. Confirm account/provider access. The alias can move to a newer model; recheck the per-model key when it does. A user-level top-level `effortLevel` does not apply to Opus 5.5, so it is not a substitute for this entry. Model choice, effort, context-window settings and actual backend identity are separate observations. [Official model configuration](https://code.claude.com/docs/en/model-config)
+The user example chooses `opus` and sets `xhigh` for `claude-opus-5-5` in `modelSettings`. Confirm account/provider access. The alias can move to a newer model; recheck the per-model key when it does. The [settings reference](https://code.claude.com/docs/en/settings-reference) documents `modelSettings` from v2.1.251, keyed by canonical model ID; alias, date-suffixed, and `[1m]` spellings map to the same entry. The published settings schema does not yet declare the field, so an editor schema warning does not show that it is invalid. A user-level top-level `effortLevel` does not apply to Opus 5.5, so it is not a substitute for this entry. `env.CLAUDE_CODE_SUBAGENT_EFFORT = "high"` runs subagents that name no effort of their own at `high` while the main session stays at `xhigh`. Fork subagents keep the session level. A subagent definition's `effort`, a per-call `effort`, and `CLAUDE_CODE_EFFORT_LEVEL` take precedence; do not set `CLAUDE_CODE_EFFORT_LEVEL` when subagents should differ. The variable appears in the Claude Code `2.1.316` changelog but not yet in the environment-variable reference; the [compatibility record](../../docs/compatibility.md) gives the bounded observations. Model choice, effort, context-window settings and actual backend identity are separate observations. [Official model configuration](https://code.claude.com/docs/en/model-config)
 
 User settings protect common home-directory credentials. Project settings protect `.env`, `.env.*`, and `secrets/**`, with `Read(!.env.example)` placed after the broad `.env.*` denial in the same list so the public example remains readable. A negation cannot cancel a deny from another settings source. Existing Bash and PowerShell ask rules remain for commit, push, tag, publish, delete and uncommitted-work-discarding Git operations. These are tool permission guardrails, not OS isolation or protection against all wrapper scripts. [Permission semantics](https://code.claude.com/docs/en/permissions)
 
@@ -48,7 +48,7 @@ Context7 is optional for library/SDK documentation; OpenAI Docs is valid in Clau
 
 ## Optional settings, not universal defaults
 
-Merge only the fragment that fits the target environment:
+Merge only the fragment that fits the target environment. The user example already defines `env` and `modelSettings`; add new keys inside those objects rather than replacing them, so `CLAUDE_CODE_SUBAGENT_EFFORT` and the per-model effort remain:
 
 | Choice | Example | Scope and tradeoff |
 |---|---|---|

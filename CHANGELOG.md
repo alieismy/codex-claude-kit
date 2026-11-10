@@ -4,6 +4,13 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
+## Unreleased
+
+- Correct the bilingual Claude guide's file-tool statement for project `Read` denials. A synthetic Claude Code `2.1.321` probe observed Read, Write, and Edit refusals on a denied `.env`, while NotebookEdit failed only on its read-before-write requirement. Remove the undocumented `v2.1.208` and `v2.1.228` starting versions and recommend `2.1.321` or later before relying on the guardrails.
+- Refresh the Claude Code compatibility record: installed CLI `2.1.321`, registry latest `2.1.322`, changelog review from `2.1.300` through `2.1.322`, and the current `modelSettings` documentation. The published settings schema still omits `modelSettings`.
+- Add `CLAUDE_CODE_SUBAGENT_EFFORT=high` to the bilingual Claude user settings example, so subagents that name no effort run at `high` while the main Opus 5.5 session stays at `xhigh`; fork subagents keep the session level. Record bounded Haiku and Opus request-effort observations on Claude Code `2.1.321`. Templates, the project settings and MCP examples, and Skills are unchanged.
+- Tell users to merge the Claude user example's existing `env` and `modelSettings` objects key by key, and record the 2026-11-10 memory-documentation recheck in both Claude guides.
+
 ## 4.0.0 - 2026-10-14
 
 - **Breaking source-layout change:** keep only rules in Codex/Claude global and project directories; restore the single shared project core to `codex/project/AGENTS.md.template`. Move project configuration, Claude settings/MCP, and platform prompts into their respective `examples/` directories. Root prompt files become entry indexes; native installation destinations and `.template` isolation remain explicit.
