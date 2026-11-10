@@ -30,8 +30,15 @@ function Get-PythonCommand {
     foreach ($name in @("python", "python3")) {
         $command = Get-Command $name -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
         if ($command) {
-            & $command.Source -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" 2>$null
-            if ($LASTEXITCODE -eq 0) {
+            # Under Stop, a launch failure or native-command error preference must not end the search.
+            try {
+                & $command.Source -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" 2>$null
+                $probeSucceeded = $LASTEXITCODE -eq 0
+            }
+            catch {
+                $probeSucceeded = $false
+            }
+            if ($probeSucceeded) {
                 return $command
             }
         }
