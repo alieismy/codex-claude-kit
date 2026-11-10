@@ -218,7 +218,7 @@ pwsh ./scripts/validate.ps1
 pwsh ./scripts/test-validator.ps1
 ```
 
-Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+ 及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。三十一项负向回归覆盖 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置，以及 Codex Schema/运行基线一致的配置契约、跨平台推理与长期指引治理、GSD 当前/归档来源归属、明确交付编排请求边界、Claude 共享导入安装保护、Claude 提示词调用语法、推荐模型／MCP 默认值、按顺序生效的环境文件例外、旧规则源重复和已退役的 Cursor 源目录。
+Skill YAML/reference 和 Codex TOML/JSON Schema 门禁需要 Python 3.9+（以 `python` 或 `python3` 提供）及 `requirements-validation.txt` 中固定的依赖，建议安装到隔离环境。三十二项负向回归覆盖 Skill、镜像、证据、全局规则、上下文、提示词、临时数据与平台配置，以及 Codex Schema/运行基线一致的配置契约、跨平台推理与长期指引治理、GSD 当前/归档来源归属、明确交付编排请求边界、Claude 共享导入安装保护、Claude 提示词调用语法、推荐模型／MCP 默认值、按顺序生效的环境文件例外、旧规则源重复、已退役的 Cursor 源目录和 CRLF 行尾。
 
 公开发布前还必须执行联网动态门禁：
 

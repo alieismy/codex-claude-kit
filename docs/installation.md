@@ -86,6 +86,7 @@ Before installing, record the intended language/source, destination scope (user 
 Global install:
 
 ```bash
+(
 skill_target="$HOME/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in skills/rd-*; do
@@ -96,6 +97,7 @@ for skill_source in skills/rd-*; do
   fi
 done
 cp -R skills/rd-* "$skill_target/"
+)
 ```
 
 On PowerShell, the preferred user-level installation is the verified installer:
@@ -110,6 +112,7 @@ The installer manages only the nine declared `rd-*` directories, verifies a SHA-
 Project-level install:
 
 ```bash
+(
 skill_target="/path/to/your-project/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in skills/rd-*; do
@@ -120,6 +123,7 @@ for skill_source in skills/rd-*; do
   fi
 done
 cp -R skills/rd-* "$skill_target/"
+)
 ```
 
 ### Optional project/team and Claude Code local fallback
@@ -219,6 +223,7 @@ If a non-empty `AGENTS.override.md` exists at either scope, back up and merge th
 Install Chinese shared skills:
 
 ```bash
+(
 skill_target="$HOME/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in zh-CN/skills/rd-*; do
@@ -229,6 +234,7 @@ for skill_source in zh-CN/skills/rd-*; do
   fi
 done
 cp -R zh-CN/skills/rd-* "$skill_target/"
+)
 ```
 
 Install Chinese Claude Code files (the project `CLAUDE.md` imports the shared `AGENTS.md`; keep and merge an existing `AGENTS.md` instead of overwriting it):

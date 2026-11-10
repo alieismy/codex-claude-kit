@@ -67,7 +67,7 @@ codex --cd path/to/nested-directory --sandbox read-only --ask-for-approval never
 
 `--sandbox read-only` 可防止这次诊断运行修改工作区；`--ask-for-approval never` 只禁用审批提示，`never` 本身不提供只读边界。设置 `CODEX_HOME` 后，Codex 从该目录读取全局指令；未设置时默认使用 `~/.codex`。指令文件修改后应再次新建运行，因为指令链只在每次运行或 TUI 会话启动时构建一次。这些检查只能证明该次运行报告了哪些来源以及如何概括其内容，不能保证以后必然遵守，也不构成运行验收或业务验收。详见 OpenAI 官方的 [`codex exec` 说明](https://learn.chatgpt.com/docs/developer-commands#codex-exec)和[只读非交互安全组合](https://learn.chatgpt.com/docs/agent-approvals-security#common-sandbox-and-approval-combinations)。
 
-## Codex Skills
+## Skills
 
 ### 按交付物逐步采用
 
@@ -88,6 +88,7 @@ codex --cd path/to/nested-directory --sandbox read-only --ask-for-approval never
 全局安装：
 
 ```bash
+(
 skill_target="$HOME/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in zh-CN/skills/rd-*; do
@@ -98,6 +99,7 @@ for skill_source in zh-CN/skills/rd-*; do
   fi
 done
 cp -R zh-CN/skills/rd-* "$skill_target/"
+)
 ```
 
 在 PowerShell 中，推荐使用带完整校验的用户级安装脚本：
@@ -112,6 +114,7 @@ pwsh -File ./scripts/install-rd-skills.ps1 -Language zh-CN -CheckOnly
 项目级安装：
 
 ```bash
+(
 skill_target="/path/to/your-project/.agents/skills"
 mkdir -p "$skill_target"
 for skill_source in zh-CN/skills/rd-*; do
@@ -122,6 +125,7 @@ for skill_source in zh-CN/skills/rd-*; do
   fi
 done
 cp -R zh-CN/skills/rd-* "$skill_target/"
+)
 ```
 
 <a id="optional-projectteam-and-claude-code-local-fallback"></a>
@@ -181,6 +185,28 @@ zh-CN/codex/examples/config.full-access.example.toml
 
 将该覆盖片段安装为 `$CODEX_HOME/full-access.config.toml` 后，用 `codex --profile full-access` 显式选择；它依赖已审阅的基础配置，项目配置和 CLI 参数仍可能覆盖它。完整步骤见[示例指南](../codex/examples/README.md)。不要在不可信仓库中使用 `full access`（完全访问权限）。
 
+<a id="environment-variables"></a>
+
+## 环境变量与 MCP 认证
+
+先选择 [DeepWiki／Tavily 与可选服务](mcp-routing.md)。DeepWiki 的公共端点无需认证；Tavily 采用官方 OAuth 或环境变量引用的 Authorization header。用户／项目 settings、MCP 定义和进程环境属于不同配置载体，分别审阅和合并。
+
+`.env.example` 是变量清单。可复制为不提交的 `.env`，供明确支持 dotenv 的工具读取，但复制、填写并不证明 Codex、Claude Code 或任意 MCP 会自动加载它。Tavily 本地 npm 服务的[当前入口](https://github.com/tavily-ai/tavily-mcp/blob/main/src/index.ts)调用 `dotenv.config()`，其工作目录与实际版本仍需核实；这一行为不能推广到远程 HTTP MCP 或所有客户端。远程 Tavily 示例从**客户端进程环境**读取 `TAVILY_API_KEY`，无需本地 npm 服务。
+
+使用获准的凭据管理器或操作系统私密输入机制，将变量提供给启动 Codex／Claude Code 的进程；不要把真实 key 写进共享 JSON、TOML、URL 或命令历史。只检查变量是否存在，例如：
+
+```powershell
+if ([string]::IsNullOrWhiteSpace($env:TAVILY_API_KEY)) {
+    throw 'TAVILY_API_KEY is not available to this process.'
+}
+```
+
+此检查不回显值，只验证当前 PowerShell 进程；不能证明已经运行的桌面客户端或服务收到变量。持久化环境变量变更后，应重新启动受影响的 shell 和客户端；桌面应用从自身父进程继承环境，终端中的变量不自动注入已有应用。选择 OAuth 时按官方客户端流程认证，无需用 API key 替代 OAuth。
+
+完成凭据和数据流审查后，Codex 只对选定 MCP 将 `enabled` 改为 `true`；Claude 只合并选定 `mcpServers` 条目并按原生流程批准。先检查服务／工具列表，再运行一次有边界的只读调用；分别报告解析、认证、连接和实际工具调用结果。服务列表不能证明 Tavily 认证有效，环境变量存在也不能证明连接成功。详见[Codex 示例](../codex/examples/README.md)、[Claude 示例](../claude/examples/README.md)及 [Tavily 官方说明](https://docs.tavily.com/documentation/mcp)。
+
+英文根目录仍是权威基线；`zh-CN/` 是简体中文翻译包。目标文件已存在时，应手动合并，避免覆盖本地项目规则。
+
 ## Claude Code 适配包
 
 安装用户级 Claude Code memory（记忆）：
@@ -225,31 +251,9 @@ cp zh-CN/claude/examples/settings.project.example.json /path/to/your-project/.cl
 
 存在非空 `AGENTS.override.md` 时，示例会在安装适配文件前停止。应先有意识地合并这一 Codex 生效来源，再选择对应的 Claude 导入（例如 `@AGENTS.override.md`）后继续；Claude 不会自动发现 override 文件。已有但为空的 `AGENTS.md` 也必须先手动修复。
 
-如果目标项目已有 `CLAUDE.md` 或 `.claude/`，请手动合并。
+如果目标项目已有 `CLAUDE.md` 或 `.claude/`，请手动合并。Claude Code 仅在不存在 `CLAUDE.md` 时直接读取 `AGENTS.md`（v2.1.277 及以上）；显式导入同样适用于更早版本，且不会重复加载 `AGENTS.md`。可在新会话中运行 `/memory` 或 `/context`，确认两个文件均已加载。
 
-用户 settings 可从 `zh-CN/claude/examples/settings.example.json` 合并到 `~/.claude/settings.json`；项目 MCP 可从 `zh-CN/claude/examples/mcp.example.json` 合并到项目根 `.mcp.json`。规则安装不会自动启用这两项。用户/local MCP 应通过 CLI 管理 `~/.claude.json`；`enableAllProjectMcpServers=false` 不能证明 headless 会话连接被阻止。
-
-<a id="environment-variables"></a>
-
-## 环境变量与 MCP 认证
-
-先选择 [DeepWiki／Tavily 与可选服务](mcp-routing.md)。DeepWiki 的公共端点无需认证；Tavily 采用官方 OAuth 或环境变量引用的 Authorization header。用户／项目 settings、MCP 定义和进程环境属于不同配置载体，分别审阅和合并。
-
-`.env.example` 是变量清单。可复制为不提交的 `.env`，供明确支持 dotenv 的工具读取，但复制、填写并不证明 Codex、Claude Code 或任意 MCP 会自动加载它。Tavily 本地 npm 服务的[当前入口](https://github.com/tavily-ai/tavily-mcp/blob/main/src/index.ts)调用 `dotenv.config()`，其工作目录与实际版本仍需核实；这一行为不能推广到远程 HTTP MCP 或所有客户端。远程 Tavily 示例从**客户端进程环境**读取 `TAVILY_API_KEY`，无需本地 npm 服务。
-
-使用获准的凭据管理器或操作系统私密输入机制，将变量提供给启动 Codex／Claude Code 的进程；不要把真实 key 写进共享 JSON、TOML、URL 或命令历史。只检查变量是否存在，例如：
-
-```powershell
-if ([string]::IsNullOrWhiteSpace($env:TAVILY_API_KEY)) {
-    throw 'TAVILY_API_KEY is not available to this process.'
-}
-```
-
-此检查不回显值，只验证当前 PowerShell 进程；不能证明已经运行的桌面客户端或服务收到变量。持久化环境变量变更后，应重新启动受影响的 shell 和客户端；桌面应用从自身父进程继承环境，终端中的变量不自动注入已有应用。选择 OAuth 时按官方客户端流程认证，无需用 API key 替代 OAuth。
-
-完成凭据和数据流审查后，Codex 只对选定 MCP 将 `enabled` 改为 `true`；Claude 只合并选定 `mcpServers` 条目并按原生流程批准。先检查服务／工具列表，再运行一次有边界的只读调用；分别报告解析、认证、连接和实际工具调用结果。服务列表不能证明 Tavily 认证有效，环境变量存在也不能证明连接成功。详见[Codex 示例](../codex/examples/README.md)、[Claude 示例](../claude/examples/README.md)及 [Tavily 官方说明](https://docs.tavily.com/documentation/mcp)。
-
-英文根目录仍是权威基线；`zh-CN/` 是简体中文翻译包。目标文件已存在时，应手动合并，避免覆盖本地项目规则。
+Codex 与 Claude Code 的项目规则只有一个共享源：项目通用行为修改 `zh-CN/codex/project/AGENTS.md.template`，只有 Claude Code 专有指引才修改 `zh-CN/claude/project/CLAUDE.md.template`。用户 settings 可从 `zh-CN/claude/examples/settings.example.json` 合并到 `~/.claude/settings.json`；项目 MCP 可从 `zh-CN/claude/examples/mcp.example.json` 合并到项目根 `.mcp.json`。规则安装不会自动启用这两项。用户/local MCP 应通过 CLI 管理 `~/.claude.json`；`enableAllProjectMcpServers=false` 不能证明 headless 会话连接被阻止。
 
 ### Windows PowerShell 项目安装
 

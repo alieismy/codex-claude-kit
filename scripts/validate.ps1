@@ -8,20 +8,27 @@ function Add-Failure {
     $failures.Add($Message) | Out-Null
 }
 
+# One pass over the tree; excluded directories are pruned rather than enumerated and discarded.
 function Get-TextFiles {
-    $patterns = @("*.md", "*.template", "*.mdc", "*.mdx", "*.markdown", "*.toml", "*.json", "*.jsonc", "*.yaml", "*.yml", "*.ps1", "*.py", "*.txt")
-    $candidates = @(
-        foreach ($pattern in $patterns) {
-            Get-ChildItem -LiteralPath $root -Recurse -File -Filter $pattern -Force
-        }
-        Get-ChildItem -LiteralPath $root -Force -File |
-            Where-Object { $_.Name -in @(".gitattributes", ".gitignore", ".env.example") }
-    )
+    $extensions = @(".md", ".template", ".mdc", ".mdx", ".markdown", ".toml", ".json", ".jsonc", ".yaml", ".yml", ".ps1", ".py", ".txt")
+    $rootFileNames = @(".gitattributes", ".gitignore", ".env.example")
+    $excludedDirectories = @(".git", ".tmp/local")
+    $pending = [System.Collections.Generic.Stack[System.IO.DirectoryInfo]]::new()
+    $pending.Push([System.IO.DirectoryInfo]::new([string]$root))
 
-    foreach ($candidate in $candidates) {
-        $relative = [System.IO.Path]::GetRelativePath([string]$root, $candidate.FullName).Replace("\", "/")
-        if ($relative -notlike ".git/*" -and $relative -notlike ".tmp/local/*") {
-            $candidate
+    while ($pending.Count -gt 0) {
+        foreach ($item in $pending.Pop().EnumerateFileSystemInfos()) {
+            $relative = [System.IO.Path]::GetRelativePath([string]$root, $item.FullName).Replace("\", "/")
+            if ($item -is [System.IO.DirectoryInfo]) {
+                # Like Get-ChildItem -Recurse, do not follow directory links.
+                if ($relative -notin $excludedDirectories -and
+                    -not ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {
+                    $pending.Push($item)
+                }
+            }
+            elseif ($item.Extension -in $extensions -or $relative -in $rootFileNames) {
+                $item
+            }
         }
     }
 }
@@ -203,13 +210,27 @@ if ($packageScript -match 'claude/project/\.claude/skills') {
 }
 
 
+# Some platforms ship only python3, while Windows may expose a non-functional python3 alias; probe each candidate.
+function Get-PythonCommand {
+    foreach ($name in @("python", "python3")) {
+        $command = Get-Command $name -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($command) {
+            & $command.Source -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" 2>$null
+            if ($LASTEXITCODE -eq 0) {
+                return $command
+            }
+        }
+    }
+    return $null
+}
+
 $structuredSkillValidator = Join-Path $root "scripts/validate-skill-metadata.py"
-$pythonCommand = Get-Command python -ErrorAction SilentlyContinue
+$pythonCommand = Get-PythonCommand
 if (-not (Test-Path -LiteralPath $structuredSkillValidator)) {
     Add-Failure "Missing structured Skill YAML/reference validator: $structuredSkillValidator"
 }
 elseif (-not $pythonCommand) {
-    Add-Failure "Python 3.9+ with requirements-validation.txt dependencies is required for Skill YAML/reference validation."
+    Add-Failure "Python 3.9+ ('python' or 'python3') with requirements-validation.txt dependencies is required for Skill YAML/reference validation."
 }
 else {
     $structuredValidationOutput = @(
@@ -233,7 +254,7 @@ if (-not (Test-Path -LiteralPath $codexConfigValidator)) {
     Add-Failure "Missing Codex configuration validator: $codexConfigValidator"
 }
 elseif (-not $pythonCommand) {
-    Add-Failure "Python 3.9+ with requirements-validation.txt dependencies is required for Codex configuration validation."
+    Add-Failure "Python 3.9+ ('python' or 'python3') with requirements-validation.txt dependencies is required for Codex configuration validation."
 }
 else {
     $codexConfigValidationOutput = @(
