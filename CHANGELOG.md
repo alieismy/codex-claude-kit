@@ -7,6 +7,7 @@ This project uses GitHub releases for versioning. Directory names should not con
 ## Unreleased
 
 - Rerun the Claude guardrail probes on Claude Code `2.1.322` and `2.1.328`: the seven file-tool cases match the `2.1.321` record. A new case that changes directory first shows that on `2.1.322` the project example's relative `Read(.env)` rule stopped covering the project root, so `.env` was read and then overwritten; `2.1.328` refused both. Raise the bilingual Claude guide's recommended minimum from `2.1.321` to `2.1.325`, following the `2.1.323` and `2.1.325` changelog fixes, and record the rerun in the bilingual compatibility record and sanitized evidence.
+- Refresh the vendored Codex configuration schema from `0.167.0` to `0.170.0`, matching the installed CLI, npm latest, and live schema. The new schema removes two `auto_review` properties that no public example sets and adds 15 `features` flags; no example value changed, and all six public examples pass the pinned and live schemas and isolated strict loading with CLI `0.170.0`. Update the schema metadata, notice, attribution, full-access example comments, and bilingual compatibility record.
 
 ## 4.0.1 - 2026-11-10
 

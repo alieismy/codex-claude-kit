@@ -1,6 +1,6 @@
 # 兼容性
 
-2026-11-19（UTC）本机 Claude Code CLI 与其 npm registry 最新版本均为 `2.1.328`，详见下方 2026-11-19 一节。2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`；本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.167.0`，详见下方两个 2026-11-10 小节。同日 v4.0.1 发布预检重新查询下表全部九项 npm registry 最新版本，并发现本机 Claude Code CLI 已为 `2.1.322`：Context7 为 `4.6.0`，Sequential Thinking 为 `2.0.0`，Playwright MCP 为 `0.0.85`，Chrome DevTools MCP 为 `1.12.0`，其余五项不变。registry 元数据不能证明 MCP 运行时已升级，`2.1.321` 的观察当时也未在 `2.1.322` 上重复（2026-11-19 已重跑）。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+2026-11-19（UTC）本机 Claude Code CLI 与其 npm registry 最新版本均为 `2.1.328`，本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.170.0`，详见下方两个 2026-11-19 小节。2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`；本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.167.0`，详见下方两个 2026-11-10 小节。同日 v4.0.1 发布预检重新查询下表全部九项 npm registry 最新版本，并发现本机 Claude Code CLI 已为 `2.1.322`：Context7 为 `4.6.0`，Sequential Thinking 为 `2.0.0`，Playwright MCP 为 `0.0.85`，Chrome DevTools MCP 为 `1.12.0`，其余五项不变。registry 元数据不能证明 MCP 运行时已升级，`2.1.321` 的观察当时也未在 `2.1.322` 上重复（2026-11-19 已重跑）。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
 
 ## 2026-11-19 Claude Code 护栏重跑
 
@@ -12,6 +12,12 @@
 - 新用例先用两次 PowerShell 工具调用把会话目录切换到子目录，并以 `Get-Location` 确认切换，再访问项目根目录的 `.env`。在 `2.1.322` 上，三次 Read 均返回了文件内容且没有权限拒绝，先 Read 后 Write 修改了该文件；不先 Read 的 Write 仅因必须先读取而失败。在 `2.1.328` 上，所有 Read 与 Write 都被 Read deny 规则拒绝，文件不变。较早使用 Bash `cd` 的尝试因 Claude Code 把 shell 重置回项目根目录而作废，详见记录。
 
 `2.1.322` 的结果复现了 `2.1.325` changelog 条目所修复的问题。`2.1.323` 至 `2.1.327` 未测试，因此“`2.1.325` 是首个修复版本”以 changelog 为依据。每个用例在一个模型上只运行一至两次，只覆盖内置文件工具与 PowerShell 目录切换，不覆盖 Bash `cd`、shell 或解释器的文件访问、MCP、其他权限模式或模型，也不覆盖桌面／网页端行为。模板、settings 示例、Skills 与个人设置均未修改。
+
+## 2026-11-19 Codex Schema 刷新
+
+本机 Codex CLI 与其 npm registry 最新版本均为 `0.170.0`，发布门禁的版本检查因此不再匹配 `0.167.0` 固定值。[tag 固定的 `0.170.0` Schema](https://raw.githubusercontent.com/openai/codex/rust-v0.170.0/codex-rs/core/config.schema.json) 与[官方实时 Schema](https://developers.openai.com/codex/config-schema.json) 逐字节一致（272,670 字节；SHA-256 记录于 `schemas/codex-config.schema.meta.json`），已替换 `0.167.0` 快照。tag 中的 Apache-2.0 许可证与仓库内副本逐字节一致。
+
+与 `0.167.0` 相比，该 Schema 删除了 `auto_review.experimental_policy_template` 与 `auto_review.extra_policy`（公开示例均未设置），并新增 15 个 `features` 开关，没有删除或修改任何 feature 开关。除新增的 `features` 开关外，公开示例所设置键的定义均无变化，因此没有示例值需要修改。六份公开示例均通过固定和实时 Schema 校验，`scripts/validate-release.ps1` 使用 CLI `0.170.0` 从隔离的临时 `CODEX_HOME` 严格加载了每份示例。这只证明 Schema 与配置加载层面的验收，不证明账户模型可用性、MCP 连接或运行行为。
 
 ## 2026-11-10 Claude Code 护栏复核
 
@@ -97,9 +103,9 @@
 
 | 组件 | 已测试版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@openai/codex` npm 包 | `0.147.0` | `0.167.0` | registry 与本机 CLI `0.167.0` 已于 2026-11-10 重新核查，仓库 Schema 快照已刷新为 tag 固定的 `0.167.0`；发布门禁会将其与实时 Schema 比较并检查全部维护的用户/项目示例。更广的测试基线仍为 `0.147.0`，上方日期化检查各有更窄范围。不要把该版本写进仓库名或 AGENTS 规则。 |
+| `@openai/codex` npm 包 | `0.147.0` | `0.170.0` | registry 与本机 CLI `0.170.0` 已于 2026-11-19 重新核查，仓库 Schema 快照已刷新为 tag 固定的 `0.170.0`；发布门禁会将其与实时 Schema 比较并检查全部维护的用户/项目示例。更广的测试基线仍为 `0.147.0`，上方日期化检查各有更窄范围。不要把该版本写进仓库名或 AGENTS 规则。 |
 
-仓库在 `schemas/` 下保存带来源和 SHA-256 元数据的 Codex `0.167.0` 配置 Schema 离线快照。`scripts/validate.ps1` 确定性使用该快照；仅发布前执行的 `scripts/validate-release.ps1` 会将其与当前官方 Schema 比较，核对已安装 CLI 版本，使用实时副本验证全部六份用户/项目示例，并从隔离的临时 `CODEX_HOME` 严格加载每份示例。
+仓库在 `schemas/` 下保存带来源和 SHA-256 元数据的 Codex `0.170.0` 配置 Schema 离线快照。`scripts/validate.ps1` 确定性使用该快照；仅发布前执行的 `scripts/validate-release.ps1` 会将其与当前官方 Schema 比较，核对已安装 CLI 版本，使用实时副本验证全部六份用户/项目示例，并从隔离的临时 `CODEX_HOME` 严格加载每份示例。
 
 独立的 2026-09-20 [双模型评估](dual-model-compatibility.md)使用 CLI `0.155.1`，请求 `gpt-5.6-sol` 与 `gpt-6-astra`，两者均为 high 推理和 high 输出详细程度。基于所提供文本的断言分别为 42/48 和 46/48，四次原生尝试均受阻。报告保留失败与限制，不证明后端模型身份或隐式路由，也不替代上述发布 Schema 或更广测试基线。
 

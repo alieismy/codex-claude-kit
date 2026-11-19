@@ -442,14 +442,6 @@
           "description": "Experimental replacement for the history-retrieval instructions when history tools and Apps are enabled. Omitted or blank values use the built-in prompt.",
           "type": "string"
         },
-        "experimental_policy_template": {
-          "description": "Experimental full Guardian prompt template containing the tenant policy placeholder.",
-          "type": "string"
-        },
-        "extra_policy": {
-          "description": "Additional policy text inserted into the Guardian template's `{{ extra_policy }}` slot.",
-          "type": "string"
-        },
         "policy": {
           "description": "Additional policy instructions inserted into the guardian prompt.",
           "type": "string"
@@ -482,35 +474,6 @@
         "timeout_ms": {
           "default": 300000,
           "description": "Maximum time to wait for the refresh command to complete.",
-          "format": "uint64",
-          "minimum": 1.0,
-          "type": "integer"
-        }
-      },
-      "required": [
-        "command"
-      ],
-      "type": "object"
-    },
-    "AwsCredentialExportConfig": {
-      "additionalProperties": false,
-      "description": "Command used to export AWS signing credentials for a model provider.",
-      "properties": {
-        "args": {
-          "default": [],
-          "description": "Arguments passed to the credential export command.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "command": {
-          "description": "Executable to invoke directly, without a shell.",
-          "type": "string"
-        },
-        "timeout_ms": {
-          "default": 30000,
-          "description": "Maximum time to wait for the credential export command to complete.",
           "format": "uint64",
           "minimum": 1.0,
           "type": "integer"
@@ -839,6 +802,9 @@
             "agent_message_board": {
               "type": "boolean"
             },
+            "agent_message_board_mcp": {
+              "type": "boolean"
+            },
             "analytics_plan_history": {
               "type": "boolean"
             },
@@ -888,6 +854,9 @@
             "async_compaction": {
               "$ref": "#/definitions/FeatureToml_for_AsyncCompactionConfigToml"
             },
+            "async_compaction_root_only": {
+              "type": "boolean"
+            },
             "auth_elicitation": {
               "type": "boolean"
             },
@@ -913,6 +882,9 @@
               "type": "boolean"
             },
             "cli_daybreak": {
+              "type": "boolean"
+            },
+            "cli_resume_account_check": {
               "type": "boolean"
             },
             "code_mode": {
@@ -963,6 +935,9 @@
             "collaboration_modes": {
               "type": "boolean"
             },
+            "command_sessions_world_state": {
+              "type": "boolean"
+            },
             "compaction_image_budget": {
               "type": "boolean"
             },
@@ -994,6 +969,9 @@
               "type": "boolean"
             },
             "daemon_auto_start": {
+              "type": "boolean"
+            },
+            "daybreak_program_propagation": {
               "type": "boolean"
             },
             "default_mode_request_user_input": {
@@ -1050,6 +1028,9 @@
             "fast_mode": {
               "type": "boolean"
             },
+            "gateway_setup_wizard": {
+              "type": "boolean"
+            },
             "gcp_setup_wizard": {
               "type": "boolean"
             },
@@ -1062,10 +1043,16 @@
             "guardian_conversation_history_tools": {
               "type": "boolean"
             },
+            "guardian_denial_reconsideration": {
+              "type": "boolean"
+            },
             "guardian_enhanced_node_repl_transcripts": {
               "type": "boolean"
             },
             "guardian_ext": {
+              "type": "boolean"
+            },
+            "guardian_include_additional_context": {
               "type": "boolean"
             },
             "guardian_native_multi_agent_history": {
@@ -1098,10 +1085,16 @@
             "hooks": {
               "type": "boolean"
             },
+            "hosted_search_policy": {
+              "type": "boolean"
+            },
             "image_detail_original": {
               "type": "boolean"
             },
             "image_generation": {
+              "type": "boolean"
+            },
+            "image_generation_animation": {
               "type": "boolean"
             },
             "image_resize_notice": {
@@ -1134,6 +1127,12 @@
             "incremental_tools": {
               "type": "boolean"
             },
+            "incremental_tools_legacy": {
+              "type": "boolean"
+            },
+            "incremental_tools_legacy_gcp": {
+              "type": "boolean"
+            },
             "instant_interrupt": {
               "type": "boolean"
             },
@@ -1162,6 +1161,9 @@
               "type": "boolean"
             },
             "mcp_connection_sharing": {
+              "type": "boolean"
+            },
+            "mcp_lazy_stdio_startup": {
               "type": "boolean"
             },
             "mcp_oauth_refresh_coordination": {
@@ -1195,6 +1197,9 @@
               "type": "boolean"
             },
             "multi_env_copy_file": {
+              "type": "boolean"
+            },
+            "multi_environment_mcp": {
               "type": "boolean"
             },
             "network_proxy": {
@@ -1413,6 +1418,9 @@
             "tui_multi_backend": {
               "type": "boolean"
             },
+            "tui_workspace": {
+              "type": "boolean"
+            },
             "ultrafast_mode": {
               "type": "boolean"
             },
@@ -1624,6 +1632,35 @@
         "header"
       ],
       "type": "string"
+    },
+    "CredentialExportConfig": {
+      "additionalProperties": false,
+      "description": "Command used to export credentials for a model provider.",
+      "properties": {
+        "args": {
+          "default": [],
+          "description": "Arguments passed to the credential export command.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "command": {
+          "description": "Executable to invoke directly, without a shell.",
+          "type": "string"
+        },
+        "timeout_ms": {
+          "default": 30000,
+          "description": "Maximum time to wait for the credential export command to complete.",
+          "format": "uint64",
+          "minimum": 1.0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "command"
+      ],
+      "type": "object"
     },
     "CredentialProviderConfig": {
       "additionalProperties": false,
@@ -1989,60 +2026,40 @@
       "type": "string"
     },
     "GatewayOAuthConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "authorization_url": {
-          "type": "string"
+      "anyOf": [
+        {
+          "$ref": "#/definitions/GatewayOAuthSettings"
         },
-        "client_id": {
-          "type": "string"
-        },
-        "credentials_store": {
-          "allOf": [
-            {
-              "$ref": "#/definitions/OAuthCredentialsStore"
+        {
+          "additionalProperties": false,
+          "properties": {
+            "credential_export": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/CredentialExportConfig"
+                }
+              ],
+              "description": "Command that prints a gateway access token."
+            },
+            "delivery": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/GatewayOAuthDelivery"
+                }
+              ],
+              "default": {
+                "kind": "header",
+                "name": "Authorization",
+                "scheme": "Bearer"
+              }
             }
-          ],
-          "description": "Where Codex stores this gateway's OAuth credentials. Defaults to the keyring-backed store."
-        },
-        "delivery": {
-          "allOf": [
-            {
-              "$ref": "#/definitions/GatewayOAuthDelivery"
-            }
-          ],
-          "default": {
-            "kind": "header",
-            "name": "Authorization",
-            "scheme": "Bearer"
           },
-          "description": "Omit to send the gateway token via the Authorization header"
-        },
-        "redirect_port": {
-          "format": "uint16",
-          "minimum": 0.0,
-          "type": "integer"
-        },
-        "resource": {
-          "type": "string"
-        },
-        "scopes": {
-          "default": [],
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "token_url": {
-          "type": "string"
+          "required": [
+            "credential_export"
+          ],
+          "type": "object"
         }
-      },
-      "required": [
-        "authorization_url",
-        "client_id",
-        "token_url"
-      ],
-      "type": "object"
+      ]
     },
     "GatewayOAuthDelivery": {
       "oneOf": [
@@ -2089,6 +2106,66 @@
           "type": "object"
         }
       ]
+    },
+    "GatewayOAuthSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "authorization_url": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "credentials_store": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/OAuthCredentialsStore"
+            }
+          ],
+          "description": "Where Codex stores this gateway's OAuth credentials. Defaults to the keyring-backed store."
+        },
+        "delivery": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/GatewayOAuthDelivery"
+            }
+          ],
+          "default": {
+            "kind": "header",
+            "name": "Authorization",
+            "scheme": "Bearer"
+          },
+          "description": "Omit to send the gateway token via the Authorization header"
+        },
+        "device_authorization_url": {
+          "description": "Optional device endpoint used when the terminal cannot open a browser for gateway sign-in.",
+          "type": "string"
+        },
+        "redirect_port": {
+          "format": "uint16",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "scopes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "token_url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "authorization_url",
+        "client_id",
+        "token_url"
+      ],
+      "type": "object"
     },
     "GhostSnapshotToml": {
       "additionalProperties": false,
@@ -2138,7 +2215,7 @@
           "type": "boolean"
         },
         "sandbox_approval": {
-          "description": "Whether to allow shell command approval requests, including inline `with_additional_permissions` and `require_escalated` requests.",
+          "description": "Whether to allow sandbox escalation approval requests, including inline `with_additional_permissions` and `require_escalated` requests. Dangerous commands can still request approval within existing permissions.",
           "type": "boolean"
         },
         "skill_approval": {
@@ -2151,6 +2228,39 @@
         "mcp_elicitations",
         "rules",
         "sandbox_approval"
+      ],
+      "type": "object"
+    },
+    "GuardianElasticSectionConfigToml": {
+      "additionalProperties": false,
+      "properties": {
+        "max_section_entry_tokens": {
+          "format": "uint",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "max_total_section_tokens": {
+          "description": "Upper bound for the section's allocation. Omit to use the global request budget as the upper bound.",
+          "format": "uint",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "min_total_section_tokens": {
+          "format": "uint",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "nested_tool_names": {
+          "description": "Exact Code Mode tool names for the transcript_selected_exec_results section.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "max_section_entry_tokens",
+        "min_total_section_tokens"
       ],
       "type": "object"
     },
@@ -2223,6 +2333,17 @@
           "maximum": 1.0,
           "minimum": 0.0,
           "type": "number"
+        },
+        "sync_elastic_budgeting": {
+          "description": "Enable elastic allocation for synchronous Guardian requests. Defaults to false.",
+          "type": "boolean"
+        },
+        "sync_elastic_sections": {
+          "additionalProperties": {
+            "$ref": "#/definitions/GuardianElasticSectionConfigToml"
+          },
+          "description": "Named section limits, decoded and validated by Guardian when the switch is enabled.",
+          "type": "object"
         },
         "thread_context": {
           "description": "Deprecated and ignored; thread-owned Guardian context is always enabled.",
@@ -3036,7 +3157,7 @@
         "credential_export": {
           "allOf": [
             {
-              "$ref": "#/definitions/AwsCredentialExportConfig"
+              "$ref": "#/definitions/CredentialExportConfig"
             }
           ],
           "description": "Optional command whose exported credentials replace the AWS SDK credential chain."
@@ -3136,7 +3257,7 @@
               "$ref": "#/definitions/GatewayOAuthConfig"
             }
           ],
-          "description": "Secondary OAuth credentials required by the provider's gateway."
+          "description": "Gateway access token from OAuth or a credential export command."
         },
         "http_headers": {
           "additionalProperties": {
@@ -3719,6 +3840,7 @@
       "enum": [
         "auto",
         "osc9",
+        "osc777",
         "bel"
       ],
       "type": "string"
@@ -3813,6 +3935,16 @@
             }
           ],
           "description": "Optional log exporter"
+        },
+        "headers_helper": {
+          "description": "Command that prints a JSON object of HTTP headers for explicit OTLP HTTP exporters. Runs from CODEX_HOME. Repository-local configuration cannot set OTel options.",
+          "type": "string"
+        },
+        "headers_helper_refresh_interval_ms": {
+          "description": "Interval between helper executions in milliseconds. Defaults to 29 minutes.",
+          "format": "uint64",
+          "minimum": 1.0,
+          "type": "integer"
         },
         "log_agent_responses": {
           "description": "Opt in to logging final main-agent and spawned-subagent responses to an OTLP log exporter. Defaults to false. Response text can be sensitive and is capped at 64 KiB.",
@@ -5047,6 +5179,14 @@
     "ToolsToml": {
       "additionalProperties": false,
       "properties": {
+        "client_search_provider": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/WebSearchProvider"
+            }
+          ],
+          "description": "Client provider preference when the model does not select a provider."
+        },
         "experimental_request_user_input": {
           "$ref": "#/definitions/ExperimentalRequestUserInput"
         },
@@ -5123,6 +5263,11 @@
           "description": "Generate automatic conversation recaps when the terminal is unfocused. Defaults to `true`. Disabling this leaves `/recap` available on demand.",
           "type": "boolean"
         },
+        "collapse_turn_details": {
+          "default": false,
+          "description": "Summarize tool calls and collapse completed turns in the full-screen transcript. Defaults to `false`.",
+          "type": "boolean"
+        },
         "copy_on_select": {
           "allOf": [
             {
@@ -5136,6 +5281,17 @@
           "default": false,
           "description": "Deselect read-only transcript or footer text after Copy on select confirms delivery. Editable composer selections remain visible. Defaults to `false` and has no effect when Copy on select is off.",
           "type": "boolean"
+        },
+        "default_hosts": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "default": {},
+          "description": "Preferred hosts for new conversations, indexed by project and local user identity. Read from the user configuration only; values are never endpoints or credentials.",
+          "type": "object"
         },
         "disable_paste_burst": {
           "description": "When true, disables burst-paste detection for typed input entirely. All characters are inserted as they are received, and no buffering or placeholder replacement will occur for fast keypress bursts. Overrides the legacy top-level `disable_paste_burst` setting. Defaults to `false`.",
@@ -5233,18 +5389,35 @@
               "yank": null
             },
             "global": {
+              "change_host": null,
               "clear_terminal": null,
+              "close_sidebar_tab": null,
               "copy": null,
+              "equalize_pane_widths": null,
               "find_transcript": null,
               "focus_activity": null,
+              "focus_main_composer": null,
+              "focus_pane_left": null,
+              "focus_pane_right": null,
+              "focus_sidebar_content": null,
+              "focus_sidebar_tabs": null,
+              "hide_pane": null,
               "leader": null,
+              "maximize_pane_width": null,
+              "minimize_pane_width": null,
+              "move_divider_left": null,
+              "move_divider_right": null,
               "open_agents": null,
               "open_external_editor": null,
               "open_transcript": null,
               "queue": null,
+              "resize_panes": null,
               "select_transcript": null,
+              "sidebar_down": null,
+              "sidebar_up": null,
               "submit": null,
               "toggle_fast_mode": null,
+              "toggle_pane_zoom": null,
               "toggle_raw_output": null,
               "toggle_shortcuts": null,
               "toggle_side_conversation": null,
@@ -5484,6 +5657,14 @@
           "default": true,
           "description": "Show startup tooltips in the TUI welcome screen. Defaults to `true`.",
           "type": "boolean"
+        },
+        "sidebar_width_percent": {
+          "default": null,
+          "description": "Preferred docked sidebar width as a percentage of the terminal. Defaults to one third.",
+          "format": "uint8",
+          "maximum": 99.0,
+          "minimum": 1.0,
+          "type": "integer"
         },
         "status_line": {
           "default": null,
@@ -6026,6 +6207,14 @@
       "additionalProperties": false,
       "description": "Global keybindings. These are used when a context does not define an override.",
       "properties": {
+        "change_host": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Change where a new conversation runs."
+        },
         "clear_terminal": {
           "allOf": [
             {
@@ -6034,6 +6223,14 @@
           ],
           "description": "Clear the terminal UI."
         },
+        "close_sidebar_tab": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Close the active sidebar tab."
+        },
         "copy": {
           "allOf": [
             {
@@ -6041,6 +6238,14 @@
             }
           ],
           "description": "Copy the last agent response to the clipboard."
+        },
+        "equalize_pane_widths": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Equalize visible pane widths."
         },
         "find_transcript": {
           "allOf": [
@@ -6058,6 +6263,54 @@
           ],
           "description": "Focus activity groups in the owned transcript to inspect their details."
         },
+        "focus_main_composer": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Focus the main conversation composer."
+        },
+        "focus_pane_left": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Focus the parent conversation."
+        },
+        "focus_pane_right": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Focus the open side conversation."
+        },
+        "focus_sidebar_content": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Focus the side conversation, or hide it when already focused."
+        },
+        "focus_sidebar_tabs": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Open the sidebar tab chooser."
+        },
+        "hide_pane": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Hide the focused sidebar pane."
+        },
         "leader": {
           "allOf": [
             {
@@ -6065,6 +6318,38 @@
             }
           ],
           "description": "Prefix for persistent, context-aware shortcut menus."
+        },
+        "maximize_pane_width": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Maximize the focused pane width."
+        },
+        "minimize_pane_width": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Minimize the focused pane width."
+        },
+        "move_divider_left": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Move the divider left when the side pane has focus."
+        },
+        "move_divider_right": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Move the divider right when the side pane has focus."
         },
         "open_agents": {
           "allOf": [
@@ -6098,6 +6383,14 @@
           ],
           "description": "Queue the current composer draft while a task is running."
         },
+        "resize_panes": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Enter keyboard resize mode for visible dividers."
+        },
         "select_transcript": {
           "allOf": [
             {
@@ -6105,6 +6398,22 @@
             }
           ],
           "description": "Enter keyboard selection mode for the transcript."
+        },
+        "sidebar_down": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Switch to the next sidebar tab."
+        },
+        "sidebar_up": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Switch to the previous sidebar tab."
         },
         "submit": {
           "allOf": [
@@ -6121,6 +6430,14 @@
             }
           ],
           "description": "Toggle Fast mode."
+        },
+        "toggle_pane_zoom": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/KeybindingsSpec"
+            }
+          ],
+          "description": "Zoom or restore the focused pane."
         },
         "toggle_raw_output": {
           "allOf": [
@@ -6266,18 +6583,35 @@
             }
           ],
           "default": {
+            "change_host": null,
             "clear_terminal": null,
+            "close_sidebar_tab": null,
             "copy": null,
+            "equalize_pane_widths": null,
             "find_transcript": null,
             "focus_activity": null,
+            "focus_main_composer": null,
+            "focus_pane_left": null,
+            "focus_pane_right": null,
+            "focus_sidebar_content": null,
+            "focus_sidebar_tabs": null,
+            "hide_pane": null,
             "leader": null,
+            "maximize_pane_width": null,
+            "minimize_pane_width": null,
+            "move_divider_left": null,
+            "move_divider_right": null,
             "open_agents": null,
             "open_external_editor": null,
             "open_transcript": null,
             "queue": null,
+            "resize_panes": null,
             "select_transcript": null,
+            "sidebar_down": null,
+            "sidebar_up": null,
             "submit": null,
             "toggle_fast_mode": null,
+            "toggle_pane_zoom": null,
             "toggle_raw_output": null,
             "toggle_shortcuts": null,
             "toggle_side_conversation": null,
@@ -7312,6 +7646,14 @@
       ],
       "type": "string"
     },
+    "WebSearchProvider": {
+      "description": "Provider preference selected by the resolved model catalog entry.",
+      "enum": [
+        "standalone",
+        "search_mcp"
+      ],
+      "type": "string"
+    },
     "WebSearchToolConfig": {
       "additionalProperties": false,
       "properties": {
@@ -7550,6 +7892,9 @@
         "agent_message_board": {
           "type": "boolean"
         },
+        "agent_message_board_mcp": {
+          "type": "boolean"
+        },
         "analytics_plan_history": {
           "type": "boolean"
         },
@@ -7599,6 +7944,9 @@
         "async_compaction": {
           "$ref": "#/definitions/FeatureToml_for_AsyncCompactionConfigToml"
         },
+        "async_compaction_root_only": {
+          "type": "boolean"
+        },
         "auth_elicitation": {
           "type": "boolean"
         },
@@ -7624,6 +7972,9 @@
           "type": "boolean"
         },
         "cli_daybreak": {
+          "type": "boolean"
+        },
+        "cli_resume_account_check": {
           "type": "boolean"
         },
         "code_mode": {
@@ -7674,6 +8025,9 @@
         "collaboration_modes": {
           "type": "boolean"
         },
+        "command_sessions_world_state": {
+          "type": "boolean"
+        },
         "compaction_image_budget": {
           "type": "boolean"
         },
@@ -7705,6 +8059,9 @@
           "type": "boolean"
         },
         "daemon_auto_start": {
+          "type": "boolean"
+        },
+        "daybreak_program_propagation": {
           "type": "boolean"
         },
         "default_mode_request_user_input": {
@@ -7761,6 +8118,9 @@
         "fast_mode": {
           "type": "boolean"
         },
+        "gateway_setup_wizard": {
+          "type": "boolean"
+        },
         "gcp_setup_wizard": {
           "type": "boolean"
         },
@@ -7773,10 +8133,16 @@
         "guardian_conversation_history_tools": {
           "type": "boolean"
         },
+        "guardian_denial_reconsideration": {
+          "type": "boolean"
+        },
         "guardian_enhanced_node_repl_transcripts": {
           "type": "boolean"
         },
         "guardian_ext": {
+          "type": "boolean"
+        },
+        "guardian_include_additional_context": {
           "type": "boolean"
         },
         "guardian_native_multi_agent_history": {
@@ -7809,10 +8175,16 @@
         "hooks": {
           "type": "boolean"
         },
+        "hosted_search_policy": {
+          "type": "boolean"
+        },
         "image_detail_original": {
           "type": "boolean"
         },
         "image_generation": {
+          "type": "boolean"
+        },
+        "image_generation_animation": {
           "type": "boolean"
         },
         "image_resize_notice": {
@@ -7845,6 +8217,12 @@
         "incremental_tools": {
           "type": "boolean"
         },
+        "incremental_tools_legacy": {
+          "type": "boolean"
+        },
+        "incremental_tools_legacy_gcp": {
+          "type": "boolean"
+        },
         "instant_interrupt": {
           "type": "boolean"
         },
@@ -7873,6 +8251,9 @@
           "type": "boolean"
         },
         "mcp_connection_sharing": {
+          "type": "boolean"
+        },
+        "mcp_lazy_stdio_startup": {
           "type": "boolean"
         },
         "mcp_oauth_refresh_coordination": {
@@ -7906,6 +8287,9 @@
           "type": "boolean"
         },
         "multi_env_copy_file": {
+          "type": "boolean"
+        },
+        "multi_environment_mcp": {
           "type": "boolean"
         },
         "network_proxy": {
@@ -8122,6 +8506,9 @@
           "type": "boolean"
         },
         "tui_multi_backend": {
+          "type": "boolean"
+        },
+        "tui_workspace": {
           "type": "boolean"
         },
         "ultrafast_mode": {
