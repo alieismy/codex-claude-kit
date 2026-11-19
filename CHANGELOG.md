@@ -4,6 +4,12 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
+## 4.0.2 - 2026-11-19
+
+- Rerun the Claude guardrail probes on Claude Code `2.1.322` and `2.1.328`: the seven file-tool cases match the `2.1.321` record. A new case that changes directory first shows that on `2.1.322` the project example's relative `Read(.env)` rule stopped covering the project root, so `.env` was read and then overwritten; `2.1.328` refused both. Raise the bilingual Claude guide's recommended minimum from `2.1.321` to `2.1.325`, following the `2.1.323` and `2.1.325` changelog fixes, and record the rerun in the bilingual compatibility record and sanitized evidence.
+- Refresh the vendored Codex configuration schema from `0.167.0` to `0.170.0`, matching the installed CLI, npm latest, and live schema. The new schema removes two `auto_review` properties that no public example sets and adds 15 `features` flags; no example value changed, and all six public examples pass the pinned and live schemas and isolated strict loading with CLI `0.170.0`. Update the schema metadata, notice, attribution, full-access example comments, and bilingual compatibility record.
+- Recheck all nine npm registry entries for the release: Context7 is `4.7.3`, Sequential Thinking `2.2.0`, Brave Search `2.1.5`, Playwright MCP `0.0.86`, and Chrome DevTools MCP `1.13.0`; Codex, Claude Code, Tavily, and Augment Context Engine are unchanged. Public MCP invocations remain unpinned; no new MCP runtime acceptance is claimed.
+
 ## 4.0.1 - 2026-11-10
 
 - Correct the bilingual Claude guide's file-tool statement for project `Read` denials. A synthetic Claude Code `2.1.321` probe observed Read, Write, and Edit refusals on a denied `.env`, while NotebookEdit failed only on its read-before-write requirement. Remove the undocumented `v2.1.208` and `v2.1.228` starting versions and recommend `2.1.321` or later before relying on the guardrails.

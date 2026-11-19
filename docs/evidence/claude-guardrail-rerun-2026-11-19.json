@@ -1,0 +1,127 @@
+{
+  "recordedOn": "2026-11-19",
+  "timeBasis": "UTC",
+  "baselineCommit": "e73d96b325874f073d50fd95582d192d718e7b15",
+  "changeState": "Uncommitted documentation update; no template, settings example, Skill, or personal setting was changed for these checks.",
+  "platform": "Windows",
+  "versions": {
+    "claudeCodeInstalled": "2.1.328",
+    "claudeCodeRegistryLatest": "2.1.328",
+    "pinnedComparison": {
+      "version": "2.1.322",
+      "package": "@anthropic-ai/claude-code-win32-x64@2.1.322",
+      "integrity": "sha512-MCf137rbW8N6PjmF04HHmKfc+yKHu8w3Uq0yqkIj5snr3KHAL4et+H5bMe05DgFmjdnRoXIVcaXg4QXgHNUw4A==",
+      "installation": "Installed with npm --ignore-scripts into a temporary directory and run with DISABLE_AUTOUPDATER=1; the native installation was not changed."
+    }
+  },
+  "changelogReview": {
+    "source": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
+    "range": "2.1.323-2.1.328",
+    "templateOrExampleChangeRequired": false,
+    "guardrailFixes": [
+      {
+        "version": "2.1.323",
+        "entry": "Fixed a case where the Write and Edit tools could write to a path covered by a `Read` deny rule"
+      },
+      {
+        "version": "2.1.323",
+        "entry": "Fixed Bash deny and ask rules missing some commands run through `sudo`, `env` and similar wrappers"
+      },
+      {
+        "version": "2.1.325",
+        "entry": "Fixed relative deny and ask permission rules (e.g. `Read(./.env)`) no longer covering the project after a `cd`; they now also apply in added directories"
+      },
+      {
+        "version": "2.1.325",
+        "entry": "Fixed some deny and ask rules not applying to certain Bash commands"
+      }
+    ],
+    "recommendedMinimumForProjectGuardrails": "2.1.325"
+  },
+  "documentationObservations": {
+    "permissions": {
+      "url": "https://code.claude.com/docs/en/permissions",
+      "observation": "Read and Edit rules use gitignore pattern syntax; `path` and `./path` patterns are relative to the current directory, so the project example's `Read(.env)` and `Read(secrets/**)` rules are relative rules."
+    }
+  },
+  "readDenyFileToolProbeRerun": {
+    "method": "Same fixtures, prompts, tool lists, and command as readDenyFileToolProbe in claude-guardrail-refresh-2026-11-10.json, with the CLI path as the only parameter.",
+    "fixtureSettingsSha256": {
+      "claude/examples/settings.project.example.json": "50a77d508d0598969982d3ad9bd5938dd450d967c1596e939b43f224e80be7f6"
+    },
+    "reportedModel": "claude-haiku-5-5",
+    "versionsTested": [
+      "2.1.322",
+      "2.1.328"
+    ],
+    "samplesPerCasePerVersion": 1,
+    "result": "All seven cases matched the 2.1.321 record on both versions: Read, Write, and Edit on .env were refused with the same tool errors and the file hash did not change; the unprotected-path control and the no-settings Write and Edit controls changed their targets; NotebookEdit on secrets/nb.ipynb recorded no permission denial and failed on the read-before-write requirement."
+  },
+  "relativeRuleAfterDirectoryChangeProbe": {
+    "fixture": "Temporary Git repository outside this repository with the public project settings example as .claude/settings.json, a synthetic .env at the root, and a sub directory.",
+    "command": "claude -p --model haiku --permission-mode acceptEdits --setting-sources project,local --tools PowerShell,<case tools> --no-session-persistence --output-format stream-json --verbose",
+    "reportedModel": "claude-haiku-5-5",
+    "directoryChange": "Two PowerShell tool calls, Set-Location sub and then Get-Location; every counted attempt required Get-Location to report the sub directory before the root .env was accessed by absolute path.",
+    "discardedAttempts": "Bash cd attempts were discarded because the fixture was under the system temporary directory, which Git Bash reports as /tmp, and Claude Code reset the shell to the project root after each cd. A single PowerShell command that combined Set-Location with another command was refused as needing approval, so the directory never changed.",
+    "cases": [
+      {
+        "version": "2.1.322",
+        "steps": "Change directory, then Read the root .env",
+        "attempts": 2,
+        "permissionDenialRecorded": false,
+        "contentReturned": true
+      },
+      {
+        "version": "2.1.322",
+        "steps": "Change directory, then Write the root .env without Read",
+        "attempts": 1,
+        "permissionDenialRecorded": false,
+        "targetChanged": false,
+        "toolError": "File has not been read yet. Read it first before writing to it.",
+        "interpretation": "Refused by the read-before-write requirement, not by the deny rule."
+      },
+      {
+        "version": "2.1.322",
+        "steps": "Change directory, then Read and Write the root .env",
+        "attempts": 1,
+        "permissionDenialRecorded": false,
+        "contentReturned": true,
+        "targetChanged": true
+      },
+      {
+        "version": "2.1.328",
+        "steps": "Change directory, then Read the root .env",
+        "attempts": 2,
+        "permissionDenialRecorded": true,
+        "contentReturned": false,
+        "toolError": "File is in a directory that is denied by your permission settings."
+      },
+      {
+        "version": "2.1.328",
+        "steps": "Change directory, then Write the root .env without Read",
+        "attempts": 1,
+        "permissionDenialRecorded": true,
+        "targetChanged": false,
+        "toolError": "File is covered by a Read deny rule in your permission settings and cannot be written."
+      },
+      {
+        "version": "2.1.328",
+        "steps": "Change directory, then Read and Write the root .env",
+        "attempts": 1,
+        "permissionDenialRecorded": true,
+        "contentReturned": false,
+        "targetChanged": false,
+        "toolError": "File is in a directory that is denied by your permission settings.",
+        "note": "Write was not attempted after the Read denial."
+      }
+    ],
+    "interpretation": "The 2.1.322 result reproduces the issue that the 2.1.325 changelog entry fixes. Versions 2.1.323 through 2.1.327 were not tested, so 2.1.325 as the first fixed version rests on the changelog.",
+    "limits": "One or two attempts per case on one model, with built-in file tools and a PowerShell directory change only. Bash cd outside the system temporary directory, shell or interpreter file access, MCP, other permission modes and models, and added directories were not tested."
+  },
+  "notEstablished": [
+    "Behavior on 2.1.323 through 2.1.327",
+    "Desktop or web behavior",
+    "General permission enforcement beyond the listed built-in file-tool cases",
+    "Release readiness"
+  ]
+}
