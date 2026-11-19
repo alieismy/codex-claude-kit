@@ -4,6 +4,10 @@ All notable changes to this project should be documented here.
 
 This project uses GitHub releases for versioning. Directory names should not contain edition or version suffixes such as `v4` or `-en`.
 
+## Unreleased
+
+- Rerun the Claude guardrail probes on Claude Code `2.1.322` and `2.1.328`: the seven file-tool cases match the `2.1.321` record. A new case that changes directory first shows that on `2.1.322` the project example's relative `Read(.env)` rule stopped covering the project root, so `.env` was read and then overwritten; `2.1.328` refused both. Raise the bilingual Claude guide's recommended minimum from `2.1.321` to `2.1.325`, following the `2.1.323` and `2.1.325` changelog fixes, and record the rerun in the bilingual compatibility record and sanitized evidence.
+
 ## 4.0.1 - 2026-11-10
 
 - Correct the bilingual Claude guide's file-tool statement for project `Read` denials. A synthetic Claude Code `2.1.321` probe observed Read, Write, and Edit refusals on a denied `.env`, while NotebookEdit failed only on its read-before-write requirement. Remove the undocumented `v2.1.208` and `v2.1.228` starting versions and recommend `2.1.321` or later before relying on the guardrails.

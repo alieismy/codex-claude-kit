@@ -1,6 +1,17 @@
 # 兼容性
 
-2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`；本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.167.0`，详见下方两个 2026-11-10 小节。同日 v4.0.1 发布预检重新查询下表全部九项 npm registry 最新版本，并发现本机 Claude Code CLI 已为 `2.1.322`：Context7 为 `4.6.0`，Sequential Thinking 为 `2.0.0`，Playwright MCP 为 `0.0.85`，Chrome DevTools MCP 为 `1.12.0`，其余五项不变。registry 元数据不能证明 MCP 运行时已升级，`2.1.321` 的观察也未在 `2.1.322` 上重复。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+2026-11-19（UTC）本机 Claude Code CLI 与其 npm registry 最新版本均为 `2.1.328`，详见下方 2026-11-19 一节。2026-11-10（UTC）重新核查的本机 Claude Code CLI 为 `2.1.321`，其 npm registry 最新版本为 `2.1.322`；本机 Codex CLI、其 npm registry 最新版本和发布 Schema 基线均为 `0.167.0`，详见下方两个 2026-11-10 小节。同日 v4.0.1 发布预检重新查询下表全部九项 npm registry 最新版本，并发现本机 Claude Code CLI 已为 `2.1.322`：Context7 为 `4.6.0`，Sequential Thinking 为 `2.0.0`，Playwright MCP 为 `0.0.85`，Chrome DevTools MCP 为 `1.12.0`，其余五项不变。registry 元数据不能证明 MCP 运行时已升级，`2.1.321` 的观察当时也未在 `2.1.322` 上重复（2026-11-19 已重跑）。2026-10-14（UTC）重新核查的本机 Codex CLI 与发布 Schema 基线均为 `0.162.1`，本机 Claude Code CLI 为 `2.1.299`。同日为 v4.0.0 发布重新查询下表全部九项 npm registry 最新版本：Claude Code 为 `2.1.299`，Context7 为 `4.4.1`，其余七项与 2026-10-13 一致。已安装版本、registry 版本和运行证据分别记录。早先观察保留各自日期，包括 2026-10-02 的 Claude Code `2.1.287`、2026-09-11 的 Cursor 版本、2026-09-16 的 Cursor 文档和 2026-08-14 的 Context7 有边界 stdio 探针。每次公开发布前重新核查 registry 最新版本和影响结论的工具/API surface。
+
+## 2026-11-19 Claude Code 护栏重跑
+
+本机 CLI 与 npm registry 最新版本均为 `2.1.328`。为作对照，`2.1.322` 的 Windows 平台包以禁用安装脚本的方式装入临时目录，并在禁用自动更新的情况下运行；本机原生安装未改动。已审阅 [Claude Code changelog](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) 的 `2.1.323` 至 `2.1.328`。两项修复影响 Claude 指南所述的 Read deny 护栏：`2.1.323` 修复了 Write 和 Edit 工具在某些情况下能写入 `Read` deny 规则所覆盖路径的问题；`2.1.325` 修复了 `Read(./.env)` 等相对 deny 与 ask 规则在 `cd` 后不再覆盖项目的问题。[权限文档](https://code.claude.com/docs/en/permissions)将 `path` 与 `./path` 模式同样视为相对当前目录，因此项目示例中的 `Read(.env)` 与 `Read(secrets/**)` 都属于相对规则。`2.1.323` 与 `2.1.325` 还修复了 Bash deny 与 ask 规则漏掉部分命令的问题。依赖项目 settings 护栏前应使用 `2.1.325` 或更高版本。
+
+[脱敏证据记录](../../docs/evidence/claude-guardrail-rerun-2026-11-19.json)分别记录两组探针，均使用 `claude-haiku-5-5`、`acceptEdits` 模式，排除用户 settings，并以公开项目 settings 示例作为项目设置：
+
+- 2026-11-10 的七个文件工具用例在 `2.1.322` 与 `2.1.328` 上原样重跑，两个版本的结果都与 `2.1.321` 记录一致，包括 Read deny 对 Write 与 Edit 的拒绝及其错误信息。
+- 新用例先用两次 PowerShell 工具调用把会话目录切换到子目录，并以 `Get-Location` 确认切换，再访问项目根目录的 `.env`。在 `2.1.322` 上，三次 Read 均返回了文件内容且没有权限拒绝，先 Read 后 Write 修改了该文件；不先 Read 的 Write 仅因必须先读取而失败。在 `2.1.328` 上，所有 Read 与 Write 都被 Read deny 规则拒绝，文件不变。较早使用 Bash `cd` 的尝试因 Claude Code 把 shell 重置回项目根目录而作废，详见记录。
+
+`2.1.322` 的结果复现了 `2.1.325` changelog 条目所修复的问题。`2.1.323` 至 `2.1.327` 未测试，因此“`2.1.325` 是首个修复版本”以 changelog 为依据。每个用例在一个模型上只运行一至两次，只覆盖内置文件工具与 PowerShell 目录切换，不覆盖 Bash `cd`、shell 或解释器的文件访问、MCP、其他权限模式或模型，也不覆盖桌面／网页端行为。模板、settings 示例、Skills 与个人设置均未修改。
 
 ## 2026-11-10 Claude Code 护栏复核
 
@@ -133,7 +144,7 @@
 
 | 组件 | 已测试 / 已固定版本 | registry 最新核查版本 | 备注 |
 |---|---:|---:|---|
-| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.322` | registry 最新版本 `2.1.322` 与本机 CLI `2.1.321` 已于 2026-11-10 重新核查，v4.0.1 发布预检时本机 CLI 为 `2.1.322`；护栏、文件工具与子代理推理强度观察见 2026-11-10 一节。2026-10-14 `2.1.299` 的模型、文件权限、MCP、Schema 和 doctor 有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
+| `@anthropic-ai/claude-code` npm 包 | 本仓库不固定 | `2.1.328` | registry 最新版本与本机 CLI `2.1.328` 已于 2026-11-19 重新核查；`2.1.322` 与 `2.1.328` 上的护栏重跑见 2026-11-19 一节。registry 最新版本 `2.1.322` 与本机 CLI `2.1.321` 已于 2026-11-10 重新核查，v4.0.1 发布预检时本机 CLI 为 `2.1.322`；护栏、文件工具与子代理推理强度观察见 2026-11-10 一节。2026-10-14 `2.1.299` 的模型、文件权限、MCP、Schema 和 doctor 有界观察分别保留其证据限制；早先 `2.1.287` 与 `2.1.260` 的观察保留原日期。未实际执行危险命令验证权限行为；settings 校验不能证明所有包装命令或复合命令都会被拦截。 |
 
 2026-10-01 核查并于 2026-11-10 再次核查的 [memory 文档](https://code.claude.com/docs/en/memory#agents-md) 说明：默认情况下，Claude Code 自 v2.1.277 起仅在不存在 `CLAUDE.md`、`.claude/CLAUDE.md` 或 `CLAUDE.local.md` 时直接读取 `AGENTS.md`；**Project instructions** 设为 `claude-md-and-agents-md` 时会同时加载两者；部分会话无法直接读取 `AGENTS.md`；无论采用哪个设置值，`CLAUDE.md` 中的 `@AGENTS.md` 导入都不会导致重复读取。项目适配因此采用导入方式。这是文档证据，尚未在维护者本机 CLI 上验证加载行为。
 
